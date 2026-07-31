@@ -63,3 +63,9 @@ Replace the uploaded JSON pages with a Data Factory pipeline using a REST connec
 the API page or continuation token dynamically, land every response unchanged, and keep the
 same Bronze MERGE and Silver latest-record logic. Store credentials in a managed connection,
 not in the notebook.
+
+## Real API end-to-end extension
+
+The shared POC API is deployed at `https://api-alpha-seven-69.vercel.app`. Use the included
+`REAL_API_E2E.md` guide to configure the Fabric REST connection, separately shared
+`x-api-key`, cursor pagination, `data[]` mapping, and initial/increment/retry executions.

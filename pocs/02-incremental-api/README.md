@@ -63,3 +63,16 @@ Replace the uploaded JSON pages with a Data Factory pipeline using a REST connec
 the API page or continuation token dynamically, land every response unchanged, and keep the
 same Bronze MERGE and Silver latest-record logic. Store credentials in a managed connection,
 not in the notebook.
+
+## Real API end-to-end extension
+
+The deployable Vercel Function in [`api/`](api/README.md) turns the fixed files into a real
+HTTPS API with cursor pagination, an exclusive `updated_after` watermark, repeatable
+extraction windows, and optional API-key authentication. Deploy it with `npm run api:deploy`,
+then use the returned `/api/v1/order-events` URL as the source of a Fabric Data Factory REST
+connection. The API README contains the exact initial, increment, and retry requests.
+
+The shared POC deployment is available at `https://api-alpha-seven-69.vercel.app`. Follow
+[`REAL_API_E2E.md`](REAL_API_E2E.md) to configure its `x-api-key` header, cursor pagination,
+`data[]` mapping, Lakehouse destination, and the three execution proof. The API key is shared
+separately and must not be committed to this repository.

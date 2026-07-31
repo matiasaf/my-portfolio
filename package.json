@@ -7,7 +7,10 @@
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "api:test": "node --test pocs/02-incremental-api/api/test/*.test.js",
+    "api:dev": "npx vercel dev --cwd pocs/02-incremental-api/api",
+    "api:deploy": "npx vercel --prod --yes --cwd pocs/02-incremental-api/api"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
