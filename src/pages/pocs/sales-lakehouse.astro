@@ -16,6 +16,7 @@ const steps = [
     title: 'Create the workspace',
     time: '5 min',
     goal: 'Prepare an isolated place where the experiment can be created and removed safely.',
+    theory: 'A workspace is the collaboration and governance boundary; capacity provides compute; the Lakehouse is the data object. Learning to separate these responsibilities prevents you from treating Fabric as one large database.',
     actions: [
       'Open Microsoft Fabric and create or select a workspace backed by Fabric capacity.',
       'Create a Lakehouse named lh_sales.',
@@ -28,6 +29,7 @@ const steps = [
     title: 'Load the raw input',
     time: '10 min',
     goal: 'Land source data without changing it, so every later result remains traceable.',
+    theory: 'Raw landing preserves the source as evidence. This is the Bronze principle: keep data replayable and attach technical metadata before applying business corrections, so a bad transformation never destroys the original input.',
     actions: [
       'Download the full kit above and unzip it on your computer.',
       'Upload customers.csv, products.csv, and orders.csv to Files/raw.',
@@ -40,6 +42,7 @@ const steps = [
     title: 'Build Bronze, Silver, and Gold',
     time: '20–30 min',
     goal: 'Turn raw files into typed, validated, and business-ready Delta tables.',
+    theory: 'Medallion architecture is a sequence of data contracts, not three copies made for decoration. Bronze preserves, Silver standardizes and validates, and Gold expresses a business-ready grain and metric. Delta tables add transactional reliability to those contracts.',
     actions: [
       'Import 01_bronze_silver_gold.ipynb into your workspace.',
       'Connect lh_sales as the notebook’s default Lakehouse.',
@@ -53,6 +56,7 @@ const steps = [
     title: 'Verify with SQL',
     time: '10 min',
     goal: 'Prove the transformation independently instead of trusting a green notebook run.',
+    theory: 'Successful execution is not proof of correct data. Data quality requires explicit assertions about counts, nulls, keys, relationships, and totals. Independent SQL checks make correctness observable and repeatable.',
     actions: [
       'Open the SQL analytics endpoint for lh_sales.',
       'Open validations.sql from the downloaded kit and run each block.',
@@ -65,6 +69,7 @@ const steps = [
     title: 'Consume and explain',
     time: '15–25 min',
     goal: 'Expose the trusted answer and demonstrate that you understand the full journey.',
+    theory: 'A semantic model separates reusable business meaning from a single visualization. Measures define the metric once; reports consume it many times. The important skill is tracing a result back through Gold, Silver, Bronze, and the original file.',
     actions: [
       'Create a semantic model that includes gold_sales_by_month.',
       'Build a column chart using month, category, and revenue.',
@@ -160,6 +165,7 @@ const expectedRows = [
               <article>
                 <header><div><p>STAGE {step.number}</p><h3>{step.title}</h3></div><span>{step.time}</span></header>
                 <p class="step-goal">{step.goal}</p>
+                <aside class="theory-note"><span>THEORY TO RETAIN</span><p>{step.theory}</p></aside>
                 <ol>
                   {step.actions.map((action) => <li>{action}</li>)}
                 </ol>
