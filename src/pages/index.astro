@@ -45,6 +45,58 @@ const layers = [
   { name: 'Silver', tag: 'clean', copy: 'Types, quality rules, and deduplication.', code: 'silver_orders', tone: 'silver' },
   { name: 'Gold', tag: 'business', copy: 'Business entities and metrics ready to consume.', code: 'gold_sales_by_month', tone: 'gold' },
 ];
+
+const pocs = [
+  {
+    number: '01',
+    status: 'READY TO BUILD',
+    title: 'Sales Lakehouse',
+    question: 'How much did we sell per month and category?',
+    level: 'Starter',
+    time: '60–90 min',
+    path: 'CSV → Lakehouse → Spark/SQL → Power BI',
+    learn: 'Medallion layers, Delta tables, quality checks, semantic metrics',
+    proof: 'Four Gold rows, $2,170 total revenue, and a report that matches SQL.',
+    tone: 'coral',
+    available: true,
+  },
+  {
+    number: '02',
+    status: 'NEXT STEP',
+    title: 'API ingestion',
+    question: 'Can we update a dataset without reloading everything?',
+    level: 'Intermediate',
+    time: '2–3 hours',
+    path: 'REST API → Pipeline → Bronze → MERGE → Gold',
+    learn: 'Pagination, incremental loads, idempotency, and watermarking',
+    proof: 'Running the pipeline twice creates no duplicates and only new records change.',
+    tone: 'blue',
+  },
+  {
+    number: '03',
+    status: 'BUSINESS MODEL',
+    title: 'Customer 360',
+    question: 'Which customers buy often, spend more, or are becoming inactive?',
+    level: 'Intermediate',
+    time: '3–4 hours',
+    path: 'CRM + orders → Lakehouse → Star schema → Power BI',
+    learn: 'Entity matching, dimensions, facts, measures, and data ownership',
+    proof: 'Every KPI has a definition, an owner, and a query that independently verifies it.',
+    tone: 'lime',
+  },
+  {
+    number: '04',
+    status: 'ADVANCED',
+    title: 'Live operations',
+    question: 'Can we detect an operational anomaly while it is happening?',
+    level: 'Advanced',
+    time: '4–6 hours',
+    path: 'Events → Eventstream → KQL → Real-time dashboard',
+    learn: 'Streaming, event time, windowing, alerts, and operational latency',
+    proof: 'A simulated threshold breach appears on the dashboard and triggers an alert.',
+    tone: 'violet',
+  },
+];
 ---
 
 <Layout
@@ -60,6 +112,7 @@ const layers = [
       <a href="#map">The map</a>
       <a href="#translation">Your experience</a>
       <a href="#roadmap">Roadmap</a>
+      <a href="#pocs">POCs</a>
     </nav>
     <a class="header-cta" href="#get-started">Get started <span aria-hidden="true">↘</span></a>
   </header>
@@ -75,7 +128,7 @@ const layers = [
         </p>
         <div class="hero-actions">
           <a class="button button-dark" href="#map">Understand the map <span>↓</span></a>
-          <a class="text-link" href="#translation">Translate my concepts <span>→</span></a>
+          <a class="text-link" href="#pocs">See practical examples <span>→</span></a>
         </div>
       </div>
 
@@ -243,13 +296,85 @@ const layers = [
       </ol>
     </section>
 
+    <section class="poc-section" id="pocs">
+      <div class="section-shell">
+        <div class="section-intro light reveal">
+          <p class="section-number">06 / PROVE IT WITH A POC</p>
+          <h2>Choose a question.<br /><em>Build the evidence.</em></h2>
+          <p>A useful POC is small enough to finish, but complete enough to prove a real data journey end to end.</p>
+        </div>
+
+        <div class="poc-definition reveal">
+          <div>
+            <span>START WITH</span>
+            <strong>One business question</strong>
+          </div>
+          <b aria-hidden="true">→</b>
+          <div>
+            <span>BUILD</span>
+            <strong>One traceable flow</strong>
+          </div>
+          <b aria-hidden="true">→</b>
+          <div>
+            <span>FINISH WITH</span>
+            <strong>One verifiable answer</strong>
+          </div>
+        </div>
+
+        <div class="poc-grid">
+          {pocs.map((poc) => (
+            <article class={`poc-card tone-${poc.tone} reveal`}>
+              <div class="poc-card-top">
+                <span>{poc.number}</span>
+                <small>{poc.status}</small>
+              </div>
+              <h3>{poc.title}</h3>
+              <p class="poc-question">“{poc.question}”</p>
+              <dl class="poc-meta">
+                <div><dt>LEVEL</dt><dd>{poc.level}</dd></div>
+                <div><dt>TIMEBOX</dt><dd>{poc.time}</dd></div>
+              </dl>
+              <div class="poc-flow">
+                <span>ARCHITECTURE</span>
+                <code>{poc.path}</code>
+              </div>
+              <details>
+                <summary>What this POC proves <span aria-hidden="true">+</span></summary>
+                <div class="poc-details">
+                  <p><b>You learn</b>{poc.learn}</p>
+                  <p><b>Definition of done</b>{poc.proof}</p>
+                </div>
+              </details>
+              {poc.available && <p class="available-note"><i></i> Dataset, notebook, and validation SQL already included</p>}
+            </article>
+          ))}
+        </div>
+
+        <aside class="poc-checklist reveal" aria-labelledby="poc-checklist-title">
+          <div>
+            <p class="panel-kicker">BEFORE CALLING IT DONE</p>
+            <h3 id="poc-checklist-title">A demo shows a screen.<br />A POC proves a claim.</h3>
+          </div>
+          <ul>
+            <li><span>01</span>The input and expected output are explicit.</li>
+            <li><span>02</span>The run can be repeated without surprises.</li>
+            <li><span>03</span>Quality is verified with data, not only visually.</li>
+            <li><span>04</span>Limitations and the next experiment are documented.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
     <section class="cta-section" id="get-started">
       <div class="cta-shape shape-one"></div><div class="cta-shape shape-two"></div>
       <div class="cta-content reveal">
         <p class="eyebrow light-eye"><span></span> YOUR FIRST GOAL</p>
         <h2>Follow the journey<br />of <em>one row.</em></h2>
-        <p>What came in. What changed. Where it landed. Who consumes it. How you verify it.</p>
-        <a class="button button-light" href="https://app.fabric.microsoft.com/" target="_blank" rel="noreferrer">Open Microsoft Fabric <span>↗</span></a>
+        <p>Start with the Sales Lakehouse: three small CSVs, one notebook, one SQL validation, and one answer you can prove.</p>
+        <div class="cta-actions">
+          <a class="button button-light" href="#pocs">Review the POC <span>↑</span></a>
+          <a class="cta-external" href="https://app.fabric.microsoft.com/" target="_blank" rel="noreferrer">Open Microsoft Fabric ↗</a>
+        </div>
       </div>
     </section>
   </main>
