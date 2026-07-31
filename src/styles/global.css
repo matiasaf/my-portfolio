@@ -146,7 +146,10 @@ h1 em, h2 em { font-style: normal; color: var(--coral); }
 .cta-shape { position: absolute; border: 1px solid rgba(23,32,30,.15); border-radius: 50%; }.shape-one { width: 620px; height: 620px; left: -250px; top: -200px; box-shadow: 0 0 0 60px rgba(23,32,30,.03), 0 0 0 120px rgba(23,32,30,.025); }.shape-two { width: 480px; height: 480px; right: -180px; bottom: -260px; box-shadow: 0 0 0 50px rgba(23,32,30,.03); }
 
 footer { min-height: 120px; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; padding: 30px 32px; background: var(--ink); color: white; font-size: 11px; }
-footer p { text-align: center; opacity: .55; } footer > a:last-child { justify-self: end; font: 500 9px var(--mono); border-bottom: 1px solid rgba(255,255,255,.4); padding-bottom: 4px; }
+footer p { text-align: center; opacity: .55; }
+.footer-note { display: grid; gap: 7px; }
+.footer-note small { font: 500 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+footer > a:last-child { justify-self: end; font: 500 9px var(--mono); border-bottom: 1px solid rgba(255,255,255,.4); padding-bottom: 4px; }
 
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }.reveal.is-visible { opacity: 1; transform: translateY(0); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } .reveal { opacity: 1; transform: none; } }
