@@ -63,7 +63,7 @@ const pocs = [
   },
   {
     number: '02',
-    status: 'NEXT STEP',
+    status: 'READY TO BUILD',
     title: 'API ingestion',
     question: 'Can we update a dataset without reloading everything?',
     level: 'Intermediate',
@@ -72,6 +72,9 @@ const pocs = [
     learn: 'Pagination, incremental loads, idempotency, and watermarking',
     proof: 'Running the pipeline twice creates no duplicates and only new records change.',
     tone: 'blue',
+    available: true,
+    href: '/pocs/incremental-api/',
+    availableCopy: 'Mock API pages, notebook, and validation SQL included',
   },
   {
     number: '03',
@@ -348,7 +351,7 @@ const pocs = [
               </details>
               {poc.available && (
                 <div class="available-row">
-                  <p class="available-note"><i></i> Dataset, notebook, and validation SQL included</p>
+                  <p class="available-note"><i></i>{poc.availableCopy || 'Dataset, notebook, and validation SQL included'}</p>
                   <a href={poc.href}>Open the build guide <span aria-hidden="true">→</span></a>
                 </div>
               )}

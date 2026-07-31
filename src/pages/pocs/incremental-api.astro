@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/guide.css';
+
+const files = [
+  { name: 'page_001.json', type: 'INITIAL', size: '485 B', href: '/downloads/incremental-api/data/initial/page_001.json', copy: 'First API page with three order events.' },
+  { name: 'page_002.json', type: 'INITIAL', size: '331 B', href: '/downloads/incremental-api/data/initial/page_002.json', copy: 'Second API page with two order events.' },
+  { name: 'page_003.json', type: 'INCREMENT', size: '332 B', href: '/downloads/incremental-api/data/incremental/page_003.json', copy: 'One updated order and one new order.' },
+  { name: '01_incremental_api_ingestion.ipynb', type: 'NOTEBOOK', size: '6 KB', href: '/downloads/incremental-api/notebooks/01_incremental_api_ingestion.ipynb', copy: 'MERGE, latest-record logic, watermark, and run log.' },
+  { name: 'validations.sql', type: 'SQL', size: '1 KB', href: '/downloads/incremental-api/sql/validations.sql', copy: 'Idempotency, current-state, Gold, and watermark checks.' },
+  { name: 'README.md', type: 'GUIDE', size: '3 KB', href: '/downloads/incremental-api/README.md', copy: 'Portable implementation notes and production extension.' },
+];
+
+const steps = [
+  { number: '01', title: 'Prepare the Lakehouse', time: '5 min', goal: 'Create an isolated destination for raw API pages, Delta tables, and run evidence.', actions: ['Create or select a Fabric workspace backed by capacity.', 'Create a Lakehouse named lh_api_orders.', 'Create the folder Files/api_source in the Lakehouse explorer.'], check: 'lh_api_orders shows Files/api_source and an empty Tables area.' },
+  { number: '02', title: 'Simulate the initial API pages', time: '10 min', goal: 'Land two immutable API responses as the first extraction window.', actions: ['Download and unzip the complete POC kit.', 'Upload only data/initial/page_001.json and page_002.json to Files/api_source.', 'Preview both files: together they contain five unique event_id values.'], check: 'The source folder contains exactly two pages and five JSON records.' },
+  { number: '03', title: 'Run the initial load', time: '20 min', goal: 'Create an immutable Bronze event history and the latest state for each order.', actions: ['Import 01_incremental_api_ingestion.ipynb into the workspace.', 'Attach lh_api_orders as the default Lakehouse.', 'Run every cell and refresh the Tables explorer when it finishes.', 'Inspect the run log: new_events_inserted must equal 5.'], check: 'Bronze has 5 events, Silver has 5 orders, and the watermark is 2026-07-01 10:20:00.' },
+  { number: '04', title: 'Apply the increment', time: '10 min', goal: 'Process one changed order and one new order without rebuilding the historical event set.', actions: ['Upload data/incremental/page_003.json into the same Files/api_source folder.', 'Run the notebook again without deleting any table.', 'Inspect O-1002 in Silver: its status must now be Completed.'], check: 'The run inserts 2 events; Bronze has 7 events and Silver has 6 current orders.' },
+  { number: '05', title: 'Prove idempotency', time: '5 min', goal: 'Demonstrate that retrying an already successful load is safe.', actions: ['Run the notebook a third time without uploading or editing any source page.', 'Open api_ingestion_run_log and inspect the latest execution.', 'Confirm that no count, watermark, or Gold result changed.'], check: 'The latest run reports new_events_inserted = 0 while Bronze remains at 7 events.' },
+  { number: '06', title: 'Validate and map to a real API', time: '15 min', goal: 'Verify the claim independently and understand which mock component changes in production.', actions: ['Run validations.sql in the Lakehouse SQL analytics endpoint.', 'Confirm the Gold totals and latest watermark shown below.', 'Sketch a Data Factory REST pipeline that lands each response unchanged into Files/api_source.', 'Keep credentials in a managed connection and reuse the notebook’s Bronze-to-Gold logic.'], check: 'All SQL checks pass and you can identify page token, watermark, and business key separately.' },
+];
+
+const runRows = [
+  ['01 · initial', '5', '5', '5', '2026-07-01 10:20'],
+  ['02 · increment', '2', '7', '6', '2026-07-02 12:00'],
+  ['03 · retry', '0', '7', '6', 'unchanged'],
+];
+---
+
+<Layout title="Incremental API POC — Build guide" description="Download and build an idempotent incremental API ingestion proof of concept in Microsoft Fabric.">
+  <header class="guide-header">
+    <a class="brand" href="/" aria-label="Back to Fabric for Builders"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>FABRIC <em>/ POC 02</em></span></a>
+    <a class="back-link" href="/#pocs">← All POCs</a>
+  </header>
+
+  <main class="guide-page api-guide" id="top">
+    <section class="guide-hero section-shell">
+      <div class="guide-hero-copy">
+        <p class="eyebrow"><span></span> READY-TO-BUILD POC · INTERMEDIATE</p>
+        <h1>Incremental<br /><strong>API ingestion.</strong></h1>
+        <p class="guide-lede">Load new and changed API events, keep the latest business state, and prove that retries create no duplicates.</p>
+        <div class="guide-actions">
+          <a class="button button-dark" href="/downloads/incremental-api-poc.zip" download>Download complete kit <span>↓</span></a>
+          <a class="text-link" href="#steps">Start the guide <span>↓</span></a>
+        </div>
+        <p class="download-note">ZIP · mock API pages · notebook · validation SQL · README</p>
+      </div>
+      <div class="guide-brief" aria-label="POC summary">
+        <p>THE QUESTION</p><blockquote>Can we update a dataset without reloading—or duplicating—everything?</blockquote>
+        <dl><div><dt>TIMEBOX</dt><dd>2–3 hours</dd></div><div><dt>LEVEL</dt><dd>Intermediate</dd></div><div><dt>EXECUTIONS</dt><dd>Initial · delta · retry</dd></div><div><dt>PROOF</dt><dd>0 duplicate events</dd></div></dl>
+      </div>
+    </section>
+
+    <section class="architecture-band"><div class="section-shell architecture-flow" aria-label="POC architecture"><span>API pages</span><b>→</b><span>Bronze MERGE</span><b>→</b><span>Latest state</span><b>→</b><span>Watermark</span><b>→</b><span>Gold</span></div></section>
+
+    <section class="kit-section section-shell" id="kit">
+      <div class="guide-section-title"><p class="section-number">01 / YOUR BUILD KIT</p><div><h2>Two batches.<br /><em>Three executions.</em></h2><p>The JSON pages simulate deterministic API responses, so you can focus on pagination, upserts, watermarks, and safe retries.</p></div></div>
+      <div class="file-list">
+        {files.map((file, index) => <a class="file-row" href={file.href} download><span class="file-index">0{index + 1}</span><span class="file-type">{file.type}</span><div><strong>{file.name}</strong><small>{file.copy}</small></div><span class="file-size">{file.size}</span><span class="file-download" aria-label={`Download ${file.name}`}>↓</span></a>)}
+      </div>
+      <aside class="simulation-note"><span>WHY MOCK THE API?</span><p>A public endpoint can change or fail. Fixed pages make the learning evidence repeatable. In production, Data Factory replaces the manual upload; the table contracts remain the same.</p></aside>
+    </section>
+
+    <section class="steps-section" id="steps"><div class="section-shell">
+      <div class="guide-section-title light-title"><p class="section-number">02 / BUILD IT STEP BY STEP</p><div><h2>Load. Change.<br /><em>Retry safely.</em></h2><p>This POC is complete only after the third run proves that the second run can be repeated.</p></div></div>
+      <div class="progress-card" aria-live="polite"><div><span>YOUR PROGRESS</span><strong data-progress-label>0 of 6 stages verified</strong></div><div class="progress-track"><i data-progress-bar></i></div><button type="button" data-reset-progress>Reset</button></div>
+      <ol class="build-steps">{steps.map((step, index) => <li class="build-step"><div class="step-rail"><span>{step.number}</span><i></i></div><article><header><div><p>STAGE {step.number}</p><h3>{step.title}</h3></div><span>{step.time}</span></header><p class="step-goal">{step.goal}</p><ol>{step.actions.map((action) => <li>{action}</li>)}</ol><label class="verify-box"><input type="checkbox" data-step-check={index} /><span><b>Evidence to continue</b>{step.check}</span></label></article></li>)}</ol>
+    </div></section>
+
+    <section class="result-section section-shell">
+      <div class="guide-section-title"><p class="section-number">03 / EXPECTED EVIDENCE</p><div><h2>The retry is<br /><em>part of the result.</em></h2><p>History grows only for unseen event IDs, while Silver keeps one current row per order.</p></div></div>
+      <div class="result-grid"><div class="expected-table-wrap"><table><thead><tr><th>execution</th><th>new events</th><th>bronze</th><th>current orders</th><th>watermark</th></tr></thead><tbody>{runRows.map((row) => <tr>{row.map((cell) => <td>{cell}</td>)}</tr>)}</tbody><tfoot><tr><td colspan="4">COMPLETED ORDERS · 5</td><td>850.00</td></tr></tfoot></table></div><aside class="proof-card"><p>DEFINITION OF DONE</p><ul><li>Seven unique immutable events exist.</li><li>Silver contains six current orders.</li><li>O-1002 is Completed after run 2.</li><li>Run 3 inserts zero events.</li><li>Gold completed amount equals 850.00.</li></ul></aside></div>
+    </section>
+
+    <section class="help-section"><div class="section-shell help-grid">
+      <div><p class="section-number">04 / IF SOMETHING DOESN’T MATCH</p><h2>Find the broken<br />incremental contract.</h2></div>
+      <div class="help-list"><details><summary>Run 1 reads seven events instead of five <span>+</span></summary><p>Page 003 was uploaded too early. Remove it, clear the POC tables, and repeat the initial run with only pages 001 and 002.</p></details><details><summary>The retry inserts the same events again <span>+</span></summary><p>Confirm that Bronze uses MERGE on event_id. order_id is a business key and can legitimately have more than one historical event.</p></details><details><summary>O-1002 remains Pending <span>+</span></summary><p>Check that page 003 is in Files/api_source and that Silver ranks records by updated_at descending before selecting row 1.</p></details><details><summary>How does this connect to a real REST API? <span>+</span></summary><p>Use Data Factory to iterate the continuation token and land each response unchanged. Preserve event_id, order_id, and updated_at; then reuse the notebook transformations.</p></details></div>
+    </div></section>
+
+    <section class="guide-cta"><p class="eyebrow light-eye"><span></span> RUN IT THREE TIMES</p><h2>Load. Update.<br /><em>Retry.</em></h2><a class="button button-light" href="/downloads/incremental-api-poc.zip" download>Get the POC kit <span>↓</span></a></section>
+  </main>
+
+  <footer><a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>FABRIC <em>/ FOR BUILDERS</em></span></a><p>POC 02 · INCREMENTAL API</p><a href="#top">BACK TO TOP ↑</a></footer>
+
+  <script>
+    const checks = Array.from(document.querySelectorAll<HTMLInputElement>('[data-step-check]'));
+    const label = document.querySelector<HTMLElement>('[data-progress-label]');
+    const bar = document.querySelector<HTMLElement>('[data-progress-bar]');
+    const storageKey = 'fabric-poc-api-progress';
+    function renderProgress() { const completed = checks.filter((check) => check.checked).length; if (label) label.textContent = `${completed} of ${checks.length} stages verified`; if (bar) bar.style.width = `${(completed / checks.length) * 100}%`; localStorage.setItem(storageKey, JSON.stringify(checks.map((check) => check.checked))); }
+    try { const saved = JSON.parse(localStorage.getItem(storageKey) || '[]'); checks.forEach((check, index) => { check.checked = Boolean(saved[index]); }); } catch { /* Progress starts empty. */ }
+    checks.forEach((check) => check.addEventListener('change', renderProgress));
+    document.querySelector('[data-reset-progress]')?.addEventListener('click', () => { checks.forEach((check) => { check.checked = false; }); renderProgress(); });
+    renderProgress();
+  </script>
+</Layout>
