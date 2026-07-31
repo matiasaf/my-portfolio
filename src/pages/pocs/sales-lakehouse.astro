@@ -1,0 +1,253 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/guide.css';
+
+const files = [
+  { name: 'customers.csv', type: 'DATA', size: '139 B', href: '/downloads/sales-lakehouse/data/customers.csv', copy: 'Three synthetic customers.' },
+  { name: 'products.csv', type: 'DATA', size: '188 B', href: '/downloads/sales-lakehouse/data/products.csv', copy: 'Four products with category and price.' },
+  { name: 'orders.csv', type: 'DATA', size: '293 B', href: '/downloads/sales-lakehouse/data/orders.csv', copy: 'Six orders across two months.' },
+  { name: '01_bronze_silver_gold.ipynb', type: 'NOTEBOOK', size: '6 KB', href: '/downloads/sales-lakehouse/notebooks/01_bronze_silver_gold.ipynb', copy: 'Repeatable PySpark transformation.' },
+  { name: 'validations.sql', type: 'SQL', size: '1 KB', href: '/downloads/sales-lakehouse/sql/validations.sql', copy: 'Row counts, quality, joins, and revenue checks.' },
+];
+
+const steps = [
+  {
+    number: '01',
+    title: 'Create the workspace',
+    time: '5 min',
+    goal: 'Prepare an isolated place where the experiment can be created and removed safely.',
+    actions: [
+      'Open Microsoft Fabric and create or select a workspace backed by Fabric capacity.',
+      'Create a Lakehouse named lh_sales.',
+      'In the Lakehouse explorer, create a raw folder under Files.',
+    ],
+    check: 'You can see Files/raw and the Tables area in lh_sales.',
+  },
+  {
+    number: '02',
+    title: 'Load the raw input',
+    time: '10 min',
+    goal: 'Land source data without changing it, so every later result remains traceable.',
+    actions: [
+      'Download the full kit above and unzip it on your computer.',
+      'Upload customers.csv, products.csv, and orders.csv to Files/raw.',
+      'Preview each file and confirm that Fabric recognizes the header row.',
+    ],
+    check: 'Files/raw contains exactly three CSV files and their columns are visible.',
+  },
+  {
+    number: '03',
+    title: 'Build Bronze, Silver, and Gold',
+    time: '20–30 min',
+    goal: 'Turn raw files into typed, validated, and business-ready Delta tables.',
+    actions: [
+      'Import 01_bronze_silver_gold.ipynb into your workspace.',
+      'Connect lh_sales as the notebook’s default Lakehouse.',
+      'Run every cell in order and read the explanation before each transformation.',
+      'Refresh the Tables explorer when the run finishes.',
+    ],
+    check: 'Bronze and Silver tables exist for all entities, plus gold_sales_by_month.',
+  },
+  {
+    number: '04',
+    title: 'Verify with SQL',
+    time: '10 min',
+    goal: 'Prove the transformation independently instead of trusting a green notebook run.',
+    actions: [
+      'Open the SQL analytics endpoint for lh_sales.',
+      'Open validations.sql from the downloaded kit and run each block.',
+      'Confirm the row counts, zero invalid rows, zero orphan references, and four Gold rows.',
+    ],
+    check: 'SUM(revenue) returns 2170.00 and every zero-row quality query is empty.',
+  },
+  {
+    number: '05',
+    title: 'Consume and explain',
+    time: '15–25 min',
+    goal: 'Expose the trusted answer and demonstrate that you understand the full journey.',
+    actions: [
+      'Create a semantic model that includes gold_sales_by_month.',
+      'Build a column chart using month, category, and revenue.',
+      'Add a card for total revenue and compare it with the SQL result.',
+      'Explain what changed at each layer and name one limitation of the POC.',
+    ],
+    check: 'The report shows 2170.00, matches SQL, and you can trace one order from CSV to Gold.',
+  },
+];
+
+const expectedRows = [
+  ['2026-01-01', 'Accessories', '2', '3', '75.00'],
+  ['2026-01-01', 'Computers', '1', '1', '1200.00'],
+  ['2026-02-01', 'Accessories', '1', '3', '45.00'],
+  ['2026-02-01', 'Computers', '1', '1', '850.00'],
+];
+---
+
+<Layout title="Sales Lakehouse POC — Build guide" description="Download and build a complete Microsoft Fabric Sales Lakehouse proof of concept step by step.">
+  <header class="guide-header">
+    <a class="brand" href="/" aria-label="Back to Fabric for Builders">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>FABRIC <em>/ POC 01</em></span>
+    </a>
+    <a class="back-link" href="/#pocs">← All POCs</a>
+  </header>
+
+  <main class="guide-page" id="top">
+    <section class="guide-hero section-shell">
+      <div class="guide-hero-copy">
+        <p class="eyebrow"><span></span> READY-TO-BUILD POC · STARTER</p>
+        <h1>Sales<br /><strong>Lakehouse.</strong></h1>
+        <p class="guide-lede">Build an end-to-end analytical flow from three CSV files to one verified business answer.</p>
+        <div class="guide-actions">
+          <a class="button button-dark" href="/downloads/sales-lakehouse-poc.zip" download>Download complete kit <span>↓</span></a>
+          <a class="text-link" href="#steps">Start the guide <span>↓</span></a>
+        </div>
+        <p class="download-note">ZIP · synthetic data · notebook · validation SQL · README</p>
+      </div>
+      <div class="guide-brief" aria-label="POC summary">
+        <p>THE QUESTION</p>
+        <blockquote>How much did we sell per month and category from completed orders?</blockquote>
+        <dl>
+          <div><dt>TIMEBOX</dt><dd>60–90 min</dd></div>
+          <div><dt>LEVEL</dt><dd>Starter</dd></div>
+          <div><dt>INPUT</dt><dd>3 CSVs · 13 rows</dd></div>
+          <div><dt>PROOF</dt><dd>$2,170 revenue</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="architecture-band">
+      <div class="section-shell architecture-flow" aria-label="POC architecture">
+        <span>CSV files</span><b>→</b><span>Bronze</span><b>→</b><span>Silver</span><b>→</b><span>Gold</span><b>→</b><span>Power BI</span>
+      </div>
+    </section>
+
+    <section class="kit-section section-shell" id="kit">
+      <div class="guide-section-title">
+        <p class="section-number">01 / YOUR BUILD KIT</p>
+        <div><h2>Everything you need.<br /><em>Nothing hidden.</em></h2><p>Download the ZIP once, or inspect and download each artifact individually.</p></div>
+      </div>
+      <div class="file-list">
+        {files.map((file, index) => (
+          <a class="file-row" href={file.href} download>
+            <span class="file-index">0{index + 1}</span>
+            <span class="file-type">{file.type}</span>
+            <div><strong>{file.name}</strong><small>{file.copy}</small></div>
+            <span class="file-size">{file.size}</span>
+            <span class="file-download" aria-label={`Download ${file.name}`}>↓</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="steps-section" id="steps">
+      <div class="section-shell">
+        <div class="guide-section-title light-title">
+          <p class="section-number">02 / BUILD IT STEP BY STEP</p>
+          <div><h2>Execute. Verify.<br /><em>Then continue.</em></h2><p>Mark each stage when its evidence—not just its activity—is complete.</p></div>
+        </div>
+
+        <div class="progress-card" aria-live="polite">
+          <div><span>YOUR PROGRESS</span><strong data-progress-label>0 of 5 stages verified</strong></div>
+          <div class="progress-track"><i data-progress-bar></i></div>
+          <button type="button" data-reset-progress>Reset</button>
+        </div>
+
+        <ol class="build-steps">
+          {steps.map((step, index) => (
+            <li class="build-step">
+              <div class="step-rail"><span>{step.number}</span><i></i></div>
+              <article>
+                <header><div><p>STAGE {step.number}</p><h3>{step.title}</h3></div><span>{step.time}</span></header>
+                <p class="step-goal">{step.goal}</p>
+                <ol>
+                  {step.actions.map((action) => <li>{action}</li>)}
+                </ol>
+                <label class="verify-box">
+                  <input type="checkbox" data-step-check={index} />
+                  <span><b>Evidence to continue</b>{step.check}</span>
+                </label>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="result-section section-shell">
+      <div class="guide-section-title">
+        <p class="section-number">03 / EXPECTED EVIDENCE</p>
+        <div><h2>Know the answer<br /><em>before the dashboard.</em></h2><p>If your Gold table differs, stop and trace the transformation. Do not adjust the report to hide the mismatch.</p></div>
+      </div>
+      <div class="result-grid">
+        <div class="expected-table-wrap">
+          <table>
+            <thead><tr><th>sale_month</th><th>category</th><th>orders</th><th>units</th><th>revenue</th></tr></thead>
+            <tbody>{expectedRows.map((row) => <tr>{row.map((cell) => <td>{cell}</td>)}</tr>)}</tbody>
+            <tfoot><tr><td colspan="4">TOTAL REVENUE</td><td>2170.00</td></tr></tfoot>
+          </table>
+        </div>
+        <aside class="proof-card">
+          <p>DEFINITION OF DONE</p>
+          <ul>
+            <li>Three Bronze and three Silver tables exist.</li>
+            <li>Quality queries return zero invalid rows.</li>
+            <li>Gold contains exactly four rows.</li>
+            <li>Power BI and SQL both return 2170.00.</li>
+            <li>You can explain every layer in your own words.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="help-section">
+      <div class="section-shell help-grid">
+        <div><p class="section-number">04 / IF SOMETHING DOESN’T MATCH</p><h2>Debug the journey,<br />not the chart.</h2></div>
+        <div class="help-list">
+          <details><summary>Tables do not appear in the SQL endpoint <span>+</span></summary><p>Wait for metadata synchronization, refresh the explorer, and confirm the notebook wrote Delta tables—not only files.</p></details>
+          <details><summary>The notebook cannot find Files/raw <span>+</span></summary><p>Confirm that lh_sales is attached as the default Lakehouse and that all three CSV files are directly inside Files/raw.</p></details>
+          <details><summary>Revenue does not equal 2170.00 <span>+</span></summary><p>Check that only completed orders enter Gold, quantities are numeric, and product prices were joined using product_id.</p></details>
+          <details><summary>The report looks right but SQL differs <span>+</span></summary><p>Treat SQL as the independent check. Inspect filters and measure definitions before accepting the visual result.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="guide-cta">
+      <p class="eyebrow light-eye"><span></span> READY?</p>
+      <h2>Download.<br /><em>Build. Prove.</em></h2>
+      <a class="button button-light" href="/downloads/sales-lakehouse-poc.zip" download>Get the POC kit <span>↓</span></a>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>FABRIC <em>/ FOR BUILDERS</em></span></a>
+    <p>POC 01 · SALES LAKEHOUSE</p>
+    <a href="#top">BACK TO TOP ↑</a>
+  </footer>
+
+  <script>
+    const checks = Array.from(document.querySelectorAll<HTMLInputElement>('[data-step-check]'));
+    const label = document.querySelector<HTMLElement>('[data-progress-label]');
+    const bar = document.querySelector<HTMLElement>('[data-progress-bar]');
+    const storageKey = 'fabric-poc-sales-progress';
+
+    function renderProgress() {
+      const completed = checks.filter((check) => check.checked).length;
+      if (label) label.textContent = `${completed} of ${checks.length} stages verified`;
+      if (bar) bar.style.width = `${(completed / checks.length) * 100}%`;
+      localStorage.setItem(storageKey, JSON.stringify(checks.map((check) => check.checked)));
+    }
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      checks.forEach((check, index) => { check.checked = Boolean(saved[index]); });
+    } catch { /* Progress simply starts empty. */ }
+
+    checks.forEach((check) => check.addEventListener('change', renderProgress));
+    document.querySelector('[data-reset-progress]')?.addEventListener('click', () => {
+      checks.forEach((check) => { check.checked = false; });
+      renderProgress();
+    });
+    renderProgress();
+  </script>
+</Layout>

@@ -59,6 +59,7 @@ const pocs = [
     proof: 'Four Gold rows, $2,170 total revenue, and a report that matches SQL.',
     tone: 'coral',
     available: true,
+    href: '/pocs/sales-lakehouse/',
   },
   {
     number: '02',
@@ -345,7 +346,12 @@ const pocs = [
                   <p><b>Definition of done</b>{poc.proof}</p>
                 </div>
               </details>
-              {poc.available && <p class="available-note"><i></i> Dataset, notebook, and validation SQL already included</p>}
+              {poc.available && (
+                <div class="available-row">
+                  <p class="available-note"><i></i> Dataset, notebook, and validation SQL included</p>
+                  <a href={poc.href}>Open the build guide <span aria-hidden="true">→</span></a>
+                </div>
+              )}
             </article>
           ))}
         </div>
