@@ -1,0 +1,301 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const translations = [
+  {
+    role: 'Backend',
+    accent: 'coral',
+    youKnow: 'APIs, jobs, queues, SQL, and services',
+    fabric: 'Pipelines, notebooks, Lakehouse, and SQL endpoint',
+    shift: 'The product does not answer a request: it prepares trusted data for many consumers.',
+  },
+  {
+    role: 'Databases',
+    accent: 'blue',
+    youKnow: 'Tables, indexes, constraints, and stored procedures',
+    fabric: 'Delta tables, semantic models, and transformations',
+    shift: 'You separate storage, compute, and consumption without losing tabular logic.',
+  },
+  {
+    role: 'Frontend',
+    accent: 'lime',
+    youKnow: 'State, components, product metrics, and visualization',
+    fabric: 'Power BI, semantic models, and Direct Lake',
+    shift: 'The final UI is a report; its contract lives in governed, reusable metrics.',
+  },
+  {
+    role: 'Architecture',
+    accent: 'violet',
+    youKnow: 'Bounded contexts, integration, observability, and security',
+    fabric: 'Workspaces, OneLake, lineage, capacities, and domains',
+    shift: 'You design a shared data system that is operable and traceable end to end.',
+  },
+];
+
+const stages = [
+  { n: '01', name: 'Source', tool: 'DB · API · files', copy: 'Data is born in operational systems.' },
+  { n: '02', name: 'Ingestion', tool: 'Data Factory', copy: 'A pipeline moves and schedules the flow.' },
+  { n: '03', name: 'Storage', tool: 'OneLake + Lakehouse', copy: 'Files and Delta tables live in one shared place.' },
+  { n: '04', name: 'Transformation', tool: 'Spark + SQL', copy: 'Data is typed, validated, joined, and prepared.' },
+  { n: '05', name: 'Consumption', tool: 'Power BI', copy: 'A semantic model defines business metrics.' },
+];
+
+const layers = [
+  { name: 'Bronze', tag: 'raw', copy: 'A faithful copy. Traceable. No silent corrections.', code: 'orders_2026_07.csv', tone: 'bronze' },
+  { name: 'Silver', tag: 'clean', copy: 'Types, quality rules, and deduplication.', code: 'silver_orders', tone: 'silver' },
+  { name: 'Gold', tag: 'business', copy: 'Business entities and metrics ready to consume.', code: 'gold_sales_by_month', tone: 'gold' },
+];
+---
+
+<Layout
+  title="Fabric for software builders"
+  description="A visual introduction to Microsoft Fabric for people coming from backend, frontend, databases, and software architecture."
+>
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="Fabric for builders, home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>FABRIC <em>/ FOR BUILDERS</em></span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="#map">The map</a>
+      <a href="#translation">Your experience</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+    <a class="header-cta" href="#get-started">Get started <span aria-hidden="true">↘</span></a>
+  </header>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span></span> Microsoft Fabric, no fluff</p>
+        <h1>You know how to build<br /><strong>software.</strong><br />Now, <em>data.</em></h1>
+        <p class="hero-lede">
+          An introduction to Microsoft Fabric from the world you already know:
+          databases, backend, frontend, and architecture.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-dark" href="#map">Understand the map <span>↓</span></a>
+          <a class="text-link" href="#translation">Translate my concepts <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal" aria-label="Comparison between a traditional application and Microsoft Fabric">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+        <div class="system-card old-system">
+          <p>TRADITIONAL APP</p>
+          <div class="mini-stack">
+            <span>UI</span><span>API</span><span>DB</span>
+          </div>
+          <small>One request → one response</small>
+        </div>
+        <div class="bridge"><span>same logic</span><b>→</b><small>different purpose</small></div>
+        <div class="system-card fabric-system">
+          <p>MS FABRIC</p>
+          <div class="fabric-core">
+            <div class="core-ring ring-one"></div>
+            <div class="core-ring ring-two"></div>
+            <div class="core-dot"><span>01</span><strong>OneLake</strong></div>
+          </div>
+          <small>One data point → many decisions</small>
+        </div>
+        <div class="visual-note note-one">SaaS <span>↗</span></div>
+        <div class="visual-note note-two">end-to-end <span>↗</span></div>
+      </div>
+    </section>
+
+    <section class="thesis-band" aria-label="Core idea">
+      <p>Fabric does not replace what you know.</p>
+      <p><strong>It connects it around data.</strong></p>
+      <div class="marquee" aria-hidden="true">
+        <span>INGESTION</span><i>✦</i><span>LAKEHOUSE</span><i>✦</i><span>TRANSFORMATION</span><i>✦</i><span>MODEL</span><i>✦</i><span>REPORT</span>
+      </div>
+    </section>
+
+    <section class="map-section section-shell" id="map">
+      <div class="section-intro reveal">
+        <p class="section-number">01 / THE MENTAL MODEL</p>
+        <h2>From an operational system<br />to an <em>analytical system.</em></h2>
+        <p>You do not need to learn five isolated products. Think of them as stages in one flow.</p>
+      </div>
+
+      <div class="flow-grid reveal">
+        {stages.map((stage, index) => (
+          <article class="flow-card">
+            <div class="flow-top"><span>{stage.n}</span>{index < stages.length - 1 && <b aria-hidden="true">→</b>}</div>
+            <h3>{stage.name}</h3>
+            <p class="tool-label">{stage.tool}</p>
+            <p>{stage.copy}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="analogy reveal">
+        <span class="analogy-label">IF YOU COME FROM MICROSERVICES</span>
+        <p>A pipeline resembles a backend workflow, but its contracts are <strong>datasets</strong>, not request payloads.</p>
+        <span class="analogy-arrow" aria-hidden="true">↗</span>
+      </div>
+    </section>
+
+    <section class="translation-section" id="translation">
+      <div class="section-shell">
+        <div class="section-intro light reveal">
+          <p class="section-number">02 / YOUR EXPERIENCE MATTERS</p>
+          <h2>Translate what you know.<br /><em>Do not start from scratch.</em></h2>
+        </div>
+
+        <div class="role-tabs" role="tablist" aria-label="Choose your background">
+          {translations.map((item, index) => (
+            <button
+              role="tab"
+              aria-selected={index === 0 ? 'true' : 'false'}
+              aria-controls={`panel-${index}`}
+              id={`tab-${index}`}
+              tabindex={index === 0 ? 0 : -1}
+              data-tab={index}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>{item.role}
+            </button>
+          ))}
+        </div>
+
+        <div class="role-panels reveal">
+          {translations.map((item, index) => (
+            <article
+              class={`role-panel accent-${item.accent}`}
+              role="tabpanel"
+              id={`panel-${index}`}
+              aria-labelledby={`tab-${index}`}
+              hidden={index !== 0}
+            >
+              <div>
+                <p class="panel-kicker">WHAT YOU ALREADY KNOW</p>
+                <h3>{item.youKnow}</h3>
+              </div>
+              <div class="equals" aria-hidden="true">≈</div>
+              <div>
+                <p class="panel-kicker">HOW IT SHOWS UP IN FABRIC</p>
+                <h3>{item.fabric}</h3>
+              </div>
+              <p class="mindset"><span>MINDSET SHIFT</span>{item.shift}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="medallion-section section-shell">
+      <div class="section-intro reveal">
+        <p class="section-number">03 / A KEY PATTERN</p>
+        <h2>Medallion, explained<br />as a <em>quality pipeline.</em></h2>
+        <p>Each layer adds trust. They are not three products, and they do not need to be three workspaces.</p>
+      </div>
+
+      <div class="layer-stack reveal">
+        {layers.map((layer, index) => (
+          <article class={`layer-card ${layer.tone}`} style={`--level: ${index}`}>
+            <div class="layer-index">0{index + 1}</div>
+            <div>
+              <span class="layer-tag">{layer.tag}</span>
+              <h3>{layer.name}</h3>
+            </div>
+            <p>{layer.copy}</p>
+            <code>{layer.code}</code>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="principles-section">
+      <div class="section-shell">
+        <p class="section-number reveal">04 / THREE IDEAS TO TAKE WITH YOU</p>
+        <div class="principles-grid">
+          <article class="reveal">
+            <span>01</span>
+            <h3>OneLake is the shared storage layer.</h3>
+            <p>It is not “another database.” It is the logical layer where different workloads find the same data.</p>
+          </article>
+          <article class="reveal">
+            <span>02</span>
+            <h3>Lakehouse brings two worlds together.</h3>
+            <p>The flexibility of files and a lake; the structure, transactions, and queries of a warehouse.</p>
+          </article>
+          <article class="reveal">
+            <span>03</span>
+            <h3>The report is not the finish line.</h3>
+            <p>The goal is traceable, verifiable, reusable data. A dashboard is only one of its consumers.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="route-section section-shell" id="roadmap">
+      <div class="section-intro reveal">
+        <p class="section-number">05 / RECOMMENDED ROADMAP</p>
+        <h2>Learn through evidence,<br /><em>not by the calendar.</em></h2>
+      </div>
+      <ol class="route-list reveal">
+        <li><span>01</span><div><b>Locate the pieces</b><small>Workspace · OneLake · Lakehouse</small></div><em>Mental model</em></li>
+        <li><span>02</span><div><b>Move some data</b><small>Manual CSV · Pipeline</small></div><em>Ingestion</em></li>
+        <li><span>03</span><div><b>Transform it</b><small>Bronze · Silver · Gold</small></div><em>Spark + SQL</em></li>
+        <li><span>04</span><div><b>Model and visualize</b><small>Facts · Dimensions · Measures</small></div><em>Power BI</em></li>
+        <li><span>05</span><div><b>Prove it works</b><small>Quality · Lineage · Consumption</small></div><em>Operations</em></li>
+      </ol>
+    </section>
+
+    <section class="cta-section" id="get-started">
+      <div class="cta-shape shape-one"></div><div class="cta-shape shape-two"></div>
+      <div class="cta-content reveal">
+        <p class="eyebrow light-eye"><span></span> YOUR FIRST GOAL</p>
+        <h2>Follow the journey<br />of <em>one row.</em></h2>
+        <p>What came in. What changed. Where it landed. Who consumes it. How you verify it.</p>
+        <a class="button button-light" href="https://app.fabric.microsoft.com/" target="_blank" rel="noreferrer">Open Microsoft Fabric <span>↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>FABRIC <em>/ FOR BUILDERS</em></span></a>
+    <p>From software to data, without losing context.</p>
+    <a href="#top">BACK TO TOP ↑</a>
+  </footer>
+
+  <script>
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+    function activateTab(index: number) {
+      tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((panel, panelIndex) => { panel.hidden = panelIndex !== index; });
+      tabs[index]?.focus();
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activateTab(index));
+      tab.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        activateTab((index + direction + tabs.length) % tabs.length);
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    const header = document.querySelector('[data-header]');
+    window.addEventListener('scroll', () => header?.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+  </script>
+</Layout>
