@@ -1,0 +1,11 @@
+---
+import { buildingBlocks } from '../../content/system-design';
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="sd-section sd-dark">
+  <div class="section-shell">
+    <SectionHeading light number="02 / THE BUILDING BLOCKS" title="A system is a chain" emphasis="of responsibilities." description="Components are not goals. Add one when it solves a measured constraint or isolates a meaningful failure mode." />
+    <div class="block-list">{buildingBlocks.map((block, index) => <article><span>{String(index + 1).padStart(2, '0')}</span><h3>{block[0]}</h3><p>{block[1]}</p></article>)}</div>
+    <aside class="sd-callout"><span>DESIGN HEURISTIC</span><p>Keep the synchronous request path short. Move slow, retryable, or non-essential work to asynchronous processing when the product permits it.</p></aside>
+  </div>
+</section>

@@ -1,0 +1,8 @@
+---
+import { process } from '../../content/system-design';
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="sd-section sd-process"><div class="section-shell">
+  <SectionHeading light number="06 / A REPEATABLE DESIGN METHOD" title="Move from ambiguity" emphasis="to an operable system." description="The order prevents premature technology choices and keeps the design connected to user outcomes." />
+  <ol class="process-list">{process.map((step, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{step[0]}</h3><p>{step[1]}</p></div></li>)}</ol>
+</div></section>

@@ -1,0 +1,10 @@
+---
+import { foundations } from '../../content/system-design';
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="sd-section section-shell">
+  <SectionHeading number="01 / START WITH THE PROBLEM" title="Architecture begins" emphasis="before the diagram." description="A useful design explains why each component exists. These four questions establish the evidence for every later decision." />
+  <div class="foundation-grid">
+    {foundations.map((item) => <article class={`foundation-card ${item.tone}`}><span>{item.number}</span><h3>{item.title}</h3><p>{item.copy}</p><aside><b>EXAMPLE</b>{item.example}</aside></article>)}
+  </div>
+</section>

@@ -1,0 +1,12 @@
+---
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="sd-section section-shell">
+  <SectionHeading number="03 / SCALE WITH INTENT" title="Four patterns that" emphasis="change the shape." description="Scaling is not adding everything at once. It is locating the current constraint and applying the smallest useful pattern." />
+  <div class="pattern-grid">
+    <article><span>01 · REPLICATION</span><h3>Make more copies.</h3><div class="pattern-visual replicas"><i>DB</i><b>→</b><i>R</i><i>R</i><i>R</i></div><p>Read replicas increase read capacity and resilience. They introduce replication lag, so not every read is guaranteed to be current.</p></article>
+    <article><span>02 · PARTITIONING</span><h3>Split responsibility.</h3><div class="pattern-visual shards"><i>A–F</i><i>G–M</i><i>N–Z</i></div><p>Partition data by a stable key to distribute storage and writes. Poor keys create hot partitions and painful rebalancing.</p></article>
+    <article><span>03 · CACHING</span><h3>Reuse expensive answers.</h3><div class="pattern-visual cache"><i>APP</i><b>→</b><i>CACHE</i><b>↘</b><i>DB</i></div><p>Cache frequent reads near consumers. Define eviction, invalidation, fallback, and acceptable staleness before relying on it.</p></article>
+    <article><span>04 · ASYNC WORK</span><h3>Separate time.</h3><div class="pattern-visual async"><i>API</i><b>→</b><i>QUEUE</i><b>→</b><i>WORKER</i></div><p>Queues absorb bursts and isolate failures. Plan for retries, duplicates, poison messages, backpressure, and monitoring.</p></article>
+  </div>
+</section>

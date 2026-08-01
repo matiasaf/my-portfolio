@@ -1,0 +1,9 @@
+---
+import { cases } from '../../content/system-design';
+import CaseStudyCard from './CaseStudyCard.astro';
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="sd-section sd-cases"><div class="section-shell">
+  <SectionHeading number="04 / SYSTEMS IN CONTEXT" title="Same building blocks." emphasis="Different priorities." description="Compare how product behavior changes the architecture. Each example optimizes a different critical path." />
+  <div class="case-list">{cases.map((item) => <CaseStudyCard {item} />)}</div>
+</div></section>

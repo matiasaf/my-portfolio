@@ -1,0 +1,9 @@
+---
+import { tradeoffs } from '../../content/system-design';
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="sd-section section-shell">
+  <SectionHeading number="05 / MAKE TRADE-OFFS EXPLICIT" title="Every guarantee" emphasis="has a cost." description="A mature design states what it protects, what it relaxes, and how users experience that choice." />
+  <div class="tradeoff-table-wrap"><table class="tradeoff-table"><thead><tr><th>Priority</th><th>What it means</th><th>Often critical for</th><th>Typical cost</th></tr></thead><tbody>{tradeoffs.map((row) => <tr>{row.map((cell, index) => index === 0 ? <th>{cell}</th> : <td>{cell}</td>)}</tr>)}</tbody></table></div>
+  <div class="cap-note"><span>ABOUT CAP</span><p>During a network partition, a distributed system must choose how strongly to preserve consistency or availability for a given operation. CAP is not a database ranking; it is a framework for reasoning about behavior under partition.</p></div>
+</section>

@@ -1,0 +1,13 @@
+---
+interface Props { item: { id: string; title: string; question: string; scale: string; flow: readonly string[]; decisions: readonly string[]; tradeoff: string; tone: string; } }
+const { item } = Astro.props;
+---
+<article class={`case-card ${item.tone}`}>
+  <header><div><span>{item.id}</span><h3>{item.title}</h3></div><p>{item.scale}</p></header>
+  <div class="case-body">
+    <div class="case-question"><span>DESIGN QUESTION</span><p>{item.question}</p></div>
+    <div class="case-flow" aria-label={`${item.title} request flow`}>{item.flow.map((step, index) => <><i>{step}</i>{index < item.flow.length - 1 && <b>→</b>}</>)}</div>
+    <ol>{item.decisions.map((decision) => <li>{decision}</li>)}</ol>
+    <aside><span>KEY TRADE-OFF</span><p>{item.tradeoff}</p></aside>
+  </div>
+</article>

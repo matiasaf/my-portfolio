@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ModuleHeader from '../components/system-design/ModuleHeader.astro';
+import Hero from '../components/system-design/Hero.astro';
+import Foundations from '../components/system-design/Foundations.astro';
+import BuildingBlocks from '../components/system-design/BuildingBlocks.astro';
+import ScalingPatterns from '../components/system-design/ScalingPatterns.astro';
+import CaseStudies from '../components/system-design/CaseStudies.astro';
+import Tradeoffs from '../components/system-design/Tradeoffs.astro';
+import DesignProcess from '../components/system-design/DesignProcess.astro';
+import FinalCta from '../components/system-design/FinalCta.astro';
+import ModuleFooter from '../components/system-design/ModuleFooter.astro';
+import '../styles/system-design.css';
+---
+
+<Layout title="System Design — A practical field guide" description="An educational guide to system design fundamentals, architectural trade-offs, and real-world system examples.">
+  <ModuleHeader />
+  <main id="top" class="sd-page">
+    <Hero />
+    <Foundations />
+    <BuildingBlocks />
+    <ScalingPatterns />
+    <CaseStudies />
+    <Tradeoffs />
+    <DesignProcess />
+    <FinalCta />
+  </main>
+  <ModuleFooter />
+</Layout>
