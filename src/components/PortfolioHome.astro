@@ -110,10 +110,11 @@ const t = en ? {
   kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'I build solid product experiences on top of complex technical systems. More than ten years working across frontend architecture, backend, cloud, and applied AI.',
   explore: 'Explore my work', knowMe: 'Read my profile', boardLabel: 'Professional focus map', now: 'FOCUS / 2026', decisions: 'Architecture & scale ↗', boardNote: 'product → systems → outcomes',
   currentLabel: 'Core expertise', exploring: 'CORE STACK',
-  aboutIndex: '01 / PROFILE', aboutHeadingA: 'A strong AI product is more than ', aboutHeadingEm: 'the model', aboutHeadingB: '.',
-  aboutP1: 'I’m a Senior Full-Stack Engineer with more than ten years of experience building web products, enterprise platforms, and internal tools. My strongest focus is frontend development and application architecture with React, Next.js, and TypeScript.',
-  aboutP2: 'In recent years I have focused on applied AI products: chat and document-processing platforms that connect models, retrieval systems, data pipelines, and interfaces people can actually trust and use.',
-  working: 'HOW I CONTRIBUTE', work1: 'Architecture and direct implementation', work2: 'Technical standards and code reviews', work3: 'Hands-on mentoring and documentation',
+  aboutIndex: '01 / PROFILE', aboutHeadingA: 'Frontend depth. ', aboutHeadingEm: 'Full-stack reach.', aboutHeadingB: ' Product ownership.',
+  aboutP1: 'I’m a Senior Full-Stack Engineer with more than ten years of experience building web products, enterprise platforms, and internal tools. Frontend architecture is my deepest specialty, but I work comfortably across the systems behind the interface.',
+  aboutP2: 'That range lets me connect product requirements with APIs, data, cloud delivery, and applied AI—without losing sight of the user experience or the team that will maintain it.',
+  lens1Label: 'DEEPEST EXPERTISE', lens1Value: 'React · Next.js · TypeScript · Frontend architecture', lens2Label: 'FULL-STACK RANGE', lens2Value: 'Python · FastAPI · Node.js · .NET · Cloud', lens3Label: 'CURRENT FOCUS', lens3Value: 'Applied AI · RAG · Document platforms',
+  working: 'HOW I LEAD', work1: 'Stay close to architecture and implementation', work2: 'Make conventions and trade-offs explicit', work3: 'Raise the team through reviews, docs, and mentoring',
   expertiseIndex: '02 / EXPERTISE', expertiseA: 'Product thinking.', expertiseB: 'Engineering depth.', expertiseCopy: 'I work across the full product surface, connecting user experience, architecture, AI capabilities, and operations.',
   principleLabel: 'A PRODUCT PRINCIPLE', principleA: 'An AI product does not end at the model.', principleB: 'It also needs good interfaces, clear failure states, source attribution, observability, user feedback, cost control, and an architecture the team can maintain.',
   experienceIndex: '03 / SELECTED EXPERIENCE', experienceA: 'A decade of', experienceB: 'shipping software.', experienceCopy: 'A selected path through product teams, technical leadership, modernization, cloud, and applied AI.', fullResume: 'Open the complete résumé',
@@ -130,10 +131,11 @@ const t = en ? {
   kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Construyo experiencias de producto sólidas sobre sistemas técnicos complejos. Más de diez años trabajando entre arquitectura frontend, backend, cloud y AI aplicada.',
   explore: 'Explorar mi trabajo', knowMe: 'Leer mi perfil', boardLabel: 'Mapa de enfoque profesional', now: 'FOCO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'producto → sistemas → resultados',
   currentLabel: 'Experiencia principal', exploring: 'STACK PRINCIPAL',
-  aboutIndex: '01 / PERFIL', aboutHeadingA: 'Un buen producto de AI es mucho más que ', aboutHeadingEm: 'el modelo', aboutHeadingB: '.',
-  aboutP1: 'Soy Senior Full-Stack Engineer con más de diez años de experiencia construyendo productos web, plataformas empresariales y herramientas internas. Mi foco más fuerte está en frontend y arquitectura de aplicaciones con React, Next.js y TypeScript.',
-  aboutP2: 'En los últimos años me especialicé en AI aplicada: plataformas de chat y procesamiento documental que conectan modelos, recuperación, datos e interfaces que las personas realmente pueden usar y en las que pueden confiar.',
-  working: 'CÓMO CONTRIBUYO', work1: 'Arquitectura e implementación directa', work2: 'Estándares técnicos y code reviews', work3: 'Acompañamiento hands-on y documentación',
+  aboutIndex: '01 / PERFIL', aboutHeadingA: 'Profundidad frontend. ', aboutHeadingEm: 'Alcance full-stack.', aboutHeadingB: ' Criterio de producto.',
+  aboutP1: 'Soy Senior Full-Stack Engineer con más de diez años de experiencia construyendo productos web, plataformas empresariales y herramientas internas. La arquitectura frontend es mi especialidad más profunda, pero trabajo cómodamente sobre los sistemas detrás de la interfaz.',
+  aboutP2: 'Ese alcance me permite conectar requisitos de producto con APIs, datos, cloud y AI aplicada, sin perder de vista la experiencia del usuario ni al equipo que después debe mantenerla.',
+  lens1Label: 'MAYOR PROFUNDIDAD', lens1Value: 'React · Next.js · TypeScript · Arquitectura frontend', lens2Label: 'ALCANCE FULL-STACK', lens2Value: 'Python · FastAPI · Node.js · .NET · Cloud', lens3Label: 'FOCO ACTUAL', lens3Value: 'AI aplicada · RAG · Plataformas documentales',
+  working: 'CÓMO LIDERO', work1: 'Me mantengo cerca de la arquitectura y el código', work2: 'Hago explícitas las convenciones y decisiones', work3: 'Elevo al equipo con reviews, documentación y mentoring',
   expertiseIndex: '02 / EXPERIENCIA', expertiseA: 'Visión de producto.', expertiseB: 'Profundidad técnica.', expertiseCopy: 'Trabajo sobre toda la superficie del producto, conectando experiencia de usuario, arquitectura, capacidades de AI y operación.',
   principleLabel: 'UN PRINCIPIO DE PRODUCTO', principleA: 'Un producto de AI no termina en el modelo.', principleB: 'También necesita buenas interfaces, errores claros, atribución de fuentes, observabilidad, feedback, control de costos y una arquitectura que el equipo pueda mantener.',
   experienceIndex: '03 / EXPERIENCIA SELECCIONADA', experienceA: 'Una década', experienceB: 'entregando software.', experienceCopy: 'Un recorrido seleccionado por equipos de producto, liderazgo técnico, modernización, cloud y AI aplicada.', fullResume: 'Abrir el CV completo',
@@ -220,6 +222,11 @@ const t = en ? {
           <p>{t.aboutP1}</p>
           <p>{t.aboutP2}</p>
         </div>
+        <div class="profile-lenses">
+          <article><span>01</span><small>{t.lens1Label}</small><strong>{t.lens1Value}</strong></article>
+          <article><span>02</span><small>{t.lens2Label}</small><strong>{t.lens2Value}</strong></article>
+          <article><span>03</span><small>{t.lens3Label}</small><strong>{t.lens3Value}</strong></article>
+        </div>
       </div>
       <aside class="working-on">
         <span>{t.working}</span>
@@ -254,9 +261,20 @@ const t = en ? {
 
     <section class="ai-principle">
       <div class="portfolio-shell principle-layout">
-        <p>{t.principleLabel}</p>
-        <blockquote>{t.principleA}</blockquote>
-        <p>{t.principleB}</p>
+        <header class="principle-header">
+          <p><span></span>{t.principleLabel}</p>
+          <b>03 / PRODUCT SYSTEM</b>
+        </header>
+        <div class="principle-statement">
+          <span class="principle-quote" aria-hidden="true">“</span>
+          <blockquote>{t.principleA}</blockquote>
+        </div>
+        <aside class="principle-detail">
+          <p>{t.principleB}</p>
+          <div class="principle-flow" aria-label={en ? 'From model to trustworthy product' : 'Del modelo a un producto confiable'}>
+            <span>{en ? 'MODEL' : 'MODELO'}</span><i>→</i><span>{en ? 'PRODUCT' : 'PRODUCTO'}</span><i>→</i><strong>{en ? 'TRUST' : 'CONFIANZA'}</strong>
+          </div>
+        </aside>
       </div>
     </section>
 
