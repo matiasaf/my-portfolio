@@ -107,8 +107,8 @@ const t = en ? {
   title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
   description: 'Senior Full-Stack Engineer with 10+ years building web products, enterprise platforms, and applied AI systems with React, Next.js, TypeScript, Python, and cloud technologies.',
   navLabel: 'Main navigation', about: 'Profile', archive: 'Experience', projects: 'Writing', talk: 'View résumé',
-  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'I build solid product experiences on top of complex technical systems. More than ten years working across frontend architecture, backend, cloud, and applied AI.',
-  explore: 'Explore my work', knowMe: 'Read my profile', boardLabel: 'Professional focus map', now: 'FOCUS / 2026', decisions: 'Architecture & scale ↗', boardNote: 'product → systems → outcomes',
+  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Senior Full-Stack Engineer with 10+ years turning complex frontend, backend, cloud, and AI systems into clear, reliable, maintainable products.',
+  explore: 'View experience', knowMe: 'Explore the lab', boardLabel: 'Professional focus map', now: 'HOW I BUILD / 2026', decisions: 'Architecture & scale ↗', boardNote: 'interface + intelligence + infrastructure',
   currentLabel: 'Core expertise', exploring: 'CORE STACK',
   aboutIndex: '01 / PROFILE', aboutHeadingA: 'Frontend depth. ', aboutHeadingEm: 'Full-stack reach.', aboutHeadingB: ' Product ownership.',
   aboutP1: 'I’m a Senior Full-Stack Engineer with more than ten years of experience building web products, enterprise platforms, and internal tools. Frontend architecture is my deepest specialty, but I work comfortably across the systems behind the interface.',
@@ -128,8 +128,8 @@ const t = en ? {
   title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
   description: 'Senior Full-Stack Engineer con más de 10 años construyendo productos web, plataformas empresariales y sistemas de AI aplicada con React, Next.js, TypeScript, Python y cloud.',
   navLabel: 'Navegación principal', about: 'Perfil', archive: 'Experiencia', projects: 'Escritura', talk: 'Ver CV',
-  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Construyo experiencias de producto sólidas sobre sistemas técnicos complejos. Más de diez años trabajando entre arquitectura frontend, backend, cloud y AI aplicada.',
-  explore: 'Explorar mi trabajo', knowMe: 'Leer mi perfil', boardLabel: 'Mapa de enfoque profesional', now: 'FOCO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'producto → sistemas → resultados',
+  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Senior Full-Stack Engineer con más de 10 años convirtiendo sistemas complejos de frontend, backend, cloud y AI en productos claros, confiables y mantenibles.',
+  explore: 'Ver experiencia', knowMe: 'Explorar el lab', boardLabel: 'Mapa de enfoque profesional', now: 'CÓMO CONSTRUYO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'interfaz + inteligencia + infraestructura',
   currentLabel: 'Experiencia principal', exploring: 'STACK PRINCIPAL',
   aboutIndex: '01 / PERFIL', aboutHeadingA: 'Profundidad frontend. ', aboutHeadingEm: 'Alcance full-stack.', aboutHeadingB: ' Criterio de producto.',
   aboutP1: 'Soy Senior Full-Stack Engineer con más de diez años de experiencia construyendo productos web, plataformas empresariales y herramientas internas. La arquitectura frontend es mi especialidad más profunda, pero trabajo cómodamente sobre los sistemas detrás de la interfaz.',
@@ -180,16 +180,16 @@ const t = en ? {
     <section class="portfolio-hero portfolio-shell">
       <div class="hero-intro">
         <p class="portfolio-kicker"><span></span> {t.kicker}</p>
-        {en ? <h1>I build products.<br />I integrate <em>AI.</em><br />I design systems.</h1> : <h1>Construyo productos.<br />Integro <em>AI.</em><br />Diseño sistemas.</h1>}
+        {en ? <h1>Solid products.<br /><em>Applied AI.</em><br />Systems that last.</h1> : <h1>Producto sólido.<br /><em>AI aplicada.</em><br />Sistemas que duran.</h1>}
         <p class="hero-summary">{t.summary}</p>
         <div class="portfolio-actions">
           <a class="primary-action" href="#experience">{t.explore} <span>↓</span></a>
-          <a class="quiet-action" href="#about">{t.knowMe} <span>→</span></a>
+          <a class="quiet-action" href="#archive">{t.knowMe} <span>→</span></a>
         </div>
         <div class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
-          <div><strong>10+</strong><span>{en ? 'years shipping' : 'años construyendo'}</span></div>
-          <div><strong>AI</strong><span>{en ? 'applied to products' : 'aplicada a producto'}</span></div>
-          <div><strong>Hands-on</strong><span>{en ? 'technical leadership' : 'liderazgo técnico'}</span></div>
+          <div><strong>10+</strong><span>{en ? 'years shipping software' : 'años entregando software'}</span></div>
+          <div><strong>1K+</strong><span>{en ? 'documents through AI pipelines' : 'documentos en pipelines de AI'}</span></div>
+          <div><strong>35%</strong><span>{en ? 'faster BI dashboard' : 'dashboard BI más rápido'}</span></div>
         </div>
       </div>
 
@@ -197,13 +197,16 @@ const t = en ? {
         <div class="board-grid" aria-hidden="true"></div>
         <div class="board-label board-label-top">{t.now}</div>
         <div class="topic-orbit orbit-main">
-          <div class="topic-core"><span>BUILD</span><strong>Software</strong></div>
+          <div class="topic-core"><span>SHIP</span><strong>Product</strong></div>
         </div>
         <a class="topic-card topic-data" href="#expertise">
           <span>01</span><strong>Applied AI</strong><small>RAG · Products ↗</small>
         </a>
         <a class="topic-card topic-systems" href="/system-design/">
           <span>02</span><strong>Systems</strong><small>{t.decisions}</small>
+        </a>
+        <a class="topic-card topic-interface" href="#about">
+          <span>03</span><strong>{en ? 'Product UI' : 'Producto UI'}</strong><small>React · Next.js ↗</small>
         </a>
         <div class="board-note">{t.boardNote}</div>
       </div>
