@@ -1,0 +1,407 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/portfolio.css';
+
+interface Props { lang: 'es' | 'en'; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const alternatePath = en ? '/' : '/en/';
+const resumePath = en ? '/en/cv/' : '/cv/';
+const socialLinks = {
+  linkedin: 'https://linkedin.com/in/fernandez-amatias',
+  github: 'https://github.com/matiasaf',
+  email: 'mailto:fernandez.amatias@gmail.com',
+};
+
+const modules = en ? [
+  {
+    number: '01', label: 'DATA · LEARNING IN PUBLIC', title: 'Microsoft Fabric',
+    description: 'Notes, mental models, and proofs of concept for understanding Fabric from a software builder’s perspective.',
+    href: '/fabric/', cta: 'Explore the module', accent: 'coral', status: 'In progress', diagram: ['Source', 'OneLake', 'Model'],
+  },
+  {
+    number: '02', label: 'ARCHITECTURE · FOUNDATIONS', title: 'System Design',
+    description: 'A visual guide to the decisions, trade-offs, and patterns behind systems built to grow.',
+    href: '/system-design/', cta: 'Open the guide', accent: 'blue', status: 'Visual guide', diagram: ['Client', 'Service', 'Data'],
+  },
+] : [
+  {
+    number: '01',
+    label: 'DATA · APRENDIZAJE EN PÚBLICO',
+    title: 'Microsoft Fabric',
+    description: 'Notas, mapas mentales y pruebas de concepto para entender Fabric desde la mirada de alguien que construye software.',
+    href: '/fabric/',
+    cta: 'Explorar el módulo',
+    accent: 'coral',
+    status: 'En construcción',
+    diagram: ['Source', 'OneLake', 'Model'],
+  },
+  {
+    number: '02',
+    label: 'ARQUITECTURA · FUNDAMENTOS',
+    title: 'System Design',
+    description: 'Una guía visual sobre decisiones, trade-offs y patrones para diseñar sistemas que puedan crecer.',
+    href: '/system-design/',
+    cta: 'Entrar a la guía',
+    accent: 'blue',
+    status: 'Guía visual',
+    diagram: ['Client', 'Service', 'Data'],
+  },
+];
+
+const notes = en ? [
+  { tag: 'FABRIC', date: 'MODULE 01', title: 'From operational software to an analytical system', href: '/fabric/#map' },
+  { tag: 'SYSTEM DESIGN', date: 'MODULE 02', title: 'Building means choosing: an introduction to trade-offs', href: '/system-design/#tradeoffs' },
+  { tag: 'POC', date: 'CASE STUDY', title: 'Sales Lakehouse: from CSV to a trusted model', href: '/pocs/sales-lakehouse/' },
+] : [
+  { tag: 'FABRIC', date: 'MÓDULO 01', title: 'De software operacional a un sistema analítico', href: '/fabric/#map' },
+  { tag: 'SYSTEM DESIGN', date: 'MÓDULO 02', title: 'Construir es elegir: una introducción a los trade-offs', href: '/system-design/#tradeoffs' },
+  { tag: 'POC', date: 'CASO PRÁCTICO', title: 'Sales Lakehouse: del CSV a un modelo confiable', href: '/pocs/sales-lakehouse/' },
+];
+
+const capabilities = en ? [
+  { number: '01', label: 'PRODUCT FRONTEND', title: 'Interfaces for complex products', copy: 'Frontend architecture and product experiences built with React, Next.js, and TypeScript, with clarity, accessibility, and maintainability as first-class constraints.', tone: 'coral' },
+  { number: '02', label: 'APPLIED AI', title: 'AI that works as a product', copy: 'RAG, Azure OpenAI, Pinecone, embeddings, document processing, source attribution, streaming, feedback, and model-usage monitoring.', tone: 'blue' },
+  { number: '03', label: 'SYSTEMS & CLOUD', title: 'The infrastructure behind the experience', copy: 'APIs and distributed workflows with Python, FastAPI, Node.js, .NET, PostgreSQL, Docker, Azure, and AWS.', tone: 'lime' },
+] : [
+  { number: '01', label: 'PRODUCT FRONTEND', title: 'Interfaces para productos complejos', copy: 'Arquitectura frontend y experiencias de producto con React, Next.js y TypeScript, poniendo claridad, accesibilidad y mantenibilidad en primer plano.', tone: 'coral' },
+  { number: '02', label: 'APPLIED AI', title: 'AI que funciona como producto', copy: 'RAG, Azure OpenAI, Pinecone, embeddings, procesamiento documental, atribución de fuentes, streaming, feedback y monitoreo de uso.', tone: 'blue' },
+  { number: '03', label: 'SYSTEMS & CLOUD', title: 'La infraestructura detrás de la experiencia', copy: 'APIs y flujos distribuidos con Python, FastAPI, Node.js, .NET, PostgreSQL, Docker, Azure y AWS.', tone: 'lime' },
+];
+
+const stackGroups = [
+  { label: 'FRONTEND', items: ['React', 'Next.js', 'TypeScript', 'Angular', 'Vite'] },
+  { label: 'BACKEND', items: ['Python', 'FastAPI', 'Node.js', '.NET', 'ASP.NET Core'] },
+  { label: 'APPLIED AI', items: ['Azure OpenAI', 'RAG', 'Pinecone', 'Embeddings', en ? 'Document processing' : 'Procesamiento documental'] },
+  { label: 'CLOUD & DATA', items: ['Azure', 'AWS', 'Docker', 'PostgreSQL', 'Azure SQL', 'DynamoDB'] },
+  { label: en ? 'QUALITY' : 'CALIDAD', items: ['Playwright', 'React Testing Library', 'Cypress', 'Vitest', 'xUnit'] },
+];
+
+const writingTopics = en ? [
+  'Frontend architecture with React and TypeScript', 'Building interfaces for AI products',
+  'RAG and retrieval systems from a product perspective', 'React applications with Python and FastAPI',
+  'Document processing and indexing', 'Streaming and real-time communication',
+  'Maintaining and evolving legacy systems', 'Design systems and reusable components',
+  'Quality, testing, and maintainability', 'Hands-on technical leadership',
+] : [
+  'Arquitectura frontend con React y TypeScript', 'Cómo construir interfaces para productos de AI',
+  'RAG y recuperación desde una perspectiva de producto', 'Aplicaciones React con Python y FastAPI',
+  'Procesamiento e indexación de documentos', 'Streaming y comunicación en tiempo real',
+  'Mantenimiento y evolución de sistemas heredados', 'Design systems y componentes reutilizables',
+  'Calidad, testing y mantenibilidad', 'Liderazgo técnico hands-on',
+];
+
+const experience = en ? [
+  { period: '2022 — NOW', company: 'Argeniss Software', role: 'Senior Full-Stack Engineer', context: 'Amplity Health', copy: 'Leading and building across AI Studio, Azure IC Portal, Website Chatbot, Amplity.com, and internal SDLC tooling.', proof: '1,000+ documents processed · 35% faster BI dashboard', tone: 'coral' },
+  { period: '2021 — 2022', company: 'Endava', role: 'Full-Stack Engineer', context: 'Bloomberg LP · Workpaper', copy: 'Worked across React, Redux, TypeScript, Node.js, PostgreSQL, Docker, and AWS during the product’s beta launch.', proof: 'Frontend + backend · mentoring in a 5-person team', tone: 'blue' },
+  { period: '2019 — 2021', company: 'Hexacta / GlobalLogic', role: 'Full-Stack Engineer', context: 'TechInsights · BA147 · SUACI', copy: 'Serverless migrations, Angular modernization, analytics widgets, infrastructure, mobile delivery, and backend evolution.', proof: 'Team migration reduced infrastructure cost ≈ 30%', tone: 'lime' },
+  { period: '2016 — 2019', company: 'Earlier work', role: 'Software Engineer', context: 'Government of Entre Ríos · Genosha', copy: 'Public-sector platforms, ETL automation, auditing, mobile apps, video generation, AWS, and FFmpeg.', proof: 'From regulated systems to high-volume media workflows', tone: 'violet' },
+] : [
+  { period: '2022 — HOY', company: 'Argeniss Software', role: 'Senior Full-Stack Engineer', context: 'Amplity Health', copy: 'Liderazgo e implementación en AI Studio, Azure IC Portal, Website Chatbot, Amplity.com y herramientas internas de SDLC.', proof: '1.000+ documentos procesados · dashboard BI 35% más rápido', tone: 'coral' },
+  { period: '2021 — 2022', company: 'Endava', role: 'Full-Stack Engineer', context: 'Bloomberg LP · Workpaper', copy: 'Trabajo transversal con React, Redux, TypeScript, Node.js, PostgreSQL, Docker y AWS durante el lanzamiento beta.', proof: 'Frontend + backend · mentoring en un equipo de 5 personas', tone: 'blue' },
+  { period: '2019 — 2021', company: 'Hexacta / GlobalLogic', role: 'Full-Stack Engineer', context: 'TechInsights · BA147 · SUACI', copy: 'Migraciones serverless, modernización Angular, analytics, infraestructura, publicación mobile y evolución backend.', proof: 'La migración del equipo redujo costos de infraestructura ≈ 30%', tone: 'lime' },
+  { period: '2016 — 2019', company: 'Experiencia inicial', role: 'Software Engineer', context: 'Gobierno de Entre Ríos · Genosha', copy: 'Plataformas públicas, automatización ETL, auditoría, aplicaciones móviles, generación de video, AWS y FFmpeg.', proof: 'De sistemas regulados a flujos multimedia de alto volumen', tone: 'violet' },
+];
+
+const t = en ? {
+  title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
+  description: 'Senior Full-Stack Engineer with 10+ years building web products, enterprise platforms, and applied AI systems with React, Next.js, TypeScript, Python, and cloud technologies.',
+  navLabel: 'Main navigation', about: 'Profile', archive: 'Experience', projects: 'Writing', talk: 'View résumé',
+  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'I build solid product experiences on top of complex technical systems. More than ten years working across frontend architecture, backend, cloud, and applied AI.',
+  explore: 'Explore my work', knowMe: 'Read my profile', boardLabel: 'Professional focus map', now: 'FOCUS / 2026', decisions: 'Architecture & scale ↗', boardNote: 'product → systems → outcomes',
+  currentLabel: 'Core expertise', exploring: 'CORE STACK',
+  aboutIndex: '01 / PROFILE', aboutHeadingA: 'A strong AI product is more than ', aboutHeadingEm: 'the model', aboutHeadingB: '.',
+  aboutP1: 'I’m a Senior Full-Stack Engineer with more than ten years of experience building web products, enterprise platforms, and internal tools. My strongest focus is frontend development and application architecture with React, Next.js, and TypeScript.',
+  aboutP2: 'In recent years I have focused on applied AI products: chat and document-processing platforms that connect models, retrieval systems, data pipelines, and interfaces people can actually trust and use.',
+  working: 'HOW I CONTRIBUTE', work1: 'Architecture and direct implementation', work2: 'Technical standards and code reviews', work3: 'Hands-on mentoring and documentation',
+  expertiseIndex: '02 / EXPERTISE', expertiseA: 'Product thinking.', expertiseB: 'Engineering depth.', expertiseCopy: 'I work across the full product surface, connecting user experience, architecture, AI capabilities, and operations.',
+  principleLabel: 'A PRODUCT PRINCIPLE', principleA: 'An AI product does not end at the model.', principleB: 'It also needs good interfaces, clear failure states, source attribution, observability, user feedback, cost control, and an architecture the team can maintain.',
+  experienceIndex: '03 / SELECTED EXPERIENCE', experienceA: 'A decade of', experienceB: 'shipping software.', experienceCopy: 'A selected path through product teams, technical leadership, modernization, cloud, and applied AI.', fullResume: 'Open the complete résumé',
+  archiveIndex: '04 / LAB & ARCHIVE', archiveA: 'What I learn.', archiveB: 'What I build.', archiveCopy: 'Deep, visual, practical content. Each module grows independently inside this portfolio.',
+  stackIndex: '05 / TOOLBOX', stackTitle: 'Technologies I use to ship.',
+  notesIndex: '06 / FEATURED NOTES', notesTitle: 'Start reading here.', edition: 'EDITION 001',
+  writingIndex: '07 / WRITING', writingTitle: 'Ideas worth explaining.', writingCopy: 'Topics where product, architecture, and day-to-day engineering meet.',
+  projectsIndex: '08 / SIDE PROJECTS', soon: 'Coming soon:', alive: 'things that live.', projectCopy: 'This space will collect products, tools, and experiments of my own—from the initial problem to the decisions and the outcome.',
+  contactKicker: 'Based in Argentina · working globally', contactA: 'Let’s build something', contactB: 'worth maintaining.', contactCopy: 'I’m open to conversations about senior and technical-lead roles, applied AI products, and ambitious software projects.', back: 'Back to top', footer: 'Built while learning.', emailLabel: 'Send an email',
+} : {
+  title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
+  description: 'Senior Full-Stack Engineer con más de 10 años construyendo productos web, plataformas empresariales y sistemas de AI aplicada con React, Next.js, TypeScript, Python y cloud.',
+  navLabel: 'Navegación principal', about: 'Perfil', archive: 'Experiencia', projects: 'Escritura', talk: 'Ver CV',
+  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Construyo experiencias de producto sólidas sobre sistemas técnicos complejos. Más de diez años trabajando entre arquitectura frontend, backend, cloud y AI aplicada.',
+  explore: 'Explorar mi trabajo', knowMe: 'Leer mi perfil', boardLabel: 'Mapa de enfoque profesional', now: 'FOCO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'producto → sistemas → resultados',
+  currentLabel: 'Experiencia principal', exploring: 'STACK PRINCIPAL',
+  aboutIndex: '01 / PERFIL', aboutHeadingA: 'Un buen producto de AI es mucho más que ', aboutHeadingEm: 'el modelo', aboutHeadingB: '.',
+  aboutP1: 'Soy Senior Full-Stack Engineer con más de diez años de experiencia construyendo productos web, plataformas empresariales y herramientas internas. Mi foco más fuerte está en frontend y arquitectura de aplicaciones con React, Next.js y TypeScript.',
+  aboutP2: 'En los últimos años me especialicé en AI aplicada: plataformas de chat y procesamiento documental que conectan modelos, recuperación, datos e interfaces que las personas realmente pueden usar y en las que pueden confiar.',
+  working: 'CÓMO CONTRIBUYO', work1: 'Arquitectura e implementación directa', work2: 'Estándares técnicos y code reviews', work3: 'Acompañamiento hands-on y documentación',
+  expertiseIndex: '02 / EXPERIENCIA', expertiseA: 'Visión de producto.', expertiseB: 'Profundidad técnica.', expertiseCopy: 'Trabajo sobre toda la superficie del producto, conectando experiencia de usuario, arquitectura, capacidades de AI y operación.',
+  principleLabel: 'UN PRINCIPIO DE PRODUCTO', principleA: 'Un producto de AI no termina en el modelo.', principleB: 'También necesita buenas interfaces, errores claros, atribución de fuentes, observabilidad, feedback, control de costos y una arquitectura que el equipo pueda mantener.',
+  experienceIndex: '03 / EXPERIENCIA SELECCIONADA', experienceA: 'Una década', experienceB: 'entregando software.', experienceCopy: 'Un recorrido seleccionado por equipos de producto, liderazgo técnico, modernización, cloud y AI aplicada.', fullResume: 'Abrir el CV completo',
+  archiveIndex: '04 / LAB & ARCHIVO', archiveA: 'Lo que aprendo.', archiveB: 'Lo que construyo.', archiveCopy: 'Contenido profundo, visual y práctico. Cada módulo crece de forma independiente dentro de este portfolio.',
+  stackIndex: '05 / HERRAMIENTAS', stackTitle: 'Tecnologías con las que construyo.',
+  notesIndex: '06 / NOTAS DESTACADAS', notesTitle: 'Para empezar a leer.', edition: 'EDICIÓN 001',
+  writingIndex: '07 / ESCRITURA', writingTitle: 'Ideas que vale la pena explicar.', writingCopy: 'Temas donde se cruzan producto, arquitectura y el trabajo cotidiano de ingeniería.',
+  projectsIndex: '08 / SIDE PROJECTS', soon: 'Próximamente:', alive: 'cosas que viven.', projectCopy: 'Este espacio va a reunir productos, herramientas y experimentos propios: del problema inicial a las decisiones y el resultado.',
+  contactKicker: 'Desde Argentina · trabajando globalmente', contactA: 'Construyamos algo', contactB: 'que valga la pena mantener.', contactCopy: 'Estoy abierto a conversar sobre roles senior y de liderazgo técnico, productos de AI aplicada y proyectos de software ambiciosos.', back: 'Volver arriba', footer: 'Construido mientras aprendo.', emailLabel: 'Enviar un email',
+};
+---
+
+<Layout
+  title={t.title}
+  description={t.description}
+  lang={lang}
+  alternateHref={alternatePath}
+>
+  <header class="portfolio-header" data-portfolio-header>
+    <a class="portfolio-brand" href="#inicio" aria-label="Matías Fernández, inicio">
+      <span class="brand-monogram" aria-hidden="true">MF</span>
+      <span>Matías Fernández</span>
+    </a>
+
+    <nav aria-label={t.navLabel}>
+      <a href="#about">{t.about}</a>
+      <a href="#experience">{t.archive}</a>
+      <a href="#writing">{t.projects}</a>
+    </nav>
+
+    <div class="portfolio-header-actions">
+      <div class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
+        <a href="/" lang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <span>/</span>
+        <a href="/en/" lang="en" aria-current={en ? 'page' : undefined}>EN</a>
+      </div>
+      <a class="header-note" href={resumePath}>{t.talk} <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="inicio" class="portfolio-main">
+    <section class="portfolio-hero portfolio-shell">
+      <div class="hero-intro">
+        <p class="portfolio-kicker"><span></span> {t.kicker}</p>
+        {en ? <h1>I build products.<br />I integrate <em>AI.</em><br />I design systems.</h1> : <h1>Construyo productos.<br />Integro <em>AI.</em><br />Diseño sistemas.</h1>}
+        <p class="hero-summary">{t.summary}</p>
+        <div class="portfolio-actions">
+          <a class="primary-action" href="#experience">{t.explore} <span>↓</span></a>
+          <a class="quiet-action" href="#about">{t.knowMe} <span>→</span></a>
+        </div>
+        <div class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
+          <div><strong>10+</strong><span>{en ? 'years shipping' : 'años construyendo'}</span></div>
+          <div><strong>AI</strong><span>{en ? 'applied to products' : 'aplicada a producto'}</span></div>
+          <div><strong>Hands-on</strong><span>{en ? 'technical leadership' : 'liderazgo técnico'}</span></div>
+        </div>
+      </div>
+
+      <div class="hero-board" aria-label={t.boardLabel}>
+        <div class="board-grid" aria-hidden="true"></div>
+        <div class="board-label board-label-top">{t.now}</div>
+        <div class="topic-orbit orbit-main">
+          <div class="topic-core"><span>BUILD</span><strong>Software</strong></div>
+        </div>
+        <a class="topic-card topic-data" href="#expertise">
+          <span>01</span><strong>Applied AI</strong><small>RAG · Products ↗</small>
+        </a>
+        <a class="topic-card topic-systems" href="/system-design/">
+          <span>02</span><strong>Systems</strong><small>{t.decisions}</small>
+        </a>
+        <div class="board-note">{t.boardNote}</div>
+      </div>
+    </section>
+
+    <section class="now-strip" aria-label={t.currentLabel}>
+      <span>{t.exploring}</span>
+      <p>React + Next.js</p><i>✦</i><p>Applied AI</p><i>✦</i><p>Python + Cloud</p>
+    </section>
+
+    <section class="about-section portfolio-shell" id="about">
+      <p class="section-index">{t.aboutIndex}</p>
+      <div class="about-copy">
+        <h2>{t.aboutHeadingA}<em>{t.aboutHeadingEm}</em>{t.aboutHeadingB}</h2>
+        <div class="about-details">
+          <p>{t.aboutP1}</p>
+          <p>{t.aboutP2}</p>
+        </div>
+      </div>
+      <aside class="working-on">
+        <span>{t.working}</span>
+        <ul>
+          <li><b>01</b> {t.work1}</li>
+          <li><b>02</b> {t.work2}</li>
+          <li><b>03</b> {t.work3}</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="expertise-section" id="expertise">
+      <div class="portfolio-shell">
+        <div class="section-heading expertise-heading">
+          <div>
+            <p class="section-index">{t.expertiseIndex}</p>
+            <h2>{t.expertiseA}<br /><em>{t.expertiseB}</em></h2>
+          </div>
+          <p>{t.expertiseCopy}</p>
+        </div>
+        <div class="capability-grid">
+          {capabilities.map((item) => (
+            <article class={`capability-card capability-${item.tone}`}>
+              <div><span>{item.number}</span><small>{item.label}</small></div>
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="ai-principle">
+      <div class="portfolio-shell principle-layout">
+        <p>{t.principleLabel}</p>
+        <blockquote>{t.principleA}</blockquote>
+        <p>{t.principleB}</p>
+      </div>
+    </section>
+
+    <section class="experience-section portfolio-shell" id="experience">
+      <div class="experience-heading">
+        <div>
+          <p class="section-index">{t.experienceIndex}</p>
+          <h2>{t.experienceA}<br /><em>{t.experienceB}</em></h2>
+        </div>
+        <div>
+          <p>{t.experienceCopy}</p>
+          <a href={resumePath}>{t.fullResume} <span>↗</span></a>
+        </div>
+      </div>
+      <div class="experience-list">
+        {experience.map((item, index) => (
+          <article class={`experience-item experience-${item.tone}`}>
+            <div class="experience-rail"><span>{String(index + 1).padStart(2, '0')}</span><i></i></div>
+            <div class="experience-period">{item.period}</div>
+            <div class="experience-role"><small>{item.context}</small><h3>{item.company}</h3><p>{item.role}</p></div>
+            <div class="experience-detail"><p>{item.copy}</p><strong>{item.proof}</strong></div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="archive-section" id="archive">
+      <div class="portfolio-shell">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">{t.archiveIndex}</p>
+            <h2>{t.archiveA}<br /><em>{t.archiveB}</em></h2>
+          </div>
+          <p>{t.archiveCopy}</p>
+        </div>
+
+        <div class="module-grid">
+          {modules.map((module) => (
+            <a class={`module-card accent-${module.accent}`} href={module.href}>
+              <div class="module-top">
+                <span>{module.number}</span>
+                <small>{module.status}</small>
+              </div>
+              <p class="module-label">{module.label}</p>
+              <h3>{module.title}</h3>
+              <p class="module-description">{module.description}</p>
+              <div class="module-diagram" aria-hidden="true">
+                {module.diagram.map((item, index) => (
+                  <><span>{item}</span>{index < module.diagram.length - 1 && <i>→</i>}</>
+                ))}
+              </div>
+              <div class="module-link">{module.cta} <span>↗</span></div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="stack-section portfolio-shell">
+      <div class="stack-heading">
+        <p class="section-index">{t.stackIndex}</p>
+        <h2>{t.stackTitle}</h2>
+      </div>
+      <div class="stack-groups">
+        {stackGroups.map((group, index) => (
+          <article>
+            <div><span>0{index + 1}</span><h3>{group.label}</h3></div>
+            <ul>{group.items.map((item) => <li>{item}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="notes-section portfolio-shell" aria-labelledby="notes-title">
+      <div class="notes-title-row">
+        <div>
+          <p class="section-index">{t.notesIndex}</p>
+          <h2 id="notes-title">{t.notesTitle}</h2>
+        </div>
+        <span class="edition">{t.edition}</span>
+      </div>
+      <div class="note-list">
+        {notes.map((note, index) => (
+          <a href={note.href}>
+            <span class="note-number">0{index + 1}</span>
+            <div><small>{note.tag} · {note.date}</small><h3>{note.title}</h3></div>
+            <span class="note-arrow">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="writing-section" id="writing">
+      <div class="portfolio-shell writing-layout">
+        <div class="writing-intro">
+          <p class="section-index">{t.writingIndex}</p>
+          <h2>{t.writingTitle}</h2>
+          <p>{t.writingCopy}</p>
+        </div>
+        <ol class="writing-topics">
+          {writingTopics.map((topic, index) => <li><span>{String(index + 1).padStart(2, '0')}</span>{topic}</li>)}
+        </ol>
+      </div>
+    </section>
+
+    <section class="projects-section" id="projects">
+      <div class="portfolio-shell projects-layout">
+        <div>
+          <p class="section-index">{t.projectsIndex}</p>
+          <h2>{t.soon}<br /><em>{t.alive}</em></h2>
+        </div>
+        <div class="project-placeholder">
+          <span class="project-status"><i></i> WORK IN PROGRESS</span>
+          <p>{t.projectCopy}</p>
+          <div class="project-slots" aria-hidden="true"><b>01</b><b>02</b><b>03</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+      <div class="contact-rings" aria-hidden="true"></div>
+      <div class="contact-content">
+        <p class="portfolio-kicker"><span></span> {t.contactKicker}</p>
+        <h2>{t.contactA}<br /><em>{t.contactB}</em></h2>
+        <p>{t.contactCopy}</p>
+        <div class="contact-links">
+          <a href={socialLinks.email}>{t.emailLabel} <span>↗</span></a>
+          <a href={socialLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
+          <a href={socialLinks.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+          <a href={resumePath}>CV <span>↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="portfolio-footer">
+    <a class="portfolio-brand" href="#inicio"><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <p>Product · Applied AI · Systems</p>
+    <span>{t.footer}</span>
+  </footer>
+
+  <script>
+    const header = document.querySelector('[data-portfolio-header]');
+    const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</Layout>

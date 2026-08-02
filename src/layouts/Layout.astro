@@ -4,13 +4,17 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  lang?: string;
+  alternateHref?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, lang = 'en', alternateHref } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin);
+const alternateUrl = alternateHref ? new URL(alternateHref, Astro.url.origin) : undefined;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -20,6 +24,11 @@ const { title, description } = Astro.props;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_AR' : 'en_US'} />
+    <link rel="canonical" href={canonicalUrl} />
+    {alternateUrl && <link rel="alternate" hreflang={lang === 'es' ? 'en' : 'es'} href={alternateUrl} />}
+    {alternateUrl && <link rel="alternate" hreflang={lang} href={canonicalUrl} />}
+    {lang === 'es' && <link rel="alternate" hreflang="x-default" href={canonicalUrl} />}
     <title>{title}</title>
   </head>
   <body>
