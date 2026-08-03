@@ -26,6 +26,26 @@ const runRows = [
   ['02 · increment', '2', '7', '6', '2026-07-02 12:00'],
   ['03 · retry', '0', '7', '6', 'unchanged'],
 ];
+
+const pipelineRuns = [
+  { run: 'Run 1', mode: 'Historical', updatedAfter: 'empty', availableThrough: '2026-07-01T23:59:59Z', expected: '5 events · Bronze 5 · Silver 5' },
+  { run: 'Run 2', mode: 'Incremental', updatedAfter: '2026-07-01T10:20:00Z', availableThrough: 'empty', expected: '2 new events · Bronze 7 · Silver 6' },
+  { run: 'Run 3', mode: 'Safe retry', updatedAfter: '2026-07-01T10:20:00Z', availableThrough: 'empty', expected: '0 inserts · state unchanged' },
+];
+
+const dynamicRelativeUrl = `@concat(
+  'api/v1/order-events?limit=2',
+  if(
+    empty(pipeline().parameters.p_updated_after),
+    '',
+    concat('&updated_after=', uriComponent(pipeline().parameters.p_updated_after))
+  ),
+  if(
+    empty(pipeline().parameters.p_available_through),
+    '',
+    concat('&available_through=', uriComponent(pipeline().parameters.p_available_through))
+  )
+)`;
 ---
 
 <Layout title="Incremental API POC — Build guide" description="Download and build an idempotent incremental API ingestion proof of concept in Microsoft Fabric.">
@@ -77,11 +97,29 @@ const runRows = [
       <ol class="live-api-steps">
         <li><span>01</span><div><h3>Create the REST connection</h3><p>In Manage connections and gateways, create <code>con_incremental_orders_api</code> with base URL <code>https://api-alpha-seven-69.vercel.app/</code>, REST type, Anonymous authentication, and Organizational privacy.</p></div></li>
         <li><span>02</span><div><h3>Configure authentication</h3><p>In Copy activity → Source → Advanced → Additional headers, add <code>x-api-key</code> with the key shared through the separate secure channel. Never place it in the URL, notebook, or repository.</p></div></li>
-        <li><span>03</span><div><h3>Follow every cursor</h3><p>Use relative endpoint <code>api/v1/order-events?limit=2</code>. Add pagination rule <code>QueryParameters.cursor</code> = <code>$.pagination.next_cursor</code>; Fabric stops when the value is null.</p></div></li>
-        <li><span>04</span><div><h3>Unwrap and land the events</h3><p>Set collection reference to <code>$['data']</code>, map the six event fields, and write JSON Lines into <code>lh_api_orders / Files/api_source</code> with a unique filename per pipeline run.</p></div></li>
-        <li><span>05</span><div><h3>Execute three windows</h3><div class="run-commands"><code>Initial · available_through=2026-07-01T23:59:59Z</code><code>Delta · updated_after=2026-07-01T10:20:00Z</code><code>Retry · repeat the Delta request unchanged</code></div></div></li>
-        <li><span>06</span><div><h3>Run the notebook and validate</h3><p>After each pipeline execution, run the ingestion notebook. The final proof is Bronze 7, Silver 6, Gold completed amount 850.00, watermark 2026-07-02 12:00, and zero inserts on retry.</p></div></li>
+        <li><span>03</span><div><h3>Add the pipeline parameters</h3><p>Create two String parameters on <code>pl_incremental_orders_api</code>. They define the lower and upper boundaries of each extraction window.</p><div class="parameter-grid"><div><code>p_updated_after</code><span>Default: empty</span><small>Exclusive lower boundary. Send the last successful watermark to request only newer events.</small></div><div><code>p_available_through</code><span>Default: 2026-07-01T23:59:59Z</span><small>Inclusive upper boundary. It freezes Run 1 so the historical result stays deterministic.</small></div></div></div></li>
+        <li><span>04</span><div><h3>Build the dynamic Relative URL</h3><p>Open Copy activity → Source and use this Dynamic content expression. Empty parameters are omitted instead of being sent as blank query-string values.</p><pre class="pipeline-expression"><code>{dynamicRelativeUrl}</code></pre></div></li>
+        <li><span>05</span><div><h3>Follow every cursor</h3><p>Add pagination rule <code>QueryParameters.cursor</code> = <code>$.pagination.next_cursor</code>. Fabric sends the opaque token in the next request and stops when the API returns <code>null</code>.</p></div></li>
+        <li><span>06</span><div><h3>Unwrap and land the events</h3><p>Set collection reference to <code>$['data']</code>, map the six event fields, and write JSON Lines into <code>lh_api_orders / Files/api_source</code> with a unique filename per pipeline run. The notebook also supports complete response envelopes.</p></div></li>
+        <li><span>07</span><div><h3>Execute the three-run proof</h3><p>Run the pipeline and then the notebook for each row. Run 3 intentionally repeats Run 2: identical input must produce an identical final state.</p></div></li>
+        <li><span>08</span><div><h3>Validate the final state</h3><p>Run <code>validations.sql</code>. The final proof is Bronze 7, Silver 6, Gold completed amount 850.00, watermark 2026-07-02 12:00, and zero inserts on retry.</p></div></li>
       </ol>
+
+      <div class="pipeline-runbook" aria-labelledby="pipeline-runs-title">
+        <div class="pipeline-runbook-head"><span>CONTROLLED EXECUTIONS</span><h3 id="pipeline-runs-title">The same pipeline. Three parameter sets.</h3></div>
+        <div class="pipeline-run-table-wrap">
+          <table class="pipeline-run-table">
+            <thead><tr><th>Execution</th><th>p_updated_after</th><th>p_available_through</th><th>Expected evidence</th></tr></thead>
+            <tbody>{pipelineRuns.map((item) => <tr><td><strong>{item.run}</strong><small>{item.mode}</small></td><td><code class:list={{ empty: item.updatedAfter === 'empty' }}>{item.updatedAfter}</code></td><td><code class:list={{ empty: item.availableThrough === 'empty' }}>{item.availableThrough}</code></td><td>{item.expected}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <p class="retry-explainer"><strong>Why Run 3 matters:</strong> API delivery and orchestration can retry. Repeating the incremental request proves that <code>event_id</code> deduplication plus the Bronze <code>MERGE</code> gives exactly-once business effect over at-least-once delivery.</p>
+      </div>
+
+      <aside class="e2e-proof">
+        <div><span>END-TO-END STATUS</span><h3>API → Fabric → Lakehouse → Notebook is working.</h3></div>
+        <ul><li>REST connection</li><li>API key header</li><li>Cursor pagination</li><li>Bronze landing</li><li>Bronze / Silver / Gold</li><li>Watermark</li><li>Gold total 850</li></ul>
+      </aside>
       <div class="live-api-download"><div><span>FULL CONFIGURATION</span><p>Includes pipeline parameters, dynamic Relative URL, mapping, output naming, expected evidence, and troubleshooting.</p></div><a class="button button-dark" href="/downloads/incremental-api/REAL_API_E2E.md" download>Download live API guide <span>↓</span></a></div>
     </section>
 
