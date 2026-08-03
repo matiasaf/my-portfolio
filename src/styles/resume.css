@@ -8,4 +8,130 @@
 .resume-skills > div { display: grid; gap: 0; }.resume-skills article { display: grid; grid-template-columns: 145px 1fr; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--line); }.resume-skills article:last-child { border: 0; }.resume-skills h3 { margin: 0; font: 500 10px var(--mono); }.resume-skills article p { margin: 0; font-size: 11px; line-height: 1.7; }
 .resume-sheet .resume-bottom { grid-template-columns: 1fr 1fr; gap: 70px; border: 0; }.resume-bottom h3 { margin: 17px 0 5px; font-size: 16px; }.resume-bottom > div > p:last-child { margin: 0; font-size: 11px; color: rgba(23,32,30,.63); }
 @media (max-width: 700px) { .resume-page { padding: 12px; }.resume-toolbar { padding: 5px; }.resume-sheet { padding: 28px 22px; }.resume-identity { grid-template-columns: 1fr; }.resume-contact { align-items: flex-start; }.resume-sheet section { grid-template-columns: 1fr; gap: 22px; }.resume-skills article { grid-template-columns: 1fr; gap: 8px; }.resume-sheet .resume-bottom { grid-template-columns: 1fr; gap: 35px; }.resume-role-heading { display: grid; }.resume-role-heading > span { grid-row: 1; }.resume-toolbar button { font-size: 0; }.resume-toolbar button span { margin: 0; font-size: 12px; } }
-@media print { @page { size: A4; margin: 12mm; }.resume-page { padding: 0; background: white; }.resume-toolbar { display: none; }.resume-sheet { width: 100%; padding: 0; box-shadow: none; }.resume-identity h1 { font-size: 62px; }.resume-sheet section { break-inside: avoid; }.resume-experience > div > article { break-inside: avoid; }.resume-contact a { color: inherit; }.resume-summary h2 { font-size: 26px; } }
+@media print {
+  @page { size: A4; margin: 9mm; }
+
+  html,
+  body {
+    background: var(--paper);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .resume-page {
+    min-height: 0;
+    padding: 0;
+    background: var(--paper);
+  }
+
+  .resume-toolbar { display: none; }
+
+  .resume-sheet {
+    width: 100%;
+    padding: 0;
+    background: var(--paper);
+    box-shadow: none;
+  }
+
+  .resume-identity {
+    grid-template-columns: 1.35fr .9fr;
+    gap: 10mm;
+    padding-bottom: 7mm;
+    border-bottom-width: 2px;
+    break-inside: avoid;
+  }
+
+  .resume-identity > div:first-child > p { font-size: 7.5px; }
+  .resume-identity h1 {
+    margin-top: 3mm;
+    font-size: 48px;
+    line-height: .78;
+  }
+
+  .resume-contact {
+    gap: 1.5mm;
+    font-size: 8.5px;
+  }
+
+  .resume-contact span { margin-bottom: 1mm; }
+  .resume-contact a { color: inherit; }
+
+  .resume-sheet section {
+    grid-template-columns: 25mm minmax(0, 1fr);
+    gap: 7mm;
+    padding-block: 7mm;
+    break-inside: avoid;
+  }
+
+  .resume-section-label { font-size: 7px; }
+
+  .resume-summary h2 {
+    margin-bottom: 3mm;
+    font-size: 20px;
+    line-height: 1.08;
+  }
+
+  .resume-summary div > p {
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  /* Experience is the only section that is allowed to flow across pages. */
+  .resume-sheet .resume-experience { break-inside: auto; }
+
+  .resume-experience > div > article {
+    margin-bottom: 5mm;
+    padding-bottom: 5mm;
+    break-inside: avoid-page;
+  }
+
+  /* Keep a stable, balanced two-page composition in both languages. */
+  .resume-experience > div > article:nth-child(3) { break-before: page; }
+
+  .resume-role-heading { gap: 5mm; }
+  .resume-role-heading small { font-size: 7px; }
+  .resume-role-heading h3 {
+    margin: 1.5mm 0 .7mm;
+    font-size: 17px;
+  }
+  .resume-role-heading p { font-size: 8.5px; }
+  .resume-role-heading > span { font-size: 7.5px; }
+
+  .resume-experience ul {
+    margin-top: 3mm;
+    padding-left: 4mm;
+  }
+
+  .resume-experience li {
+    margin: 1.7mm 0;
+    padding-left: 1mm;
+    font-size: 9px;
+    line-height: 1.46;
+    orphans: 2;
+    widows: 2;
+  }
+
+  .resume-skills article {
+    grid-template-columns: 28mm 1fr;
+    gap: 5mm;
+    padding: 2.5mm 0;
+  }
+
+  .resume-skills h3 { font-size: 7.5px; }
+  .resume-skills article p {
+    font-size: 8.5px;
+    line-height: 1.45;
+  }
+
+  .resume-sheet .resume-bottom {
+    gap: 12mm;
+    padding-block: 5mm;
+  }
+
+  .resume-bottom h3 {
+    margin: 3mm 0 1mm;
+    font-size: 11px;
+  }
+
+  .resume-bottom > div > p:last-child { font-size: 8.5px; }
+}
