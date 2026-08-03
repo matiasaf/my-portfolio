@@ -1,0 +1,7 @@
+ticket_id,contact_email,created_at,priority,status
+T-001,ana.torres@example.com,2026-02-18,Low,Closed
+T-002," BRUNO.SILVA@example.com ",2026-03-19,High,Open
+T-003,carla.ruiz@example.com,2026-03-20,Medium,Open
+T-004,diego.lopez@example.com,2026-03-11,Low,Closed
+T-005,elena.costa@example.com,2026-03-21,Low,Open
+T-006,unknown.contact@example.com,2026-03-22,High,Open

@@ -1,0 +1,25 @@
+-- Add these explicit measures to the semantic model.
+
+Total Revenue =
+SUM ( fact_sales[amount] )
+
+Completed Orders =
+DISTINCTCOUNT ( fact_sales[order_id] )
+
+Purchasing Customers =
+DISTINCTCOUNT ( fact_sales[customer_key] )
+
+Average Revenue per Purchasing Customer =
+DIVIDE ( [Total Revenue], [Purchasing Customers] )
+
+Open Tickets =
+CALCULATE (
+    DISTINCTCOUNT ( fact_support[ticket_id] ),
+    fact_support[status] = "Open"
+)
+
+Customers with Open Tickets =
+CALCULATE (
+    DISTINCTCOUNT ( fact_support[customer_key] ),
+    fact_support[status] = "Open"
+)
