@@ -104,6 +104,9 @@ In the activity **Mapping** tab:
 3. Map `event_id`, `order_id`, `customer_id`, `status`, `amount`, and `updated_at`.
 4. `page_number` is optional for the real API and can be left unmapped.
 
+If the Copy activity lands each complete response envelope instead, that format is also
+supported: the notebook detects the top-level `data[]` array and explodes it into event rows.
+
 In **Destination**:
 
 1. Select Lakehouse `lh_api_orders`.

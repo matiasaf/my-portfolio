@@ -4,7 +4,8 @@
 
 Can we process new and updated API records without duplicating data when a run is repeated?
 
-This POC uses small JSON files as deterministic, paginated API responses. That keeps the
+This POC supports both small flat JSON files and the real API's paginated response envelopes.
+The notebook explodes each page's `data[]` array before processing events. This keeps the
 experiment reproducible while preserving the important API concepts: pages, immutable event
 IDs, business keys, update timestamps, watermarking, upserts, and idempotent reruns.
 
@@ -57,6 +58,14 @@ worth 850.00 in total.
 - [ ] Gold reports five completed orders and completed amount of `850.00`.
 - [ ] The watermark equals `2026-07-02 12:00:00` after run 2.
 
+## Troubleshooting invalid rows
+
+The notebook reads both flat JSON events and API envelopes containing `data[]`, `pagination`,
+and `request`. It uses an explicit schema and parses ISO timestamps ending in `Z`. If a JSON
+file is malformed or a required field is absent, the first cell displays the source filename,
+corrupt record, raw timestamp, and parsed timestamp before stopping. Remove or correct that
+file in `Files/api_source`, then rerun the cell.
+
 ## Production extension
 
 Replace the uploaded JSON pages with a Data Factory pipeline using a REST connection. Pass
@@ -66,6 +75,13 @@ not in the notebook.
 
 ## Real API end-to-end extension
 
-The shared POC API is deployed at `https://api-alpha-seven-69.vercel.app`. Use the included
-`REAL_API_E2E.md` guide to configure the Fabric REST connection, separately shared
-`x-api-key`, cursor pagination, `data[]` mapping, and initial/increment/retry executions.
+The deployable Vercel Function in [`api/`](api/README.md) turns the fixed files into a real
+HTTPS API with cursor pagination, an exclusive `updated_after` watermark, repeatable
+extraction windows, and optional API-key authentication. Deploy it with `npm run api:deploy`,
+then use the returned `/api/v1/order-events` URL as the source of a Fabric Data Factory REST
+connection. The API README contains the exact initial, increment, and retry requests.
+
+The shared POC deployment is available at `https://api-alpha-seven-69.vercel.app`. Follow
+[`REAL_API_E2E.md`](REAL_API_E2E.md) to configure its `x-api-key` header, cursor pagination,
+`data[]` mapping, Lakehouse destination, and the three execution proof. The API key is shared
+separately and must not be committed to this repository.
