@@ -1,6 +1,11 @@
 .portfolio-main { --portfolio-accent: #ff5b3d; }
-.portfolio-shell { width: min(1240px, calc(100% - 48px)); margin-inline: auto; }
-.portfolio-header { position: fixed; z-index: 80; inset: 0 0 auto; height: 76px; padding: 0 32px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: height .25s, background .25s, border-color .25s; border-bottom: 1px solid transparent; }
+/* --shell-max y --shell-gutter se definen en global.css: son la guia de ancho
+   compartida por todo el sitio. */
+.portfolio-shell { width: min(var(--shell-max), calc(100% - var(--shell-gutter) * 2)); margin-inline: auto; }
+/* El header va a sangre (fondo y blur de borde a borde) pero su padding interno
+   replica el margen de .portfolio-shell, para que la marca y el CTA queden
+   alineados con el contenido de abajo en cualquier ancho. */
+.portfolio-header { position: fixed; z-index: 80; inset: 0 0 auto; height: 76px; padding-inline: max(var(--shell-gutter), calc((100% - var(--shell-max)) / 2)); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: height .25s, background .25s, border-color .25s; border-bottom: 1px solid transparent; }
 .portfolio-header.is-scrolled { height: 64px; background: rgba(245,241,232,.9); border-color: var(--line); backdrop-filter: blur(16px); }
 .portfolio-brand { display: inline-flex; align-items: center; gap: 11px; width: max-content; font-size: 13px; font-weight: 800; letter-spacing: -.02em; }
 .brand-monogram { display: grid; place-items: center; width: 31px; height: 31px; background: var(--ink); color: var(--paper); border-radius: 50%; font: 500 10px var(--mono); letter-spacing: -.08em; }
@@ -18,7 +23,9 @@
 .header-note span { margin-left: 14px; }
 .header-note:hover { background: var(--ink); color: var(--paper); }
 
-.portfolio-hero { min-height: 790px; padding-top: 132px; display: grid; grid-template-columns: .98fr 1.02fr; align-items: center; gap: 74px; }
+/* align-items: stretch hace que el board acompañe la altura de la columna de
+   texto: su borde superior cae con el eyebrow y el inferior con las metricas. */
+.portfolio-hero { min-height: 790px; padding-top: 132px; padding-bottom: 104px; display: grid; grid-template-columns: .98fr 1.02fr; align-items: stretch; gap: 74px; }
 .portfolio-kicker, .section-index, .module-label { font: 500 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 .portfolio-kicker { display: flex; align-items: center; gap: 11px; }
 .portfolio-kicker > span { width: 28px; height: 2px; background: var(--portfolio-accent); }
@@ -140,7 +147,7 @@
   .about-section { grid-template-columns: .55fr 2fr; }.working-on { grid-column: 2; min-height: auto; }.capability-grid { grid-template-columns: 1fr; }.capability-card { min-height: 290px; border-right: 0; border-bottom: 1px solid var(--ink); }.principle-layout { grid-template-columns: 1.2fr .8fr; gap: 32px; }.principle-statement { padding-left: 38px; }.experience-item { grid-template-columns: 35px 100px 1fr; }.experience-detail { grid-column: 3; }.module-card { min-height: 510px; }.stack-section { grid-template-columns: 1fr; }.stack-heading { position: static; }.projects-layout { gap: 45px; }
 }
 @media (max-width: 680px) {
-  .portfolio-shell { width: min(100% - 32px,1240px); }.portfolio-header { height: 64px; padding-inline: 16px; }.portfolio-brand > span:last-child { display: none; }.portfolio-header-actions { gap: 9px; }.header-note { padding: 8px 10px; }.header-note > span { display: none; }.language-switcher { gap: 4px; }
+  :root { --shell-gutter: 16px; }.portfolio-header { height: 64px; }.portfolio-brand > span:last-child { display: none; }.portfolio-header-actions { gap: 9px; }.header-note { padding: 8px 10px; }.header-note > span { display: none; }.language-switcher { gap: 4px; }
   .portfolio-hero { min-height: auto; padding-top: 112px; gap: 48px; }.hero-intro h1 { font-size: clamp(47px,14vw,64px); }.hero-summary { font-size: 15px; }.portfolio-actions { align-items: stretch; flex-direction: column; }.quiet-action { align-self: flex-start; }.hero-proof { grid-template-columns: 1fr; }.hero-proof div { min-height: 62px; grid-template-columns: 72px 1fr; align-items: center; border-right: 0; border-bottom: 1px solid var(--ink); }.hero-proof div:last-child { border: 0; }
   .hero-board { min-height: 440px; }.topic-orbit { width: 240px; height: 240px; }.topic-orbit::after { width: 170px; height: 170px; }.topic-card { width: 138px; padding: 12px; }.topic-data { left: 8px; top: 75px; }.topic-interface { right: 8px; top: 52px; }.topic-systems { right: 8px; bottom: 50px; }.topic-card strong { font-size: 17px; }.board-note { left: 12px; bottom: 18px; max-width: 170px; }
   .now-strip { justify-content: flex-start; gap: 16px; white-space: nowrap; }.now-strip > span { display: none; }
