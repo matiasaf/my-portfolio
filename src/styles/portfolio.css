@@ -8,7 +8,8 @@
 .portfolio-header { position: fixed; z-index: 80; inset: 0 0 auto; height: 76px; padding-inline: max(var(--shell-gutter), calc((100% - var(--shell-max)) / 2)); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: height .25s, background .25s, border-color .25s; border-bottom: 1px solid transparent; }
 .portfolio-header.is-scrolled { height: 64px; background: rgba(245,241,232,.9); border-color: var(--line); backdrop-filter: blur(16px); }
 .portfolio-brand { display: inline-flex; align-items: center; gap: 11px; width: max-content; font-size: 13px; font-weight: 800; letter-spacing: -.02em; }
-.brand-monogram { display: grid; place-items: center; width: 31px; height: 31px; background: var(--ink); color: var(--paper); border-radius: 50%; font: 500 10px var(--mono); letter-spacing: -.08em; }
+/* .brand-monogram vive en global.css: es la identidad compartida por el
+   portfolio, los modulos y el favicon. */
 .portfolio-header nav { display: flex; gap: 30px; font-size: 12px; font-weight: 700; }
 .portfolio-header nav a { position: relative; }
 .portfolio-header nav a::after { content: ''; position: absolute; height: 2px; background: var(--portfolio-accent); left: 0; right: 100%; bottom: -7px; transition: right .2s; }

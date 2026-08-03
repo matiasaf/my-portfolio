@@ -27,6 +27,11 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; }
 .section-shell { width: min(var(--shell-max), calc(100% - var(--shell-gutter) * 2)); margin-inline: auto; }
 
+/* Monograma MF: la misma marca del portfolio, los modulos y el favicon. */
+.brand-monogram { display: grid; place-items: center; width: 31px; height: 31px; background: var(--ink); color: var(--paper); border-radius: 50%; font: 500 10px var(--mono); letter-spacing: -.08em; }
+/* Sobre el footer oscuro se invierte, si no el monograma seria ink sobre ink. */
+footer .brand-monogram { background: var(--coral); color: var(--ink); }
+
 /* Foco visible: sin esto la navegacion por teclado es invisible, porque los
    enlaces no tienen subrayado y los botones son cajas a medida. */
 :where(a, button, summary, [tabindex]):focus-visible {
@@ -180,7 +185,7 @@ h1 em, h2 em { font-style: normal; color: var(--coral); }
 .cta-actions { display: flex; justify-content: center; align-items: center; gap: 26px; }.cta-external { margin-top: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--ink); font-size: 12px; font-weight: 700; }
 .cta-shape { position: absolute; border: 1px solid rgba(23,32,30,.15); border-radius: 50%; }.shape-one { width: 620px; height: 620px; left: -250px; top: -200px; box-shadow: 0 0 0 60px rgba(23,32,30,.03), 0 0 0 120px rgba(23,32,30,.025); }.shape-two { width: 480px; height: 480px; right: -180px; bottom: -260px; box-shadow: 0 0 0 50px rgba(23,32,30,.03); }
 
-footer { min-height: 120px; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; padding: 30px 32px; background: var(--ink); color: white; font-size: 11px; }
+footer { min-height: 120px; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; padding-block: 30px; padding-inline: max(var(--shell-gutter), calc((100% - var(--shell-max)) / 2)); background: var(--ink); color: white; font-size: 11px; }
 footer p { text-align: center; opacity: .55; }
 .footer-note { display: grid; gap: 7px; }
 .footer-note small { font: 500 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
