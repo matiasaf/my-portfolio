@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Matias Fernandez">
+  <style>
+    :root { --bg: #17201e; --fg: #f5f1e8; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #f5f1e8; --fg: #17201e; }
+    }
+  </style>
+  <circle cx="16" cy="16" r="15.5" fill="var(--bg)"/>
+  <rect x="6" y="10" width="3" height="12" fill="var(--fg)"/>
+  <rect x="13.9" y="10" width="3" height="12" fill="var(--fg)"/>
+  <rect x="18.7" y="10" width="3" height="12" fill="var(--fg)"/>
+  <rect x="18.7" y="10" width="7.3" height="2.769" fill="var(--fg)"/>
+  <rect x="18.7" y="14.98" width="5.767" height="2.492" fill="var(--fg)"/>
+  <polygon points="5.899,10 9.101,10 11.45,16.304 13.799,10 17.001,10 13.051,20.6 9.849,20.6" fill="var(--fg)"/>
+</svg>

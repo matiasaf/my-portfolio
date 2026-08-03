@@ -1,0 +1,14 @@
+{
+  "name": "Matías Fernández",
+  "short_name": "MF",
+  "description": "Portfolio, notas y pruebas de concepto sobre datos, arquitectura y system design.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#f5f1e8",
+  "background_color": "#f5f1e8",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
