@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { resume } from '../content/resume';
 import '../styles/resume.css';
 
 interface Props { lang: 'es' | 'en'; }
@@ -8,69 +9,16 @@ const en = lang === 'en';
 const homePath = en ? '/en/' : '/';
 const alternatePath = en ? '/cv/' : '/en/cv/';
 
-const contacts = [
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/fernandez-amatias' },
-  { label: 'GitHub', href: 'https://github.com/matiasaf' },
-  { label: 'fernandez.amatias@gmail.com', href: 'mailto:fernandez.amatias@gmail.com' },
-];
+/* Todo el contenido vive en src/content/resume.ts, que tambien alimenta
+   /cv.tex y /en/cv.tex. No agregar texto del CV aca. */
+const cv = resume[lang];
 
-const roles = en ? [
-  { company: 'Argeniss Software', period: 'Feb 2022 — Present', role: 'Senior Full-Stack Engineer', context: 'Client: Amplity Health', bullets: [
-    'Lead the React/Next.js frontend of AI Studio while contributing hands-on across .NET, Azure Functions, Python document processing, Azure OpenAI, Pinecone, SignalR, Azure SQL, and Logic Apps. More than 1,000 documents have completed its processing pipeline.',
-    'Co-develop Azure IC Portal using Next.js 15, React 19, strict TypeScript, Fluent UI, React Query, Prisma, Azure SQL, Zod, authenticated route-handler APIs, large-list virtualization, and asynchronous bulk workflows.',
-    'Maintain and evolve a Website Chatbot spanning React/Vite, an embeddable widget, Python/FastAPI, PostgreSQL, Azure Functions, WebSockets, Azure OpenAI, Pinecone/RAG, Docker, and Azure Container Apps.',
-    'Led the Amplity.com delivery team from Aug 2024 to Feb 2025, partnering with Product while remaining hands-on. Improved a Business Intelligence Tool dashboard load time by 35%.',
-    'Define technical conventions, perform code reviews, and maintain architecture documentation.',
-  ]},
-  { company: 'Endava', period: 'May 2021 — Feb 2022', role: 'Full-Stack Engineer', context: 'Client: Bloomberg LP · Workpaper', bullets: [
-    'Participated in the beta launch and a React/Redux/TypeScript UI refactor, while contributing almost equally to Node.js services and PostgreSQL-backed APIs.',
-    'Built generic TypeScript forms, optimistic updates, Playwright and React Testing Library coverage, plus serverless APIs with AWS Lambda, API Gateway, and DynamoDB.',
-    'Mentored and reviewed code within a five-developer team as collaborative technical leadership.',
-  ]},
-  { company: 'Hexacta / GlobalLogic', period: 'Jan 2019 — May 2021', role: 'Full-Stack Engineer', context: 'TechInsights · BA147 · SUACI', bullets: [
-    'Helped migrate Java services to Node.js/TypeScript serverless services on AWS; the team migration reduced infrastructure costs by approximately 30%.',
-    'Contributed to an Angular 7-to-12 migration, interactive analytics, Terraform infrastructure, blue-green deployments, Ionic offline synchronization, map integrations, and Java/Spring Boot services.',
-  ]},
-  { company: 'Government of Entre Ríos', period: 'Nov 2016 — Jan 2019', role: 'Software Engineer', context: 'Public-sector platforms', bullets: [
-    'Built regulated systems with PHP, Oracle, React, React Native, Laravel, and Vue, including RBAC, auditing, traceability, and compliance requirements.',
-    'Automated ETL workflows with Node.js including validation, transformation, deduplication, alerts, and retries.',
-  ]},
-  { company: 'Genosha', period: 'Jun 2016 — Dec 2016', role: 'Software Engineer', context: 'Video-generation platform', bullets: [
-    'Built a viral-video workflow with AngularJS, Node.js, Docker, AWS ECS, Facebook Graph API, and FFmpeg; contributed to 720p encoding optimizations.',
-  ]},
-] : [
-  { company: 'Argeniss Software', period: 'Feb 2022 — Actualidad', role: 'Senior Full-Stack Engineer', context: 'Cliente: Amplity Health', bullets: [
-    'Lidero el frontend React/Next.js de AI Studio y contribuyo hands-on en .NET, Azure Functions, procesamiento documental con Python, Azure OpenAI, Pinecone, SignalR, Azure SQL y Logic Apps. Más de 1.000 documentos completaron el pipeline.',
-    'Co-desarrollo Azure IC Portal con Next.js 15, React 19, TypeScript strict, Fluent UI, React Query, Prisma, Azure SQL, Zod, APIs autenticadas, virtualización y flujos bulk asíncronos.',
-    'Mantengo y evoluciono Website Chatbot: React/Vite, widget embebible, Python/FastAPI, PostgreSQL, Azure Functions, WebSockets, Azure OpenAI, Pinecone/RAG, Docker y Azure Container Apps.',
-    'Lideré la entrega de Amplity.com entre ago 2024 y feb 2025, trabajando con Producto y manteniéndome hands-on. Mejoré 35% el tiempo de carga de un dashboard de Business Intelligence.',
-    'Defino convenciones técnicas, realizo code reviews y mantengo documentación de arquitectura.',
-  ]},
-  { company: 'Endava', period: 'May 2021 — Feb 2022', role: 'Full-Stack Engineer', context: 'Cliente: Bloomberg LP · Workpaper', bullets: [
-    'Participé del lanzamiento beta y de un refactor React/Redux/TypeScript, contribuyendo casi en partes iguales a servicios Node.js y APIs sobre PostgreSQL.',
-    'Construí formularios genéricos con TypeScript, optimistic updates, cobertura con Playwright y React Testing Library, y APIs serverless con AWS Lambda, API Gateway y DynamoDB.',
-    'Realicé mentoring y code reviews en un equipo de cinco desarrolladores como liderazgo técnico colaborativo.',
-  ]},
-  { company: 'Hexacta / GlobalLogic', period: 'Ene 2019 — May 2021', role: 'Full-Stack Engineer', context: 'TechInsights · BA147 · SUACI', bullets: [
-    'Participé en la migración de servicios Java a Node.js/TypeScript serverless sobre AWS; la migración del equipo redujo aproximadamente 30% los costos de infraestructura.',
-    'Contribuí a una migración Angular 7–12, analytics interactivos, infraestructura Terraform, blue-green deployments, sincronización offline con Ionic, mapas y servicios Java/Spring Boot.',
-  ]},
-  { company: 'Gobierno de Entre Ríos', period: 'Nov 2016 — Ene 2019', role: 'Software Engineer', context: 'Plataformas del sector público', bullets: [
-    'Construí sistemas regulados con PHP, Oracle, React, React Native, Laravel y Vue, incluyendo RBAC, auditoría, trazabilidad y requerimientos de cumplimiento.',
-    'Automaticé procesos ETL con Node.js: validación, transformación, deduplicación, alertas y reintentos.',
-  ]},
-  { company: 'Genosha', period: 'Jun 2016 — Dic 2016', role: 'Software Engineer', context: 'Plataforma de generación de video', bullets: [
-    'Trabajé en un flujo de video viral con AngularJS, Node.js, Docker, AWS ECS, Facebook Graph API y FFmpeg, incluyendo optimizaciones de encoding 720p.',
-  ]},
-];
+/* El diseno de pantalla parte el nombre en dos lineas; en impresion el <br>
+   se oculta (ver resume.css). */
+const [firstName, ...lastName] = cv.name.split(' ');
 
-const skills = [
-  ['Frontend', 'React 19 · Next.js 15 · TypeScript · React Query · Redux · Fluent UI · Angular · Vue · Ionic · React Native'],
-  ['Backend & APIs', 'Python · FastAPI · Node.js · .NET 8 · ASP.NET Core · Azure Functions · Java · Spring Boot · Zod'],
-  ['Applied AI', 'Azure OpenAI · RAG · Pinecone · Embeddings · Document processing · Source attribution · Feedback loops · Usage & cost monitoring'],
-  ['Cloud & Data', 'Azure · AWS · Docker · Terraform · Bicep · PostgreSQL · Azure SQL · DynamoDB · CI/CD'],
-  [en ? 'Quality' : 'Calidad', 'Playwright · React Testing Library · Cypress · Vitest · xUnit · Web Vitals'],
-];
+/* PDF compilado con LaTeX por `npm run cv:pdf` y commiteado en public/. */
+const pdfPath = en ? '/downloads/matias-fernandez-resume.pdf' : '/downloads/matias-fernandez-cv.pdf';
 ---
 
 <Layout
@@ -84,37 +32,38 @@ const skills = [
       <a href={homePath}>← {en ? 'Portfolio' : 'Portfolio'}</a>
       <div class="resume-toolbar-actions">
         <div class="resume-language"><a href="/cv/" aria-current={!en ? 'page' : undefined}>ES</a><span>/</span><a href="/en/cv/" aria-current={en ? 'page' : undefined}>EN</a></div>
-        <button type="button" onclick="window.print()">{en ? 'Print / Save PDF' : 'Imprimir / Guardar PDF'} <span>↓</span></button>
+        <a class="resume-download" href={pdfPath} download>{en ? 'Download PDF' : 'Descargar PDF'} <span>↓</span></a>
+        <button type="button" onclick="window.print()">{en ? 'Print' : 'Imprimir'} <span>↗</span></button>
       </div>
     </header>
 
     <article class="resume-sheet">
       <header class="resume-identity">
-        <div><p>SENIOR FULL-STACK · APPLIED AI</p><h1>Matías<br />Fernández</h1></div>
-        <div class="resume-contact"><span>Paraná, Entre Ríos, Argentina</span>{contacts.map((item) => <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noreferrer' : undefined}>{item.label} ↗</a>)}</div>
+        <div><h1>{firstName} <br />{lastName.join(' ')}</h1><p>{cv.headline}</p></div>
+        <div class="resume-contact"><span>{cv.location}</span>{cv.contacts.map((item) => <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noreferrer' : undefined}>{item.label}<span class="resume-ext"> ↗</span></a>)}</div>
       </header>
 
       <section class="resume-summary">
-        <p class="resume-section-label">01 / {en ? 'PROFILE' : 'PERFIL'}</p>
+        <p class="resume-section-label"><span class="resume-label-index">01 / </span>{cv.labels.profile}</p>
         <div>
-          <h2>{en ? 'I build reliable product experiences on top of complex systems.' : 'Construyo experiencias de producto confiables sobre sistemas complejos.'}</h2>
-          <p>{en ? 'Senior Full-Stack Engineer with more than ten years of experience across frontend architecture, backend, cloud, distributed systems, and applied AI. Hands-on technical leadership with a strong focus on React, Next.js, TypeScript, and products that integrate models and retrieval systems responsibly.' : 'Senior Full-Stack Engineer con más de diez años de experiencia en arquitectura frontend, backend, cloud, sistemas distribuidos y AI aplicada. Liderazgo técnico hands-on, con foco en React, Next.js, TypeScript y productos que integran modelos y sistemas de recuperación de forma responsable.'}</p>
+          <h2>{cv.summary.headline}</h2>
+          <p>{cv.summary.body}</p>
         </div>
       </section>
 
       <section class="resume-experience">
-        <p class="resume-section-label">02 / {en ? 'EXPERIENCE' : 'EXPERIENCIA'}</p>
-        <div>{roles.map((item) => <article><div class="resume-role-heading"><div><small>{item.context}</small><h3>{item.company}</h3><p>{item.role}</p></div><span>{item.period}</span></div><ul>{item.bullets.map((bullet) => <li>{bullet}</li>)}</ul></article>)}</div>
+        <p class="resume-section-label"><span class="resume-label-index">02 / </span>{cv.labels.experience}</p>
+        <div>{cv.roles.map((item) => <article><div class="resume-role-heading"><div><small>{item.context}</small><h3>{item.company}</h3><p>{item.role}</p></div><span>{item.period}</span></div><ul>{item.bullets.map((bullet) => <li>{bullet}</li>)}</ul></article>)}</div>
       </section>
 
       <section class="resume-skills">
-        <p class="resume-section-label">03 / STACK</p>
-        <div>{skills.map((group) => <article><h3>{group[0]}</h3><p>{group[1]}</p></article>)}</div>
+        <p class="resume-section-label"><span class="resume-label-index">03 / </span>{cv.labels.stack}</p>
+        <div>{cv.skills.map((group) => <article><h3>{group[0]}</h3><p>{group[1]}</p></article>)}</div>
       </section>
 
       <section class="resume-bottom">
-        <div><p class="resume-section-label">04 / {en ? 'EDUCATION' : 'EDUCACIÓN'}</p><h3>{en ? 'Analyst in Applied Informatics' : 'Analista en Informática Aplicada'}</h3><p>Universidad Nacional del Litoral · 2008–2017</p></div>
-        <div><p class="resume-section-label">05 / {en ? 'LANGUAGES' : 'IDIOMAS'}</p><h3>{en ? 'Spanish — Native' : 'Español — Nativo'}</h3><p>{en ? 'English — B2, advanced professional communication' : 'Inglés — B2, comunicación profesional avanzada'}</p></div>
+        <div><p class="resume-section-label"><span class="resume-label-index">04 / </span>{cv.labels.education}</p><h3>{cv.education.degree}</h3><p>{cv.education.detail}</p></div>
+        <div><p class="resume-section-label"><span class="resume-label-index">05 / </span>{cv.labels.languages}</p><h3>{cv.languages.primary}</h3><p>{cv.languages.secondary}</p></div>
       </section>
     </article>
   </main>
