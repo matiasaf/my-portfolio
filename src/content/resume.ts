@@ -29,7 +29,8 @@ export interface Resume {
   headline: string;
   location: string;
   contacts: ResumeContact[];
-  /** Titulos de seccion, en el orden en que se renderizan. */
+  /** Titulos de seccion, en Title Case: cada salida decide como capitalizarlos
+   *  (LaTeX usa \scshape, el HTML usa font-variant-caps). */
   labels: {
     profile: string;
     experience: string;
@@ -37,7 +38,13 @@ export interface Resume {
     education: string;
     languages: string;
   };
-  summary: { headline: string; body: string };
+  summary: {
+    /** Titular de display, solo para la web. El PDF no lo usa: en un CV
+     *  impreso una frase de posicionamiento lee como landing, no como CV. */
+    headline: string;
+    /** El resumen profesional propiamente dicho. Lo usan web y PDF. */
+    body: string;
+  };
   roles: ResumeRole[];
   skills: [string, string][];
   education: { degree: string; detail: string };
@@ -59,7 +66,7 @@ const en: Resume = {
   headline,
   location,
   contacts,
-  labels: { profile: 'PROFILE', experience: 'EXPERIENCE', stack: 'STACK', education: 'EDUCATION', languages: 'LANGUAGES' },
+  labels: { profile: 'Profile', experience: 'Experience', stack: 'Stack', education: 'Education', languages: 'Languages' },
   summary: {
     headline: 'I build reliable product experiences on top of complex systems.',
     body: 'Senior Full-Stack Engineer with more than ten years of experience across frontend architecture, backend, cloud, distributed systems, and applied AI. Hands-on technical leadership with a strong focus on React, Next.js, TypeScript, and products that integrate models and retrieval systems responsibly.',
@@ -86,7 +93,7 @@ const en: Resume = {
       'Automated ETL workflows with Node.js including validation, transformation, deduplication, alerts, and retries.',
     ]},
     { company: 'Genosha', period: 'Jun 2016 — Dec 2016', role: 'Software Engineer', context: 'Video-generation platform', bullets: [
-      'Built a viral-video workflow with AngularJS, Node.js, Docker, AWS ECS, Facebook Graph API, and FFmpeg; contributed to 720p encoding optimizations.',
+      'Viral-video workflow with AngularJS, Node.js, Docker, AWS ECS and FFmpeg; optimized 720p encoding.',
     ]},
   ],
   skills: [
@@ -105,7 +112,7 @@ const es: Resume = {
   headline,
   location,
   contacts,
-  labels: { profile: 'PERFIL', experience: 'EXPERIENCIA', stack: 'STACK', education: 'EDUCACIÓN', languages: 'IDIOMAS' },
+  labels: { profile: 'Perfil', experience: 'Experiencia', stack: 'Stack', education: 'Educación', languages: 'Idiomas' },
   summary: {
     headline: 'Construyo experiencias de producto confiables sobre sistemas complejos.',
     body: 'Senior Full-Stack Engineer con más de diez años de experiencia en arquitectura frontend, backend, cloud, sistemas distribuidos y AI aplicada. Liderazgo técnico hands-on, con foco en React, Next.js, TypeScript y productos que integran modelos y sistemas de recuperación de forma responsable.',
@@ -132,7 +139,7 @@ const es: Resume = {
       'Automaticé procesos ETL con Node.js: validación, transformación, deduplicación, alertas y reintentos.',
     ]},
     { company: 'Genosha', period: 'Jun 2016 — Dic 2016', role: 'Software Engineer', context: 'Plataforma de generación de video', bullets: [
-      'Trabajé en un flujo de video viral con AngularJS, Node.js, Docker, AWS ECS, Facebook Graph API y FFmpeg, incluyendo optimizaciones de encoding 720p.',
+      'Flujo de video viral con AngularJS, Node.js, Docker, AWS ECS y FFmpeg; encoding 720p optimizado.',
     ]},
   ],
   skills: [

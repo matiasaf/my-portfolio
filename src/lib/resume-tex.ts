@@ -63,44 +63,68 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 \addtolength{\oddsidemargin}{-0.5in}
 \addtolength{\evensidemargin}{-0.5in}
 \addtolength{\textwidth}{1in}
-\addtolength{\topmargin}{-0.6in}
-\addtolength{\textheight}{1.2in}
+\addtolength{\topmargin}{-0.7in}
+\addtolength{\textheight}{1.6in}
 
 \urlstyle{same}
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0in}
+\setlength{\parindent}{0pt}
+
+% El espaciado se controla SOLO desde aca. El template original lo ajustaba
+% con \vspace negativos calibrados contra el espaciado por defecto de las
+% listas; al compactar las listas esos negativos se acumulaban y las lineas
+% terminaban superpuestas.
+\setlist{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=0pt}
 
 % Titulo de seccion: versalitas y filete, el \scshape del template.
-\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+% Requiere que el titulo venga en Title Case: \scshape sobre texto ya en
+% mayusculas no produce versalitas, deja mayusculas normales.
+\titleformat{\section}{\vspace{-6pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
 
 % ── Comandos de entrada ──────────────────────────────────────────────────
-\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+
+% Linea de stack con sangria francesa, para que las continuaciones alineen
+% bajo el contenido y no se lean como items nuevos. Va como parrafo suelto y
+% no como \item: dentro de un itemize la lista pisa el \hangindent.
+\newcommand{\resumeSkill}[2]{\par\hangindent=1.7em\hangafter=1\noindent\textbf{#1}: #2\par}
 
 % #1 titulo  #2 fechas (derecha)  #3 subtitulo  #4 contexto (derecha)
 \newcommand{\resumeSubheading}[4]{%
-  \vspace{-2pt}\item
+  \item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
       \textbf{#1} & #2 \\
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-7pt}%
+      \textit{\small#3} & \textit{\small #4}
+    \end{tabular*}%
 }
 
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+% label explicito: al estar anidada, esta lista tomaria \labelitemii (una raya)
+% en vez de la vinieta del template.
+\newcommand{\resumeItemListStart}{\begin{itemize}[label=$\bullet$, leftmargin=1.2em, topsep=1pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}}
 `;
 
 function renderHeader(r: Resume): string {
-  const links = r.contacts
-    .map((c) => `\\href{${escapeUrl(c.href)}}{\\underline{${escapeTex(c.display)}}}`)
-    .join(' $|$ ');
+  const link = (c: Resume['contacts'][number]) =>
+    `\\href{${escapeUrl(c.href)}}{\\underline{${escapeTex(c.display)}}}`;
+
+  /* En una sola linea los cuatro datos desbordan y el salto automatico deja
+     un "|" colgando al final del renglon. Se parte a proposito: ubicacion y
+     mail arriba, perfiles web abajo. */
+  const mail = r.contacts.filter((c) => c.href.startsWith('mailto:'));
+  const web = r.contacts.filter((c) => !c.href.startsWith('mailto:'));
+  const line1 = [escapeTex(r.location), ...mail.map(link)].join(' $|$ ');
+  const line2 = web.map(link).join(' $|$ ');
 
   return String.raw`\begin{center}
-    {\Huge \scshape ${escapeTex(r.name)}} \\ \vspace{3pt}
+    {\Huge \scshape ${escapeTex(r.name)}} \\ \vspace{2pt}
     \small ${escapeTex(r.headline)} \\ \vspace{3pt}
-    \small ${escapeTex(r.location)} $|$ ${links}
+    \small ${line1} \\ \vspace{1pt}
+    \small ${line2}
 \end{center}`;
 }
 
@@ -118,7 +142,7 @@ export function renderResumeTex(r: Resume): string {
   const experience = r.roles.map(renderRole).join('\n\n');
 
   const skills = r.skills
-    .map(([group, items]) => `     \\textbf{${escapeTex(group)}}{: ${escapeTex(items)}} \\\\`)
+    .map(([group, items]) => `   \\resumeSkill{${escapeTex(group)}}{${escapeTex(items)}}`)
     .join('\n');
 
   // Educacion e idiomas van al final, no al principio como en el template original.
@@ -128,7 +152,6 @@ export function renderResumeTex(r: Resume): string {
 ${renderHeader(r)}
 
 \\section{${escapeTex(r.labels.profile)}}
-  \\small{\\textbf{${escapeTex(r.summary.headline)}}} \\\\
   \\small{${escapeTex(r.summary.body)}}
 
 \\section{${escapeTex(r.labels.experience)}}
@@ -139,26 +162,18 @@ ${experience}
 \\resumeSubHeadingListEnd
 
 \\section{${escapeTex(r.labels.stack)}}
- \\begin{itemize}[leftmargin=0.15in, label={}]
-   \\small{\\item{
+ {\\small\\leftskip=0.15in
 ${skills}
-   }}
- \\end{itemize}
+ \\par}
 
 \\section{${escapeTex(r.labels.education)}}
  \\begin{itemize}[leftmargin=0.15in, label={}]
-   \\small{\\item{
-     \\textbf{${escapeTex(r.education.degree)}} \\\\
-     \\textit{${escapeTex(r.education.detail)}}
-   }}
+   \\item[]\\small \\textbf{${escapeTex(r.education.degree)}} \\hfill \\textit{${escapeTex(r.education.detail)}}
  \\end{itemize}
 
 \\section{${escapeTex(r.labels.languages)}}
  \\begin{itemize}[leftmargin=0.15in, label={}]
-   \\small{\\item{
-     ${escapeTex(r.languages.primary)} \\\\
-     ${escapeTex(r.languages.secondary)}
-   }}
+   \\item[]\\small ${escapeTex(r.languages.primary)} \\hfill ${escapeTex(r.languages.secondary)}
  \\end{itemize}
 
 \\end{document}
