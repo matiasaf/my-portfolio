@@ -1,0 +1,55 @@
+---
+import { book, chapters } from '../../content/ddia';
+import SectionHeading from './SectionHeading.astro';
+
+const published = chapters.filter((c) => c.status === 'published');
+const featured = published[0];
+---
+
+<section class="sd-section section-shell" id="ddia">
+  <SectionHeading
+    number="08 / READING THE CLASSICS"
+    title="A chapter-by-chapter study of"
+    emphasis="Designing Data-Intensive Applications."
+    description="Kleppmann's book is the reference most system design conversations quietly borrow from. These are my own notes, written to be studied: one page per chapter, with the arguments redrawn as diagrams."
+  />
+
+  <div class="ddia-shelf">
+    <article class="ddia-spotlight">
+      <p class="ddia-spotlight-kicker">
+        <span>CHAPTER {featured.number}</span>
+        <span class="ddia-badge">Available</span>
+      </p>
+      <h3>{featured.title}</h3>
+      <p class="ddia-spotlight-hook">{featured.hook}</p>
+      <ul class="ddia-spotlight-topics">
+        <li>Reliability — faults, failures, and the three ways systems break</li>
+        <li>Scalability — load parameters, fan-out, and why the tail is the story</li>
+        <li>Maintainability — operability, simplicity, evolvability</li>
+      </ul>
+      <a class="ddia-spotlight-cta" href={featured.href}>
+        Read the analysis <span aria-hidden="true">→</span>
+      </a>
+    </article>
+
+    <div class="ddia-index">
+      <p class="ddia-index-head">
+        <span>{book.title}</span>
+        <span>{book.author} · {book.edition}</span>
+      </p>
+      <ol class="ddia-index-list">
+        {chapters.map((c) => (
+          <li class:list={['ddia-index-item', { 'is-live': c.status === 'published' }]}>
+            <span class="ddia-index-number">{c.number}</span>
+            {c.href ? <a href={c.href}>{c.title}</a> : <span class="ddia-index-title">{c.title}</span>}
+            <span class="ddia-index-part">{c.part}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="ddia-index-note">
+        Original study notes and diagrams. The book itself is by {book.author} ({book.publisher},
+        {' '}{book.edition}) — <a href={book.site} rel="noopener noreferrer" target="_blank">dataintensive.net</a>.
+      </p>
+    </div>
+  </div>
+</section>

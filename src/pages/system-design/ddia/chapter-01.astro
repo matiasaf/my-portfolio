@@ -1,0 +1,609 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import BookChapterHeader from '../../../components/system-design/BookChapterHeader.astro';
+import BookChapterFooter from '../../../components/system-design/BookChapterFooter.astro';
+import { book, chapterOneConcepts } from '../../../content/ddia';
+import '../../../styles/system-design.css';
+import '../../../styles/ddia.css';
+
+const faultClasses = [
+  {
+    tone: 'blue',
+    kind: 'Hardware faults',
+    nature: 'Random and mostly independent. One machine failing says little about the next.',
+    example: 'A disk dies, a memory module develops a bad cell, a rack loses power, someone unplugs the wrong cable.',
+    response: 'Redundancy first. But past a certain scale the answer shifts to software tolerance across machines, which buys something extra: you can patch and reboot nodes one at a time, with no planned downtime.',
+  },
+  {
+    tone: 'coral',
+    kind: 'Software faults',
+    nature: 'Systematic and correlated. The same latent bug lives on every node and fires on every node at once.',
+    example: 'The 2012 leap second that hung Linux kernels simultaneously worldwide; a runaway process exhausting a shared resource; a slow dependency cascading into its callers.',
+    response: 'No single countermeasure. Test the assumptions, isolate processes, let things crash and restart, and measure behaviour in production so a drifting system announces itself.',
+  },
+  {
+    tone: 'violet',
+    kind: 'Human faults',
+    nature: 'The most frequent source in practice. Configuration mistakes lead the statistics on outage causes.',
+    example: 'A config change rolled out everywhere at once, a migration run against the wrong environment, a manual step skipped at 3am.',
+    response: 'Reduce the opportunity for error rather than the humans: well-designed abstractions, realistic sandboxes, tests at every level, gradual rollouts, fast rollback, and telemetry that shows what actually happened.',
+  },
+];
+
+const pillars = [
+  {
+    tone: 'coral',
+    name: 'Operability',
+    line: 'Make routine work boring.',
+    body: 'Give the people running the system visibility into its behaviour, predictable and documented defaults, and good support for the tasks they perform every week. Most of a system’s life is operation, not construction.',
+  },
+  {
+    tone: 'lime',
+    name: 'Simplicity',
+    line: 'Remove the complexity that is not the problem’s fault.',
+    body: 'Some complexity is essential — it comes from the domain. The rest is accidental: it comes from the implementation. Accidental complexity is the kind you are allowed to delete, and abstraction is the tool for deleting it.',
+  },
+  {
+    tone: 'blue',
+    name: 'Evolvability',
+    line: 'Assume the requirements will move.',
+    body: 'They always do: new features, new regulations, new scale, new platforms. A system that is simple and well understood is one you can change cheaply — which is why evolvability is mostly simplicity, seen over time.',
+  },
+];
+
+const takeaways = [
+  ['Name the load parameter before arguing about architecture.', 'Requests per second, read/write ratio, fan-out, working set size. If the group cannot agree on which number is growing, the design debate has no ground truth.'],
+  ['Ask for percentiles, never averages.', 'A mean response time describes no real user. Ask for p50, p99 and p999, and ask where they were measured — server-side numbers hide queueing that the client feels.'],
+  ['Separate the fault from the failure.', 'For each dependency: what happens when it is slow, wrong, or gone? A design is fault-tolerant only for the faults you named out loud.'],
+  ['Treat operations as a first-class requirement.', 'Rollback path, deploy strategy, and the signals you will alert on belong in the design, not in a runbook written after the incident.'],
+];
+---
+
+<Layout
+  title="DDIA Chapter 1 — Reliable, Scalable, and Maintainable Applications"
+  description="An extensive study analysis of Chapter 1 of Designing Data-Intensive Applications by Martin Kleppmann: reliability, scalability and maintainability, with the arguments redrawn as diagrams."
+>
+  <BookChapterHeader number="01" />
+
+  <main id="top" class="sd-page ddia-page">
+    <!-- ─────────────────────────  HERO  ───────────────────────── -->
+    <section class="ddia-hero section-shell">
+      <p class="ddia-breadcrumb">
+        <a href="/system-design/">System Design</a>
+        <span aria-hidden="true">/</span>
+        <a href="/system-design/#ddia">DDIA</a>
+        <span aria-hidden="true">/</span>
+        <b>Chapter 01</b>
+      </p>
+      <h1>Reliable, scalable,<br /><strong>maintainable.</strong></h1>
+      <p class="ddia-lede">
+        The opening chapter does something quietly ambitious: before any database, index or queue is
+        discussed, it argues that almost every meaningful decision in a data system can be traced
+        back to three concerns. Everything in the remaining eleven chapters is a technique for
+        buying one of them, usually at the expense of another.
+      </p>
+      <div class="ddia-hero-meta">
+        <div><span>PART</span><b>I · Foundations</b></div>
+        <div><span>CONCERNS</span><b>3</b></div>
+        <div><span>CENTRAL CASE</span><b>Twitter fan-out</b></div>
+        <div><span>READING</span><b>~15 min</b></div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  01 · THE PREMISE  ───────────────────── -->
+    <section class="ddia-section section-shell">
+      <div class="ddia-section-head">
+        <p class="section-number">01 / THE PREMISE</p>
+        <div>
+          <h2>Data-intensive,<br /><em>not compute-intensive.</em></h2>
+          <p>
+            The systems most of us build are rarely limited by raw CPU. They are limited by the
+            amount of data, its complexity, and the speed at which it changes.
+          </p>
+        </div>
+      </div>
+
+      <div class="ddia-prose">
+        <p>
+          That shift has a consequence the chapter draws out carefully. No single tool covers the
+          whole job any more, so we assemble systems out of parts: a database for the source of
+          truth, a cache for the expensive reads, a search index for queries the database is bad at,
+          a queue for work that should not block the request, a stream or batch processor for
+          everything derived.
+        </p>
+        <p>
+          The moment you put an API in front of that assembly, something changes that is easy to
+          miss. <strong>You have not integrated tools — you have built a new data system</strong>, and
+          its guarantees are now yours. The cache does not promise it agrees with the database. The
+          search index does not promise it is current. Whatever consistency your users experience is
+          a property you designed, deliberately or not.
+        </p>
+      </div>
+
+      <figure class="ddia-figure">
+        <figcaption class="ddia-figure-cap">
+          <span>FIGURE A</span>
+          <b>The boundary you become responsible for</b>
+        </figcaption>
+        <div class="composite-map">
+          <div class="composite-client">CLIENT</div>
+          <div class="composite-arrow" aria-hidden="true">↓</div>
+          <div class="composite-boundary">
+            <p class="composite-boundary-label">YOUR SERVICE — one API, one implied set of guarantees</p>
+            <div class="composite-parts">
+              <span class="part-db">DATABASE<em>source of truth</em></span>
+              <span class="part-cache">CACHE<em>may be stale</em></span>
+              <span class="part-index">SEARCH INDEX<em>eventually current</em></span>
+              <span class="part-queue">QUEUE<em>async, retried</em></span>
+            </div>
+            <p class="composite-boundary-foot">
+              No component promises the others agree with it. That promise is the one you make.
+            </p>
+          </div>
+        </div>
+      </figure>
+
+      <div class="ddia-triad">
+        <article class="triad-card triad-coral">
+          <span>01</span>
+          <h3>Reliability</h3>
+          <p>It keeps working correctly when something goes wrong — hardware, software, or a person.</p>
+        </article>
+        <article class="triad-card triad-lime">
+          <span>02</span>
+          <h3>Scalability</h3>
+          <p>There are reasonable options for keeping performance acceptable as load grows.</p>
+        </article>
+        <article class="triad-card triad-blue">
+          <span>03</span>
+          <h3>Maintainability</h3>
+          <p>People can operate it, understand it, and change it without fear — for years.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  02 · RELIABILITY  ───────────────────── -->
+    <section class="ddia-section ddia-section-dark">
+      <div class="section-shell">
+        <div class="ddia-section-head light">
+          <p class="section-number">02 / RELIABILITY</p>
+          <div>
+            <h2>Continuing to work correctly<br /><em>when things go wrong.</em></h2>
+            <p>
+              The definition is doing real work. Not "nothing goes wrong" — things will go wrong.
+              The claim is that the system keeps performing its function anyway.
+            </p>
+          </div>
+        </div>
+
+        <div class="ddia-prose light">
+          <p>
+            The distinction the chapter insists on is between a <strong>fault</strong> and a
+            <strong>failure</strong>. A fault is one component deviating from its spec. A failure is
+            the system as a whole stopping. They are not the same event, and the entire discipline
+            lives in the gap between them: fault tolerance means arranging things so that a fault
+            never gets to become a failure.
+          </p>
+        </div>
+
+        <figure class="ddia-figure">
+          <figcaption class="ddia-figure-cap light">
+            <span>FIGURE B</span>
+            <b>The gap where fault tolerance lives</b>
+          </figcaption>
+          <div class="fault-diagram">
+            <div class="fault-track fault-track-bad">
+              <span class="fault-origin">FAULT<em>replica goes down</em></span>
+              <span class="fault-link" aria-hidden="true">→</span>
+              <span class="fault-step">requests pile up</span>
+              <span class="fault-link" aria-hidden="true">→</span>
+              <span class="fault-step">threads exhausted</span>
+              <span class="fault-link" aria-hidden="true">→</span>
+              <span class="fault-end fault-end-bad">FAILURE<em>service is down</em></span>
+            </div>
+            <div class="fault-track fault-track-good">
+              <span class="fault-origin">FAULT<em>replica goes down</em></span>
+              <span class="fault-link" aria-hidden="true">→</span>
+              <span class="fault-step">health check ejects it</span>
+              <span class="fault-link" aria-hidden="true">→</span>
+              <span class="fault-step">traffic reroutes</span>
+              <span class="fault-link" aria-hidden="true">→</span>
+              <span class="fault-end fault-end-good">CONTAINED<em>degraded, still serving</em></span>
+            </div>
+          </div>
+          <p class="ddia-figure-note">
+            Same fault, two systems. The difference is not luck — it is whether this specific fault
+            was named in advance and given a path that stops short of the user.
+          </p>
+        </figure>
+
+        <div class="ddia-prose light">
+          <p>
+            There is a counter-intuitive move here that is worth sitting with: the way to trust fault
+            tolerance is to <strong>deliberately increase the rate of faults</strong>. Killing
+            processes at random in production is not recklessness; it is the only way to keep the
+            tolerance path exercised, because an untested recovery path is not a recovery path.
+          </p>
+        </div>
+
+        <div class="fault-classes">
+          {faultClasses.map((f) => (
+            <article class={`fault-class fault-${f.tone}`}>
+              <h3>{f.kind}</h3>
+              <p class="fault-nature">{f.nature}</p>
+              <p class="fault-label">LOOKS LIKE</p>
+              <p class="fault-body">{f.example}</p>
+              <p class="fault-label">WHAT ACTUALLY HELPS</p>
+              <p class="fault-body">{f.response}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  03 · SCALABILITY  ───────────────────── -->
+    <section class="ddia-section section-shell">
+      <div class="ddia-section-head">
+        <p class="section-number">03 / SCALABILITY</p>
+        <div>
+          <h2>"Is it scalable?"<br /><em>is the wrong question.</em></h2>
+          <p>
+            Scalability is not a property a system has or lacks. The useful version is a conditional:
+            if load grows along this specific dimension, what are our options?
+          </p>
+        </div>
+      </div>
+
+      <div class="ddia-prose">
+        <p>
+          Which makes the first task descriptive rather than architectural. You have to say what
+          "load" means here, as a number: requests per second, ratio of reads to writes, number of
+          simultaneously active users, hit rate on the cache. The chapter calls these
+          <strong>load parameters</strong>, and choosing the wrong one is how teams end up optimising
+          something that was never the bottleneck.
+        </p>
+      </div>
+
+      <div class="load-params">
+        <p class="load-params-label">TYPICAL LOAD PARAMETERS</p>
+        <div>
+          <span>requests / second</span>
+          <span>read : write ratio</span>
+          <span>simultaneously active users</span>
+          <span>cache hit rate</span>
+          <span>fan-out per write</span>
+          <span>working set size</span>
+        </div>
+      </div>
+
+      <div class="ddia-prose">
+        <p>
+          The chapter then spends its best pages on a single example, and it is worth following
+          closely because the punchline is not the architecture — it is how the right load parameter
+          was found. The figures come from a November 2012 Twitter talk that Kleppmann cites.
+        </p>
+      </div>
+
+      <figure class="ddia-figure">
+        <figcaption class="ddia-figure-cap">
+          <span>FIGURE C</span>
+          <b>Two ways to build a home timeline</b>
+        </figcaption>
+
+        <div class="tw-numbers">
+          <div><b>4.6k</b><span>tweets posted / sec (average)</span></div>
+          <div><b>12k</b><span>tweets posted / sec (peak)</span></div>
+          <div class="tw-numbers-hi"><b>300k</b><span>timeline reads / sec</span></div>
+        </div>
+
+        <p class="tw-insight">
+          Writes are not the problem. <b>Reads outnumber them by roughly 65 to 1</b> — so the design
+          question is where to pay for the join between "who I follow" and "what they posted".
+        </p>
+
+        <div class="tw-approaches">
+          <article class="tw-approach">
+            <p class="tw-approach-tag">APPROACH 1 · JOIN ON READ</p>
+            <h3>Store every tweet in one collection</h3>
+            <div class="tw-flow">
+              <span class="tw-write">WRITE<em>insert 1 row</em></span>
+              <span class="tw-flow-arrow" aria-hidden="true">→</span>
+              <span class="tw-store">GLOBAL TWEETS</span>
+              <span class="tw-flow-arrow" aria-hidden="true">→</span>
+              <span class="tw-read tw-read-heavy">READ<em>join followees, sort, merge</em></span>
+            </div>
+            <p class="tw-verdict tw-verdict-bad">
+              Writes are trivial. But every one of the 300k reads per second pays for the join, and
+              that is the operation happening 65 times more often.
+            </p>
+          </article>
+
+          <article class="tw-approach">
+            <p class="tw-approach-tag">APPROACH 2 · FAN-OUT ON WRITE</p>
+            <h3>Precompute a mailbox per user</h3>
+            <div class="tw-flow">
+              <span class="tw-write tw-write-heavy">WRITE<em>insert into every follower</em></span>
+              <span class="tw-flow-arrow" aria-hidden="true">→</span>
+              <span class="tw-store">TIMELINE CACHES</span>
+              <span class="tw-flow-arrow" aria-hidden="true">→</span>
+              <span class="tw-read">READ<em>return a ready list</em></span>
+            </div>
+            <p class="tw-verdict tw-verdict-good">
+              Reads become nearly free. The cost moves to write time, where there is 65× more headroom
+              — which is exactly why Twitter moved in this direction.
+            </p>
+          </article>
+        </div>
+
+        <div class="tw-math">
+          <p class="tw-math-label">THE COST OF APPROACH 2</p>
+          <p class="tw-math-line">
+            <b>4.6k</b> tweets/sec <span aria-hidden="true">×</span> <b>~75</b> followers on average
+            <span aria-hidden="true">=</span> <b>345k</b> writes/sec into timeline caches
+          </p>
+          <p class="tw-math-note">
+            Still tractable. But this is an average, and the average is hiding the entire problem.
+          </p>
+        </div>
+
+        <div class="tw-skew">
+          <p class="tw-skew-label">THE DISTRIBUTION IS THE LOAD PARAMETER</p>
+          <div class="tw-skew-bars">
+            <div class="tw-skew-row">
+              <span class="tw-skew-name">median user</span>
+              <span class="tw-skew-bar" style="width: 2%"></span>
+              <span class="tw-skew-val">a handful of followers</span>
+            </div>
+            <div class="tw-skew-row">
+              <span class="tw-skew-name">average</span>
+              <span class="tw-skew-bar" style="width: 6%"></span>
+              <span class="tw-skew-val">~75 followers</span>
+            </div>
+            <div class="tw-skew-row tw-skew-row-hi">
+              <span class="tw-skew-name">celebrity</span>
+              <span class="tw-skew-bar tw-skew-bar-hi" style="width: 100%"></span>
+              <span class="tw-skew-val">30M+ followers — <b>30M writes for one tweet</b></span>
+            </div>
+          </div>
+          <p class="tw-skew-note">
+            A single celebrity tweet would have to land in tens of millions of mailboxes, and the
+            chapter's stated goal of delivering timelines within about five seconds makes that
+            impossible to do naively. So the answer is a hybrid: fan out on write for the vast
+            majority of users, and merge in the handful of high-follower accounts at read time.
+          </p>
+        </div>
+
+        <p class="ddia-figure-note">
+          <strong>The lesson is the method, not the architecture.</strong> The load parameter that
+          decided this design was not requests per second — it was the <em>distribution</em> of
+          followers per user. Averages chose the wrong architecture; the tail chose the right one.
+        </p>
+      </figure>
+
+      <div class="ddia-prose">
+        <h3 class="ddia-h3">Describing performance once load is defined</h3>
+        <p>
+          With load described, performance becomes answerable in two ways. Batch systems care about
+          <strong>throughput</strong> — records processed per unit of time. Online systems care about
+          <strong>response time</strong> — what the user waits through.
+        </p>
+      </div>
+
+      <aside class="ddia-callout">
+        <p class="ddia-callout-tag">A DISTINCTION WORTH KEEPING</p>
+        <p>
+          <strong>Response time is not latency.</strong> Response time is what the client observes:
+          service time plus network delays plus time spent queueing. Latency is the portion a request
+          spends waiting to be handled. Systems that look healthy server-side and terrible to users
+          are usually systems measuring latency and calling it response time.
+        </p>
+      </aside>
+
+      <div class="ddia-prose">
+        <p>
+          And response time is not a number — it is a distribution. The same endpoint, called
+          repeatedly with identical arguments, returns a spread of times: a context switch, a garbage
+          collection pause, a lost packet and retransmission, a cold page. Which is why the chapter is
+          blunt about averages: <strong>the mean describes no actual user</strong>. Percentiles do.
+        </p>
+      </div>
+
+      <figure class="ddia-figure">
+        <figcaption class="ddia-figure-cap">
+          <span>FIGURE D</span>
+          <b>What percentiles say that an average cannot</b>
+        </figcaption>
+        <div class="pct-chart">
+          <div class="pct-row">
+            <span class="pct-name">p50 <em>median</em></span>
+            <span class="pct-bar pct-bar-ok" style="width: 8%"></span>
+            <span class="pct-note">half of users are faster than this</span>
+          </div>
+          <div class="pct-row">
+            <span class="pct-name">p95</span>
+            <span class="pct-bar pct-bar-warn" style="width: 26%"></span>
+            <span class="pct-note">1 request in 20 is slower</span>
+          </div>
+          <div class="pct-row">
+            <span class="pct-name">p99</span>
+            <span class="pct-bar pct-bar-hot" style="width: 55%"></span>
+            <span class="pct-note">1 in 100 — often your heaviest accounts</span>
+          </div>
+          <div class="pct-row">
+            <span class="pct-name">p999</span>
+            <span class="pct-bar pct-bar-crit" style="width: 100%"></span>
+            <span class="pct-note">1 in 1,000 — the tail Amazon chose to watch</span>
+          </div>
+          <p class="pct-axis">
+            <span>fast</span>
+            <span>RESPONSE TIME — shape is illustrative, not measured</span>
+            <span>slow</span>
+          </p>
+        </div>
+        <p class="ddia-figure-note">
+          The argument for caring about the tail is commercial, and the chapter cites it directly:
+          the slowest requests often belong to the customers with the most data — that is, the most
+          valuable ones. Amazon observed that <b>100 ms of extra response time cost about 1% in
+          sales</b>, and others reported a <b>1-second slowdown cutting a customer satisfaction
+          metric by 16%</b>. Amazon still drew a line at p999: optimising the 99.99th percentile was
+          judged too expensive for the return.
+        </p>
+      </figure>
+
+      <div class="ddia-prose">
+        <h3 class="ddia-h3">Why tails get worse in distributed systems</h3>
+        <p>
+          Two mechanisms make this sharper than it first looks. The first is
+          <strong>head-of-line blocking</strong>: a server handles a limited number of requests in
+          parallel, so a few slow ones delay everything queued behind them — requests that are fast
+          to process still arrive late. This is why the measurement has to be taken on the client
+          side, where the queueing is visible.
+        </p>
+        <p>
+          The second is <strong>tail latency amplification</strong>, and it is the one that surprises
+          people. If a single user request fans out into several backend calls, the user waits for the
+          slowest of them. Rare slowness stops being rare as fan-out grows.
+        </p>
+      </div>
+
+      <figure class="ddia-figure">
+        <figcaption class="ddia-figure-cap">
+          <span>FIGURE E</span>
+          <b>Tail latency amplification</b>
+        </figcaption>
+        <div class="tail-diagram">
+          <span class="tail-origin">1 USER REQUEST</span>
+          <div class="tail-fan" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="tail-backends">
+            <span>fast</span><span>fast</span><span>fast</span>
+            <span class="tail-slow">SLOW</span><span>fast</span>
+          </div>
+          <div class="tail-result">
+            The user waits for <b>the slowest one</b>. With enough parallel calls, hitting the tail
+            stops being unlikely — it becomes the normal case.
+          </div>
+        </div>
+      </figure>
+
+      <div class="ddia-prose">
+        <h3 class="ddia-h3">Coping with load</h3>
+        <p>
+          Only now, with load and performance described, does the chapter allow the architectural
+          question — and it deflates it on purpose. Scaling up (a bigger machine) and scaling out
+          (more machines) are not a religious choice; real systems use both, because a handful of
+          strong machines is often simpler and cheaper than a large fleet of small ones.
+        </p>
+        <p>
+          Distributing <em>stateless</em> services is largely mechanical. Distributing
+          <em>stateful</em> ones is where the difficulty concentrates — which is the reason the next
+          eleven chapters exist at all. And the closing warning is the one worth memorising:
+          <strong>there is no generic scaling architecture</strong>. A system designed for a hundred
+          thousand small events per second looks nothing like one designed for a handful of enormous
+          ones, even at identical throughput. The architecture follows from the load parameters, and
+          those are specific to your problem.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  04 · MAINTAINABILITY  ───────────────────── -->
+    <section class="ddia-section section-shell">
+      <div class="ddia-section-head">
+        <p class="section-number">04 / MAINTAINABILITY</p>
+        <div>
+          <h2>The majority of the cost<br /><em>comes after it ships.</em></h2>
+          <p>
+            Most of the money a system consumes is spent on maintenance: fixing it, adapting it to
+            new requirements, operating it, and paying down the debt of decisions made quickly.
+          </p>
+        </div>
+      </div>
+
+      <div class="pillars">
+        {pillars.map((p) => (
+          <article class={`pillar pillar-${p.tone}`}>
+            <h3>{p.name}</h3>
+            <p class="pillar-line">{p.line}</p>
+            <p class="pillar-body">{p.body}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="ddia-prose">
+        <p>
+          The distinction inside simplicity is the one that earns its keep in code review.
+          <strong>Essential complexity</strong> comes from the problem: tax rules really are that
+          complicated. <strong>Accidental complexity</strong> comes from how we built it — tangled
+          dependencies, inconsistent naming, special cases papering over a leaky abstraction. Only
+          the second kind is negotiable, and separating them turns "this is too complex" from an
+          opinion into a claim you can check.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  CONCEPTS  ───────────────────── -->
+    <section class="ddia-section ddia-section-tint">
+      <div class="section-shell">
+        <div class="ddia-section-head">
+          <p class="section-number">05 / VOCABULARY</p>
+          <div>
+            <h2>Four terms the rest<br /><em>of the book assumes.</em></h2>
+            <p>Chapter 1 is largely there to install these. They reappear constantly from Chapter 5 onward.</p>
+          </div>
+        </div>
+        <dl class="concept-list">
+          {chapterOneConcepts.map(([term, definition]) => (
+            <div class="concept">
+              <dt>{term}</dt>
+              <dd>{definition}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  TAKEAWAYS  ───────────────────── -->
+    <section class="ddia-section section-shell">
+      <div class="ddia-section-head">
+        <p class="section-number">06 / IN PRACTICE</p>
+        <div>
+          <h2>What to carry into<br /><em>the next design review.</em></h2>
+          <p>The chapter is conceptual, but it converts into four questions that change conversations.</p>
+        </div>
+      </div>
+      <ol class="takeaways">
+        {takeaways.map(([title, body], i) => (
+          <li>
+            <span>{String(i + 1).padStart(2, '0')}</span>
+            <div><h3>{title}</h3><p>{body}</p></div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ─────────────────────  ATTRIBUTION  ───────────────────── -->
+    <section class="ddia-section section-shell">
+      <aside class="ddia-source">
+        <p class="ddia-source-tag">SOURCE</p>
+        <div>
+          <p>
+            These are original study notes and diagrams on Chapter 1 of
+            <strong><em>{book.title}</em></strong> by {book.author} ({book.publisher},
+            {' '}{book.edition}). The analysis, wording and figures here are mine; the ideas,
+            the framing and the cited data are the author's.
+          </p>
+          <p class="ddia-source-cta">
+            This summary is not a substitute for the chapter — it is a map for studying it.
+            <a href={book.site} rel="noopener noreferrer" target="_blank">dataintensive.net <span aria-hidden="true">↗</span></a>
+          </p>
+        </div>
+      </aside>
+
+      <nav class="ddia-pager" aria-label="Chapter navigation">
+        <a class="ddia-pager-back" href="/system-design/#ddia"><span aria-hidden="true">←</span> All chapters</a>
+        <p class="ddia-pager-next">Chapter 02 — Data Models and Query Languages <b>in progress</b></p>
+      </nav>
+    </section>
+  </main>
+
+  <BookChapterFooter number="01" />
+</Layout>

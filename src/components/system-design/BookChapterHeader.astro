@@ -1,0 +1,11 @@
+---
+interface Props { number: string }
+const { number } = Astro.props;
+---
+<header class="sd-header">
+  <a class="brand" href="/system-design/#ddia" aria-label="Back to the System Design module">
+    <span class="brand-monogram" aria-hidden="true">MF</span>
+    <span>Matías Fernández <em>/ System Design</em></span>
+  </a>
+  <span class="sd-header-label">DDIA · CHAPTER {number}</span>
+</header>
