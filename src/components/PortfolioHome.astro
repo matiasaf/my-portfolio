@@ -122,7 +122,8 @@ const t = en ? {
   stackIndex: '05 / TOOLBOX', stackTitle: 'Technologies I use to ship.',
   notesIndex: '06 / FEATURED NOTES', notesTitle: 'Start reading here.', edition: 'EDITION 001',
   writingIndex: '07 / WRITING', writingTitle: 'Ideas worth explaining.', writingCopy: 'Topics where product, architecture, and day-to-day engineering meet.',
-  projectsIndex: '08 / SIDE PROJECTS', soon: 'Coming soon:', alive: 'things that live.', projectCopy: 'This space will collect products, tools, and experiments of my own—from the initial problem to the decisions and the outcome.',
+  projectsIndex: '08 / SIDE PROJECTS', soon: 'Built in public.', alive: 'Evidence first.', projectCopy: 'A document knowledge platform built milestone by milestone, with honest states, verifiable progress, and retrieval quality treated as a product surface.',
+  projectStatus: 'MILESTONE 01 · COMPLETE', projectTitle: 'AI Knowledge Platform', projectStage: 'Validated ingestion', projectProgress: '1 / 5 milestones', projectDetail: 'Read the build log', projectRepo: 'View repository',
   contactKicker: 'Based in Argentina · working globally', contactA: 'Let’s build something', contactB: 'worth maintaining.', contactCopy: 'I’m open to conversations about senior and technical-lead roles, applied AI products, and ambitious software projects.', back: 'Back to top', footer: 'Built while learning.', emailLabel: 'Send an email',
 } : {
   title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
@@ -143,7 +144,8 @@ const t = en ? {
   stackIndex: '05 / HERRAMIENTAS', stackTitle: 'Tecnologías con las que construyo.',
   notesIndex: '06 / NOTAS DESTACADAS', notesTitle: 'Para empezar a leer.', edition: 'EDICIÓN 001',
   writingIndex: '07 / ESCRITURA', writingTitle: 'Ideas que vale la pena explicar.', writingCopy: 'Temas donde se cruzan producto, arquitectura y el trabajo cotidiano de ingeniería.',
-  projectsIndex: '08 / SIDE PROJECTS', soon: 'Próximamente:', alive: 'cosas que viven.', projectCopy: 'Este espacio va a reunir productos, herramientas y experimentos propios: del problema inicial a las decisiones y el resultado.',
+  projectsIndex: '08 / SIDE PROJECTS', soon: 'Construido en público.', alive: 'Evidencia primero.', projectCopy: 'Una plataforma de conocimiento documental construida milestone a milestone, con estados honestos, progreso verificable y la calidad de recuperación como parte del producto.',
+  projectStatus: 'MILESTONE 01 · COMPLETO', projectTitle: 'AI Knowledge Platform', projectStage: 'Ingesta validada', projectProgress: '1 / 5 milestones', projectDetail: 'Ver el paso a paso', projectRepo: 'Abrir repositorio',
   contactKicker: 'Desde Argentina · trabajando globalmente', contactA: 'Construyamos algo', contactB: 'que valga la pena mantener.', contactCopy: 'Estoy abierto a conversar sobre roles senior y de liderazgo técnico, productos de AI aplicada y proyectos de software ambiciosos.', back: 'Volver arriba', footer: 'Construido mientras aprendo.', emailLabel: 'Enviar un email',
 };
 ---
@@ -389,11 +391,22 @@ const t = en ? {
           <p class="section-index">{t.projectsIndex}</p>
           <h2>{t.soon}<br /><em>{t.alive}</em></h2>
         </div>
-        <div class="project-placeholder">
-          <span class="project-status"><i></i> WORK IN PROGRESS</span>
-          <p>{t.projectCopy}</p>
-          <div class="project-slots" aria-hidden="true"><b>01</b><b>02</b><b>03</b></div>
-        </div>
+        <article class="project-card">
+          <div class="project-card-top">
+            <span class="project-status"><i></i> {t.projectStatus}</span>
+            <span class="project-progress">{t.projectProgress}</span>
+          </div>
+          <p class="project-label">APPLIED AI · RAG · PRODUCT ENGINEERING</p>
+          <h3>{t.projectTitle}</h3>
+          <p class="project-copy">{t.projectCopy}</p>
+          <div class="project-pipeline" aria-label={en ? 'Project roadmap' : 'Roadmap del proyecto'}>
+            <strong>{t.projectStage}</strong><span>→</span><span>Retrieval</span><span>→</span><span>{en ? 'Grounded answers' : 'Respuestas con citas'}</span>
+          </div>
+          <div class="project-links">
+            <a href={en ? '/en/projects/ai-knowledge-platform/' : '/projects/ai-knowledge-platform/'}>{t.projectDetail} <span>→</span></a>
+            <a href="https://github.com/matiasaf/ai-knowledge-platform" target="_blank" rel="noreferrer">{t.projectRepo} <span>↗</span></a>
+          </div>
+        </article>
       </div>
     </section>
 
