@@ -5,6 +5,7 @@ import '../styles/portfolio.css';
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
+const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
 const alternatePath = en ? '/' : '/en/';
 const resumePath = en ? '/en/cv/' : '/cv/';
 const socialLinks = {
@@ -178,6 +179,7 @@ const t = en ? {
   description={t.description}
   lang={lang}
   alternateHref={alternatePath}
+  mainId="inicio"
 >
   <header class="portfolio-header" data-portfolio-header>
     <a class="portfolio-brand" href="#inicio" aria-label="Matías Fernández, inicio">
@@ -193,46 +195,45 @@ const t = en ? {
     </nav>
 
     <div class="portfolio-header-actions">
-      <div class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
-        <a href="/" lang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-        <span>/</span>
-        <a href="/en/" lang="en" aria-current={en ? 'page' : undefined}>EN</a>
-      </div>
+      <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
+        <a href="/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <a href="/en/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+      </nav>
       <a class="header-note" href={resumePath}>{t.talk} <span aria-hidden="true">↗</span></a>
     </div>
   </header>
 
-  <main id="inicio" class="portfolio-main">
+  <main id="inicio" tabindex="-1" class="portfolio-main">
     <section class="portfolio-hero portfolio-shell">
       <div class="hero-intro">
         <p class="portfolio-kicker"><span></span> {t.kicker}</p>
         {en ? <h1>Solid products.<br /><em>Applied AI.</em><br />Systems that last.</h1> : <h1>Producto sólido.<br /><em>AI aplicada.</em><br />Sistemas que duran.</h1>}
         <p class="hero-summary">{t.summary}</p>
         <div class="portfolio-actions">
-          <a class="primary-action" href="#experience">{t.explore} <span>↓</span></a>
-          <a class="quiet-action" href="#archive">{t.knowMe} <span>→</span></a>
+          <a class="primary-action" href="#experience">{t.explore} <span aria-hidden="true">↓</span></a>
+          <a class="quiet-action" href="#archive">{t.knowMe} <span aria-hidden="true">→</span></a>
         </div>
-        <div class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
-          <div><strong>10+</strong><span>{en ? 'years shipping software' : 'años entregando software'}</span></div>
-          <div><strong>1K+</strong><span>{en ? 'documents through AI pipelines' : 'documentos en pipelines de AI'}</span></div>
-          <div><strong>35%</strong><span>{en ? 'faster BI dashboard' : 'dashboard BI más rápido'}</span></div>
-        </div>
+        <ul class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
+          <li><strong>10+</strong><span>{en ? 'years shipping software' : 'años entregando software'}</span></li>
+          <li><strong>1K+</strong><span>{en ? 'documents through AI pipelines' : 'documentos en pipelines de AI'}</span></li>
+          <li><strong>35%</strong><span>{en ? 'faster BI dashboard' : 'dashboard BI más rápido'}</span></li>
+        </ul>
       </div>
 
-      <div class="hero-board" aria-label={t.boardLabel}>
+      <div class="hero-board" role="group" aria-label={t.boardLabel}>
         <div class="board-grid" aria-hidden="true"></div>
         <div class="board-label board-label-top">{t.now}</div>
         <div class="topic-orbit orbit-main">
           <div class="topic-core"><span>SHIP</span><strong>Product</strong></div>
         </div>
         <a class="topic-card topic-data" href="#expertise">
-          <span>01</span><strong>Applied AI</strong><small>RAG · Products ↗</small>
+          <span aria-hidden="true">01</span><strong>Applied AI</strong><small>RAG · Products ↗</small>
         </a>
         <a class="topic-card topic-systems" href="/system-design/">
-          <span>02</span><strong>Systems</strong><small>{t.decisions}</small>
+          <span aria-hidden="true">02</span><strong>Systems</strong><small>{t.decisions}</small>
         </a>
         <a class="topic-card topic-interface" href="#about">
-          <span>03</span><strong>{en ? 'Product UI' : 'Producto UI'}</strong><small>React · Next.js ↗</small>
+          <span aria-hidden="true">03</span><strong>{en ? 'Product UI' : 'Producto UI'}</strong><small>React · Next.js ↗</small>
         </a>
         <div class="board-note">{t.boardNote}</div>
       </div>
@@ -240,7 +241,7 @@ const t = en ? {
 
     <section class="now-strip" aria-label={t.currentLabel}>
       <span>{t.exploring}</span>
-      <p>React + Next.js</p><i>✦</i><p>Applied AI</p><i>✦</i><p>Python + Cloud</p>
+      <p>React + Next.js</p><i aria-hidden="true">✦</i><p>Applied AI</p><i aria-hidden="true">✦</i><p>Python + Cloud</p>
     </section>
 
     <section class="about-section portfolio-shell" id="about">
@@ -301,7 +302,7 @@ const t = en ? {
         <aside class="principle-detail">
           <p>{t.principleB}</p>
           <div class="principle-flow" aria-label={en ? 'From model to trustworthy product' : 'Del modelo a un producto confiable'}>
-            <span>{en ? 'MODEL' : 'MODELO'}</span><i>→</i><span>{en ? 'PRODUCT' : 'PRODUCTO'}</span><i>→</i><strong>{en ? 'TRUST' : 'CONFIANZA'}</strong>
+            <span>{en ? 'MODEL' : 'MODELO'}</span><i aria-hidden="true">→</i><span>{en ? 'PRODUCT' : 'PRODUCTO'}</span><i aria-hidden="true">→</i><strong>{en ? 'TRUST' : 'CONFIANZA'}</strong>
           </div>
         </aside>
       </div>
@@ -315,7 +316,7 @@ const t = en ? {
         </div>
         <div>
           <p>{t.experienceCopy}</p>
-          <a href={resumePath}>{t.fullResume} <span>↗</span></a>
+          <a href={resumePath}>{t.fullResume} <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <div class="experience-list">
@@ -379,7 +380,7 @@ const t = en ? {
                   <><span>{item}</span>{index < module.diagram.length - 1 && <i>→</i>}</>
                 ))}
               </div>
-              <div class="module-link">{module.cta} <span>↗</span></div>
+              <div class="module-link">{module.cta} <span aria-hidden="true">↗</span></div>
             </a>
           ))}
         </div>
@@ -414,7 +415,7 @@ const t = en ? {
           <a href={note.href}>
             <span class="note-number">0{index + 1}</span>
             <div><small>{note.tag} · {note.date}</small><h3>{note.title}</h3></div>
-            <span class="note-arrow">↗</span>
+            <span class="note-arrow" aria-hidden="true">↗</span>
           </a>
         ))}
       </div>
@@ -448,11 +449,11 @@ const t = en ? {
           <h3>{t.projectTitle}</h3>
           <p class="project-copy">{t.projectCopy}</p>
           <div class="project-pipeline" aria-label={en ? 'Project roadmap' : 'Roadmap del proyecto'}>
-            <strong>{t.projectStage}</strong><span>→</span><span>Retrieval</span><span>→</span><span>{en ? 'Grounded answers' : 'Respuestas con citas'}</span>
+            <strong>{t.projectStage}</strong><span aria-hidden="true">→</span><span>Retrieval</span><span aria-hidden="true">→</span><span>{en ? 'Grounded answers' : 'Respuestas con citas'}</span>
           </div>
           <div class="project-links">
-            <a href={en ? '/en/projects/ai-knowledge-platform/' : '/projects/ai-knowledge-platform/'}>{t.projectDetail} <span>→</span></a>
-            <a href="https://github.com/matiasaf/ai-knowledge-platform" target="_blank" rel="noreferrer">{t.projectRepo} <span>↗</span></a>
+            <a href={en ? '/en/projects/ai-knowledge-platform/' : '/projects/ai-knowledge-platform/'}>{t.projectDetail} <span aria-hidden="true">→</span></a>
+            <a href="https://github.com/matiasaf/ai-knowledge-platform" target="_blank" rel="noreferrer">{t.projectRepo} <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
           </div>
         </article>
       </div>
@@ -469,10 +470,10 @@ const t = en ? {
           <div><small>{t.openEnvLabel}</small><p>{t.openEnv}</p></div>
         </div>
         <div class="contact-links">
-          <a href={socialLinks.email}>{t.emailLabel} <span>↗</span></a>
-          <a href={socialLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
-          <a href={socialLinks.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
-          <a href={resumePath}>CV <span>↗</span></a>
+          <a href={socialLinks.email}>{t.emailLabel} <span aria-hidden="true">↗</span></a>
+          <a href={socialLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
+          <a href={socialLinks.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
+          <a href={resumePath}>CV <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>

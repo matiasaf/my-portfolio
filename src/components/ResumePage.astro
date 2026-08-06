@@ -6,6 +6,7 @@ import '../styles/resume.css';
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
+const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
 const homePath = en ? '/en/' : '/';
 const alternatePath = en ? '/cv/' : '/en/cv/';
 
@@ -27,20 +28,20 @@ const pdfPath = en ? '/downloads/matias-fernandez-resume.pdf' : '/downloads/mati
   lang={lang}
   alternateHref={alternatePath}
 >
-  <main class="resume-page">
+  <main id="main-content" tabindex="-1" class="resume-page">
     <header class="resume-toolbar">
       <a href={homePath}>← {en ? 'Portfolio' : 'Portfolio'}</a>
       <div class="resume-toolbar-actions">
-        <div class="resume-language"><a href="/cv/" aria-current={!en ? 'page' : undefined}>ES</a><span>/</span><a href="/en/cv/" aria-current={en ? 'page' : undefined}>EN</a></div>
-        <a class="resume-download" href={pdfPath} download>{en ? 'Download PDF' : 'Descargar PDF'} <span>↓</span></a>
-        <button type="button" onclick="window.print()">{en ? 'Print' : 'Imprimir'} <span>↗</span></button>
+        <nav class="resume-language" aria-label={en ? 'Choose language' : 'Elegir idioma'}><a href="/cv/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a><a href="/en/cv/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a></nav>
+        <a class="resume-download" href={pdfPath} download>{en ? 'Download PDF' : 'Descargar PDF'} <span aria-hidden="true">↓</span></a>
+        <button type="button" onclick="window.print()">{en ? 'Print' : 'Imprimir'} <span aria-hidden="true">↗</span></button>
       </div>
     </header>
 
     <article class="resume-sheet">
       <header class="resume-identity">
         <div><h1>{firstName} <br />{lastName.join(' ')}</h1><p>{cv.headline}</p></div>
-        <div class="resume-contact"><span>{cv.location}</span>{cv.contacts.map((item) => <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noreferrer' : undefined}>{item.label}<span class="resume-ext"> ↗</span></a>)}</div>
+        <div class="resume-contact"><span>{cv.location}</span>{cv.contacts.map((item) => <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noreferrer' : undefined}>{item.label}<span class="resume-ext" aria-hidden="true"> ↗</span>{item.href.startsWith('http') && <span class="visually-hidden">{newTab}</span>}</a>)}</div>
       </header>
 
       <section class="resume-summary">

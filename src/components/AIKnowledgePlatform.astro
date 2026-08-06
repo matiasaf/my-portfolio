@@ -60,14 +60,14 @@ const t = en ? {
 };
 ---
 
-<Layout title={t.title} description={t.description} lang={lang} alternateHref={alternate}>
+<Layout mainId="top" title={t.title} description={t.description} lang={lang} alternateHref={alternate}>
   <header class="akp-header">
     <a class="akp-brand" href={home} aria-label={en ? 'Back to portfolio' : 'Volver al portfolio'}><span class="brand-monogram">MF</span><span>Matías Fernández <em>/ AI Knowledge Platform</em></span></a>
     <span class="akp-module">{t.module}</span>
     <div class="akp-header-actions"><a href={alternate}>{en ? 'ES' : 'EN'}</a><a href={home}>{t.back} ↗</a></div>
   </header>
 
-  <main id="top" class="akp-page">
+  <main id="top" tabindex="-1" class="akp-page">
     <section class="akp-hero section-shell">
       <div>
         <p class="akp-eyebrow"><span></span>{t.eyebrow}</p>

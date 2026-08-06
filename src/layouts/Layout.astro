@@ -6,9 +6,12 @@ interface Props {
   description: string;
   lang?: string;
   alternateHref?: string;
+  /** id del <main> de la pagina: es el destino del skip link. */
+  mainId?: string;
 }
 
-const { title, description, lang = 'en', alternateHref } = Astro.props;
+const { title, description, lang = 'en', alternateHref, mainId = 'main-content' } = Astro.props;
+const skipLabel = lang === 'es' ? 'Saltar al contenido' : 'Skip to content';
 const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin);
 const alternateUrl = alternateHref ? new URL(alternateHref, Astro.url.origin) : undefined;
 ---
@@ -45,6 +48,7 @@ const alternateUrl = alternateHref ? new URL(alternateHref, Astro.url.origin) : 
     <title>{title}</title>
   </head>
   <body>
+    <a class="skip-link" href={`#${mainId}`}>{skipLabel}</a>
     <slot />
   </body>
 </html>
