@@ -52,6 +52,7 @@ export interface Resume {
 }
 
 const contacts: ResumeContact[] = [
+  { label: 'builtbymatias.dev', display: 'builtbymatias.dev', href: 'https://builtbymatias.dev' },
   { label: 'LinkedIn', display: 'linkedin.com/in/fernandez-amatias', href: 'https://linkedin.com/in/fernandez-amatias' },
   { label: 'GitHub', display: 'github.com/matiasaf', href: 'https://github.com/matiasaf' },
   { label: 'fernandez.amatias@gmail.com', display: 'fernandez.amatias@gmail.com', href: 'mailto:fernandez.amatias@gmail.com' },
