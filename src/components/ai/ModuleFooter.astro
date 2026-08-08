@@ -1,0 +1,13 @@
+---
+interface Props { label?: string; }
+const { label = 'MODULE 01 · AI & HARNESSES' } = Astro.props;
+---
+
+<footer>
+  <a class="brand footer-brand" href="/" aria-label="Back to the portfolio">
+    <span class="brand-monogram" aria-hidden="true">MF</span>
+    <span>Matías Fernández</span>
+  </a>
+  <p>{label}</p>
+  <a href="#top">BACK TO TOP ↑</a>
+</footer>

@@ -1,0 +1,775 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ModuleHeader from '../../components/ai/ModuleHeader.astro';
+import ModuleFooter from '../../components/ai/ModuleFooter.astro';
+import { foundationConcepts } from '../../content/ai';
+import '../../styles/ai.css';
+
+/* Presupuesto de parametros de GPT-3, tal como lo desglosa el video de
+   3Blue1Brown. `bar` es el ancho relativo al bloque mas grande (las dos
+   proyecciones del MLP), no un porcentaje del total. */
+const paramBudget = [
+  { name: 'Embedding', shape: 'd_model × n_vocab', math: '12,288 × 50,257', count: '617,558,016', share: '0.4%', bar: 1, tone: 'is-small' },
+  { name: 'Key', shape: 'd_head × d_model × heads × layers', math: '128 × 12,288 × 96 × 96', count: '14,495,514,624', share: '8.3%', bar: 25, tone: '' },
+  { name: 'Query', shape: 'd_head × d_model × heads × layers', math: '128 × 12,288 × 96 × 96', count: '14,495,514,624', share: '8.3%', bar: 25, tone: '' },
+  { name: 'Value', shape: 'd_head × d_model × heads × layers', math: '128 × 12,288 × 96 × 96', count: '14,495,514,624', share: '8.3%', bar: 25, tone: '' },
+  { name: 'Output', shape: 'd_head × d_model × heads × layers', math: '128 × 12,288 × 96 × 96', count: '14,495,514,624', share: '8.3%', bar: 25, tone: '' },
+  { name: 'Up-projection', shape: 'n_neurons × d_model × layers', math: '49,152 × 12,288 × 96', count: '57,982,058,496', share: '33.1%', bar: 100, tone: 'is-big' },
+  { name: 'Down-projection', shape: 'd_model × n_neurons × layers', math: '12,288 × 49,152 × 96', count: '57,982,058,496', share: '33.1%', bar: 100, tone: 'is-big' },
+  { name: 'Unembedding', shape: 'n_vocab × d_model', math: '50,257 × 12,288', count: '617,558,016', share: '0.4%', bar: 1, tone: 'is-small' },
+];
+
+/* Softmax sobre cuatro logits inventados, calculado a mano para cada
+   temperatura. Sirve para que la figura muestre numeros que cierran. */
+const logits = [
+  { token: '"mat"', value: 4.0, bar: 100 },
+  { token: '"floor"', value: 3.2, bar: 80 },
+  { token: '"roof"', value: 2.0, bar: 50 },
+  { token: '"moon"', value: 0.5, bar: 12 },
+];
+
+const temperatures = [
+  { t: 'T → 0', note: 'Deterministic. Always the top token.', probs: [100, 0, 0, 0] },
+  { t: 'T = 0.7', note: 'Sharper than the raw distribution.', probs: [72.3, 23.1, 4.2, 0.5] },
+  { t: 'T = 1', note: 'The distribution exactly as scored.', probs: [61.9, 27.8, 8.4, 1.9] },
+  { t: 'T = 1.6', note: 'Flatter. Unlikely tokens get a real chance.', probs: [49.9, 30.2, 14.3, 5.6] },
+];
+
+const attentionWeights = [
+  { word: '"machine"', weight: 41, hi: true },
+  { word: '"learning"', weight: 38, hi: true },
+  { word: '"model" (self)', weight: 16, hi: false },
+  { word: '"a"', weight: 5, hi: false },
+];
+
+const consequences = [
+  [
+    'The model does not look anything up.',
+    'There is no table of facts being consulted. Whatever the network "knows" is baked into fixed weight matrices, and the answer is produced by multiplying your text through them. This is why a model can be fluent and confidently wrong at once: fluency and factuality come out of the same operation, and nothing in that operation distinguishes them.',
+  ],
+  [
+    'Tokenization explains the stupid failures.',
+    'A model that reasons well about distributed systems can fail to count the letters in a word, because it never saw letters — it saw token IDs. The same mechanism explains why arithmetic on long numbers is shaky and why the exact same prompt in another language can behave differently: it is a different sequence of tokens entirely.',
+  ],
+  [
+    'Context is a hard, quadratic budget.',
+    'Attention compares every position against every other, so doubling the context roughly quadruples that work. Long context windows are not free storage — they are the most expensive thing in the forward pass, which is why deciding what to put in the window is a real engineering discipline rather than a formatting choice.',
+  ],
+  [
+    'Only the last position writes the answer.',
+    'The prediction is read off the final vector in the sequence, after it has absorbed everything before it. That is the mechanical reason instructions placed after the material often land differently from the same instructions placed before it: the position where the answer is computed sees a different accumulation.',
+  ],
+  [
+    'Temperature is a knob on the same distribution.',
+    'The model does not become more creative at a higher temperature. It produces exactly the same scores and then flattens them before sampling, so lower-ranked tokens get picked more often. Anything you want to be reproducible should be run near zero, and anything you want varied should be varied deliberately, not hoped for.',
+  ],
+  [
+    'The stack is the reason scaling worked.',
+    'Attention and the MLP alternate for dozens of layers, and every one of them is the same two operations with different weights. That uniformity is what made it worth pouring capital into: there is no clever architecture to redesign per problem, only a bigger version of the same block, which is precisely the property the last few years have been exploiting.',
+  ],
+];
+---
+
+<Layout
+  mainId="top"
+  title="Inside a transformer — a visual walk from a token to the next token"
+  description="A visual, didactic explanation of the transformer architecture behind LLMs: tokens, embeddings, attention, the MLP, softmax and temperature, and where GPT-3's 175 billion parameters actually live."
+>
+  <ModuleHeader label="ARTICLE 01 · FOUNDATIONS" />
+
+  <main id="top" tabindex="-1" class="ai-page">
+    <!-- ─────────────────────────  HERO  ───────────────────────── -->
+    <section class="ai-post-hero section-shell">
+      <p class="ai-breadcrumb">
+        <a href="/ai/">AI &amp; Harnesses</a>
+        <span aria-hidden="true">/</span>
+        <a href="/ai/#writing">Foundations</a>
+        <span aria-hidden="true">/</span>
+        <b>Article 01</b>
+      </p>
+      <h1>Text in.<br /><strong>A probability out.</strong></h1>
+      <p class="ai-post-lede">
+        A transformer is not a mind, a database, or a search engine. It is one enormous function
+        that takes a sequence of text and returns a probability for every possible next token —
+        and then gets run again on its own output. Everything else, including the part that feels
+        like thinking, is that step repeated. This is a walk through the step, one stage at a time.
+      </p>
+      <div class="ai-post-meta">
+        <div><span>TRACK</span><b>Foundations</b></div>
+        <div><span>FIGURES</span><b>8</b></div>
+        <div><span>REFERENCE MODEL</span><b>GPT-3</b></div>
+        <div><span>READING</span><b>~18 min</b></div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  01 · THE PREMISE  ───────────────────── -->
+    <section class="ai-section section-shell">
+      <div class="ai-section-head">
+        <p class="section-number">01 / THE PREMISE</p>
+        <div>
+          <h2>The whole model does<br /><em>exactly one thing.</em></h2>
+          <p>
+            Predict what comes next. Not the sentence, not the paragraph — the next token. The
+            surprising part is not the mechanism; it is that repeating it is enough.
+          </p>
+        </div>
+      </div>
+
+      <div class="ai-prose">
+        <p>
+          The name says it. <strong>GPT</strong> is <em>Generative Pre-trained Transformer</em>:
+          it generates, it was trained in advance on a very large amount of text, and
+          <em>transformer</em> is the specific architecture doing the work — invented at Google in
+          2017, originally to translate between languages.
+        </p>
+        <p>
+          Feed it some text and it does not return a sentence. It returns a
+          <strong>probability for every token in its vocabulary</strong> — for GPT-3, that is 50,257
+          numbers that sum to one. A chatbot is that function wrapped in a loop: sample one token
+          from the distribution, append it to the text, run the whole thing again. The model has no
+          memory of having run before. Each pass re-reads everything from the start.
+        </p>
+      </div>
+
+      <figure class="ai-figure">
+        <figcaption class="ai-figure-cap">
+          <span>FIGURE A</span>
+          <b>The loop that looks like conversation</b>
+        </figcaption>
+        <div class="ai-frame">
+          <p class="ai-frame-label">ONE PASS</p>
+          <div class="ai-loop">
+            <div class="ai-loop-row">
+              <span class="ai-loop-step">TEXT SO FAR<em>every token, every time</em></span>
+              <span class="ai-loop-arrow" aria-hidden="true">→</span>
+              <span class="ai-loop-step is-model">TRANSFORMER<em>one giant function</em></span>
+              <span class="ai-loop-arrow" aria-hidden="true">→</span>
+              <span class="ai-loop-step is-out">50,257 PROBABILITIES<em>one per vocabulary entry</em></span>
+              <span class="ai-loop-arrow" aria-hidden="true">→</span>
+              <span class="ai-loop-step is-pick">SAMPLE ONE<em>the next token</em></span>
+            </div>
+            <div class="ai-loop-back">
+              <b>THEN</b>
+              <span>Append the sampled token to the text and run the entire function again from scratch. Nothing carries over between passes except the text itself.</span>
+            </div>
+            <div class="ai-loop-tape">
+              <p class="ai-loop-tape-row"><i>PASS 1</i><span>The</span><span>cat</span><span>sat</span><span>on</span><span class="is-new">the</span></p>
+              <p class="ai-loop-tape-row"><i>PASS 2</i><span>The</span><span>cat</span><span>sat</span><span>on</span><span>the</span><span class="is-new">mat</span></p>
+              <p class="ai-loop-tape-row"><i>PASS 3</i><span>The</span><span>cat</span><span>sat</span><span>on</span><span>the</span><span>mat</span><span class="is-new">.</span></p>
+            </div>
+          </div>
+        </div>
+        <p class="ai-figure-note">
+          <strong>This is the entire product surface of a raw model.</strong> Everything a chat
+          interface adds — turns, roles, system prompts, tool calls — is text arranged so that the
+          most probable continuation happens to be the behaviour you wanted.
+        </p>
+      </figure>
+    </section>
+
+    <!-- ─────────────────────  02 · TOKENS  ───────────────────── -->
+    <section class="ai-section section-shell">
+      <div class="ai-section-head">
+        <p class="section-number">02 / TOKENS</p>
+        <div>
+          <h2>The model never<br /><em>sees a word.</em></h2>
+          <p>
+            Before anything else, the text is chopped into tokens: fragments from a fixed
+            vocabulary. Common words are one token. Rarer ones are assembled from pieces.
+          </p>
+        </div>
+      </div>
+
+      <div class="ai-prose">
+        <p>
+          This is the first place intuition breaks. A token is not a word and not a character — it
+          is whatever the tokenizer decided was a useful unit while compressing the training corpus.
+          Spaces usually belong to the token that follows them, punctuation is its own token, and an
+          unusual word arrives as two or three fragments.
+        </p>
+      </div>
+
+      <figure class="ai-figure">
+        <figcaption class="ai-figure-cap">
+          <span>FIGURE B</span>
+          <b>What the input actually looks like</b>
+        </figcaption>
+        <div class="ai-frame">
+          <p class="ai-frame-label">"The tokenizer doesn't see words." — ILLUSTRATIVE SPLIT</p>
+          <div class="ai-token-strip">
+            <span class="ai-token t-1">The</span>
+            <span class="ai-token t-2"><i>␣</i>token</span>
+            <span class="ai-token t-2">izer</span>
+            <span class="ai-token t-3"><i>␣</i>doesn</span>
+            <span class="ai-token t-3">'t</span>
+            <span class="ai-token t-4"><i>␣</i>see</span>
+            <span class="ai-token t-1"><i>␣</i>words</span>
+            <span class="ai-token t-4">.</span>
+          </div>
+          <p class="ai-token-legend">
+            <span>8 TOKENS · 6 WORDS</span>
+            <span><b>␣</b> = THE SPACE BELONGS TO THE TOKEN</span>
+            <span>EXACT SPLITS VARY BY TOKENIZER</span>
+          </p>
+        </div>
+        <p class="ai-figure-note">
+          Each token is then replaced by its <b>ID</b> — an index into the vocabulary. From here on
+          the network is working with numbers, and the letters are gone for good.
+        </p>
+      </figure>
+    </section>
+
+    <!-- ─────────────────────  03 · EMBEDDINGS  ───────────────────── -->
+    <section class="ai-section ai-section-tint">
+      <div class="section-shell">
+        <div class="ai-section-head">
+          <p class="section-number">03 / EMBEDDINGS</p>
+          <div>
+            <h2>Every token becomes<br /><em>a direction in space.</em></h2>
+            <p>
+              The first weight matrix in the model is a lookup table: one column per vocabulary
+              entry. GPT-3's has 50,257 columns of 12,288 numbers each.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-prose">
+          <p>
+            Twelve thousand dimensions is impossible to picture, so use the smallest honest
+            intuition instead: each token becomes an arrow, and arrows that point in similar
+            directions mean similar things. What makes this more than a filing system is that
+            <strong>directions themselves carry meaning</strong>, independently of any particular
+            word.
+          </p>
+          <p>
+            The classic demonstration is arithmetic. Take the vector for <code>woman</code>, subtract
+            <code>man</code>, and you get an arrow that is roughly "the gender step". Add that same
+            arrow to <code>king</code> and you land very close to <code>queen</code>. The model was
+            never told about gender; the direction fell out of the training objective, because that
+            geometry makes next-token prediction easier.
+          </p>
+        </div>
+
+        <figure class="ai-figure">
+          <figcaption class="ai-figure-cap">
+            <span>FIGURE C</span>
+            <b>Meaning stored as direction, not as position</b>
+          </figcaption>
+          <div class="ai-frame">
+            <p class="ai-frame-label">VECTOR ARITHMETIC IN EMBEDDING SPACE</p>
+            <div class="ai-vec-math">
+              <div class="ai-vec-row">
+                <span class="ai-vec">E(woman)</span>
+                <span class="ai-vec-op" aria-hidden="true">−</span>
+                <span class="ai-vec">E(man)</span>
+                <span class="ai-vec-op" aria-hidden="true">≈</span>
+                <span class="ai-vec">E(queen)</span>
+                <span class="ai-vec-op" aria-hidden="true">−</span>
+                <span class="ai-vec">E(king)</span>
+              </div>
+              <div class="ai-vec-row">
+                <span class="ai-vec">E(king)</span>
+                <span class="ai-vec-op" aria-hidden="true">+</span>
+                <span class="ai-vec">(gender step)</span>
+                <span class="ai-vec-op" aria-hidden="true">≈</span>
+                <span class="ai-vec is-result">E(queen)</span>
+              </div>
+              <p class="ai-vec-caption">
+                The same subtraction between two related pairs produces nearly the same arrow. That
+                shared arrow <em>is</em> the concept, and it can be added to words it was never
+                demonstrated on.
+              </p>
+            </div>
+
+            <div class="ai-dirs">
+              <div class="ai-dir">
+                <b>GENDER</b>
+                <span>uncle → aunt, nephew → niece, king → queen. One arrow, many pairs.</span>
+              </div>
+              <div class="ai-dir">
+                <b>PLURALITY</b>
+                <span>cat → cats, idea → ideas. A second, unrelated arrow, learned the same way.</span>
+              </div>
+              <div class="ai-dir">
+                <b>COUNTRY → LEADER</b>
+                <span>Germany → Hitler, Italy → Mussolini. Association, not endorsement: the geometry only reflects the corpus.</span>
+              </div>
+            </div>
+
+            <div class="ai-dot">
+              <span>WHY DOT PRODUCTS</span>
+              <p>
+                The dot product of two vectors is large when they point the same way, near zero when
+                they are perpendicular, and negative when they oppose. That single operation is how
+                the network asks "how much of this is present in that" — and it is the core of
+                attention, three sections from here.
+              </p>
+            </div>
+          </div>
+          <p class="ai-figure-note">
+            One important limit: at this stage, a token's vector depends only on the token. Every
+            occurrence of <b>"model"</b> starts identical, whether the sentence is about machine
+            learning or fashion. Context has not entered the picture yet.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  04 · THE STACK  ───────────────────── -->
+    <section class="ai-section ai-dark">
+      <div class="section-shell">
+        <div class="ai-section-head light">
+          <p class="section-number">04 / THE STACK</p>
+          <div>
+            <h2>A grid of vectors,<br /><em>refined ninety-six times.</em></h2>
+            <p>
+              The tokens are laid out side by side and pushed through the same two operations, over
+              and over. Nothing is added to the array; the vectors in it just keep getting rewritten.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-prose light">
+          <p>
+            The array has a fixed width — the <strong>context window</strong>, 2,048 tokens for
+            GPT-3. That is the model's entire world during one pass. Anything outside it does not
+            exist, which is why "just give it more context" is a hardware bill and not a setting.
+          </p>
+          <p>
+            Then the array flows through the stack: an <strong>attention block</strong>, then a
+            <strong>multilayer perceptron</strong> block, then attention again, then an MLP, for 96
+            layers. Same two shapes throughout — only the weights differ. If you want a one-line
+            summary of the architecture: <em>vectors talk to each other, then think alone,
+            repeatedly.</em>
+          </p>
+        </div>
+
+        <figure class="ai-figure">
+          <figcaption class="ai-figure-cap light">
+            <span>FIGURE D</span>
+            <b>One forward pass, end to end</b>
+          </figcaption>
+          <div class="ai-frame">
+            <p class="ai-frame-label">GPT-3 · 2,048 POSITIONS × 12,288 DIMENSIONS × 96 LAYERS</p>
+            <div class="ai-stack">
+              <div class="ai-stack-lane">
+                <i>TOKENS</i>
+                <div class="ai-stack-cells">
+                  <span>The</span><span>cat</span><span>sat</span><span>on</span><span>the</span><span class="is-last">___</span>
+                </div>
+              </div>
+              <div class="ai-stack-lane">
+                <i>EMBEDDINGS</i>
+                <div class="ai-stack-cells">
+                  <span class="is-vec">v₁</span><span class="is-vec">v₂</span><span class="is-vec">v₃</span><span class="is-vec">v₄</span><span class="is-vec">v₅</span><span class="is-last">v₆</span>
+                </div>
+              </div>
+
+              <div class="ai-stack-block">
+                <i>BLOCK · A</i>
+                <div class="ai-stack-band is-attn">
+                  <b>ATTENTION</b>
+                  <em>vectors exchange information — context enters here</em>
+                </div>
+              </div>
+              <div class="ai-stack-block">
+                <i>BLOCK · B</i>
+                <div class="ai-stack-band is-mlp">
+                  <b>MLP</b>
+                  <em>each vector processed alone, in parallel</em>
+                </div>
+              </div>
+              <div class="ai-stack-repeat">↻ REPEAT 96 TIMES · SAME SHAPES, DIFFERENT WEIGHTS</div>
+
+              <div class="ai-stack-out">
+                <i>READ-OUT</i>
+                <div>ONLY THE LAST VECTOR IS USED TO PREDICT THE NEXT TOKEN</div>
+              </div>
+            </div>
+          </div>
+          <p class="ai-figure-note">
+            Note what the read-out implies. The final vector at the last position has, by then,
+            absorbed information from every earlier position — so <b>the prediction is made in one
+            place, from an accumulation of everything before it</b>. During training every position
+            predicts its own next token at once, which is what makes training efficient; at
+            inference, only the last one matters.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  05 · ATTENTION  ───────────────────── -->
+    <section class="ai-section section-shell">
+      <div class="ai-section-head">
+        <p class="section-number">05 / ATTENTION</p>
+        <div>
+          <h2>Where a word finds out<br /><em>what it means here.</em></h2>
+          <p>
+            Attention is the step where vectors are allowed to look at each other and update
+            themselves. It is the reason the same word can mean different things in different
+            sentences.
+          </p>
+        </div>
+      </div>
+
+      <div class="ai-prose">
+        <p>
+          Every position emits a <strong>query</strong> — loosely, "what am I looking for?" — and a
+          <strong>key</strong> — "what do I offer?". Dot products between queries and keys score how
+          relevant each position is to each other position, those scores are normalised into
+          weights, and each vector then pulls in a weighted mix of <strong>value</strong> vectors
+          from the positions that scored highly.
+        </p>
+        <p>
+          The effect is concrete. The word <code>model</code> arrives generic, and leaves the block
+          carrying "machine learning" with it. A single head does this once; GPT-3 runs
+          <strong>96 heads per layer in parallel</strong>, each free to specialise in a different
+          kind of relationship — grammatical agreement, coreference, topic — and their results are
+          combined.
+        </p>
+      </div>
+
+      <figure class="ai-figure">
+        <figcaption class="ai-figure-cap">
+          <span>FIGURE E</span>
+          <b>One word being rewritten by its neighbours</b>
+        </figcaption>
+        <div class="ai-frame">
+          <p class="ai-frame-label">UPDATING THE VECTOR AT "MODEL" — WEIGHTS ARE ILLUSTRATIVE</p>
+          <div class="ai-attn-sentence">
+            <span class="ai-attn-word">a</span>
+            <span class="ai-attn-word">machine</span>
+            <span class="ai-attn-word">learning</span>
+            <span class="ai-attn-word is-target">model</span>
+          </div>
+          <div class="ai-attn-weights">
+            {attentionWeights.map((row) => (
+              <div class="ai-attn-row">
+                <span>{row.word}</span>
+                <span class={`ai-attn-bar ${row.hi ? 'is-hi' : ''}`} style={`width: ${row.weight}%`}></span>
+                <span class="ai-attn-val">{row.weight}%</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="ai-attn-two">
+            <div class="ai-attn-case">
+              <b>SAME TOKEN, DIFFERENT CONTEXT</b>
+              <p><q>a machine learning model</q> — the vector moves toward statistics, training, parameters.</p>
+            </div>
+            <div class="ai-attn-case">
+              <b>SAME TOKEN, DIFFERENT CONTEXT</b>
+              <p><q>a fashion model on the runway</q> — the identical starting vector moves somewhere else entirely.</p>
+            </div>
+          </div>
+        </div>
+        <p class="ai-figure-note">
+          This is also the step that makes context expensive: every position is scored against every
+          other, so the work grows with the <b>square</b> of the sequence length. A context window is
+          not a bigger buffer — it is a quadratically bigger computation.
+        </p>
+      </figure>
+
+      <aside class="ai-callout">
+        <p class="ai-callout-tag">A DISTINCTION WORTH KEEPING</p>
+        <p>
+          Attention moves information <strong>between</strong> positions. Everything else in the
+          network operates on one position at a time. If you ever wonder where a model "combined"
+          two facts from different parts of your prompt, this is the only place it could have
+          happened.
+        </p>
+      </aside>
+    </section>
+
+    <!-- ─────────────────────  06 · THE MLP  ───────────────────── -->
+    <section class="ai-section section-shell">
+      <div class="ai-section-head">
+        <p class="section-number">06 / THE MLP</p>
+        <div>
+          <h2>Where the vectors<br /><em>think alone.</em></h2>
+          <p>
+            The other half of every block. No communication between positions here — each vector is
+            pushed through the same small pipeline independently, and in parallel.
+          </p>
+        </div>
+      </div>
+
+      <div class="ai-prose">
+        <p>
+          The pipeline is short: project the 12,288-dimensional vector up into a much wider space
+          (49,152 — four times bigger), apply a nonlinearity that zeroes out most of it, then project
+          back down to 12,288 and add the result to the original vector.
+        </p>
+        <p>
+          A useful reading of that shape: the up-projection asks tens of thousands of yes/no
+          questions of the vector at once, the nonlinearity keeps only the ones that fired, and the
+          down-projection writes the consequences back. This is widely believed to be where a lot of
+          the model's <strong>factual knowledge</strong> is stored — and, as the parameter table
+          below shows, it is where two thirds of the weights are.
+        </p>
+      </div>
+
+      <figure class="ai-figure">
+        <figcaption class="ai-figure-cap">
+          <span>FIGURE F</span>
+          <b>Up, squash, down — once per position, per layer</b>
+        </figcaption>
+        <div class="ai-frame">
+          <p class="ai-frame-label">THE MLP BLOCK</p>
+          <div class="ai-mlp">
+            <div class="ai-mlp-col">
+              <b>IN</b>
+              <span class="ai-mlp-bar is-in"></span>
+              <small>12,288</small>
+            </div>
+            <div class="ai-mlp-op"><i aria-hidden="true">→</i>UP-PROJECT</div>
+            <div class="ai-mlp-col">
+              <b>HIDDEN</b>
+              <span class="ai-mlp-bar is-wide"></span>
+              <small>49,152</small>
+            </div>
+            <div class="ai-mlp-op"><i aria-hidden="true">→</i>NONLINEARITY<br />+ DOWN-PROJECT</div>
+            <div class="ai-mlp-col">
+              <b>OUT</b>
+              <span class="ai-mlp-bar is-out"></span>
+              <small>12,288</small>
+            </div>
+          </div>
+          <div class="ai-mlp-lanes">
+            <span>v₁ alone</span><span>v₂ alone</span><span>v₃ alone</span><span>v₄ alone</span><span>v₅ alone</span><span>v₆ alone</span>
+          </div>
+        </div>
+        <p class="ai-figure-note">
+          The lanes are the point. Attention is the sociable half of the block; the MLP is the
+          solitary half, and because the positions never interact here, this stage
+          <b>parallelises perfectly</b> — which matters enormously for how these models are trained
+          and served.
+        </p>
+      </figure>
+    </section>
+
+    <!-- ─────────────────────  07 · THE LAST STEP  ───────────────────── -->
+    <section class="ai-section ai-section-tint">
+      <div class="section-shell">
+        <div class="ai-section-head">
+          <p class="section-number">07 / THE LAST STEP</p>
+          <div>
+            <h2>From one vector<br /><em>to 50,257 numbers.</em></h2>
+            <p>
+              After the last layer, one final matrix turns the last vector into a score for every
+              token in the vocabulary. Softmax turns those scores into probabilities.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-prose">
+          <p>
+            The matrix is the <strong>unembedding</strong> — the mirror image of the embedding table,
+            50,257 rows of 12,288 numbers. Multiplying gives 50,257 raw scores called
+            <strong>logits</strong>: unbounded, possibly negative, not yet meaningful as
+            probabilities.
+          </p>
+          <p>
+            Softmax fixes that in two moves: exponentiate every logit, so everything becomes
+            positive and larger gaps get amplified, then divide by the total so the whole thing sums
+            to one. <strong>Temperature</strong> is a single extra division applied before
+            exponentiating. Divide by a small number and the gaps widen — the top token dominates.
+            Divide by a larger one and the distribution flattens.
+          </p>
+        </div>
+
+        <figure class="ai-figure">
+          <figcaption class="ai-figure-cap">
+            <span>FIGURE G</span>
+            <b>The same scores, four temperatures</b>
+          </figcaption>
+          <div class="ai-frame">
+            <p class="ai-frame-label">RAW LOGITS AFTER "THE CAT SAT ON THE"</p>
+            <div class="ai-logits">
+              {logits.map((row) => (
+                <div class="ai-logit-row">
+                  <span>{row.token}</span>
+                  <span class="ai-logit-bar" style={`width: ${row.bar}%`}></span>
+                  <span class="ai-logit-val">{row.value.toFixed(1)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div class="ai-temps">
+              {temperatures.map((temp) => (
+                <div class="ai-temp">
+                  <b>{temp.t}</b>
+                  <small>{temp.note}</small>
+                  <div class="ai-temp-bars">
+                    {temp.probs.map((prob, index) => (
+                      <div class="ai-temp-bar">
+                        <span>{prob}%</span>
+                        <i class={index === 0 ? 'is-top' : ''} style={`width: ${prob}%`}></i>
+                      </div>
+                    ))}
+                  </div>
+                  <p class="ai-temp-note">mat · floor · roof · moon</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p class="ai-figure-note">
+            The logits are invented, but the four distributions are the actual softmax of those
+            logits at each temperature. Read across and the important thing becomes obvious:
+            <b>the model's opinion never changed</b>. Temperature only changes how much you let the
+            lower-ranked opinions win the draw.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  08 · PARAMETERS  ───────────────────── -->
+    <section class="ai-section ai-dark">
+      <div class="section-shell">
+        <div class="ai-section-head light">
+          <p class="section-number">08 / THE BUDGET</p>
+          <div>
+            <h2>Where 175 billion<br /><em>parameters actually live.</em></h2>
+            <p>
+              "Parameter" means one number inside one matrix, tuned during training. GPT-3 has
+              175,181,291,520 of them spread across 27,938 matrices — and they are not distributed
+              the way most people assume.
+            </p>
+          </div>
+        </div>
+
+        <figure class="ai-figure">
+          <figcaption class="ai-figure-cap light">
+            <span>FIGURE H</span>
+            <b>GPT-3's parameter budget, by role</b>
+          </figcaption>
+          <div class="ai-frame ai-params-wrap">
+            <table class="ai-params">
+              <caption>d_model = 12,288 · n_vocab = 50,257 · layers = 96 · heads = 96 · d_head = 128</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Matrix</th>
+                  <th scope="col">Dimensions</th>
+                  <th scope="col">Parameters</th>
+                  <th scope="col">Share</th>
+                  <th scope="col"><span class="visually-hidden">Relative size</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {paramBudget.map((row) => (
+                  <tr>
+                    <th scope="row">{row.name}</th>
+                    <td class="ai-params-num">{row.math}</td>
+                    <td class="ai-params-num">{row.count}</td>
+                    <td class="ai-params-num">{row.share}</td>
+                    <td><span class={`ai-params-bar ${row.tone}`} style={`width: ${row.bar}%`}></span></td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row">Total</th>
+                  <td></td>
+                  <td class="ai-params-num">175,181,291,520</td>
+                  <td class="ai-params-num">100%</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p class="ai-figure-note">
+            Two readings worth carrying away. First, <b>the MLPs hold about two thirds of the
+            weights</b> — attention gets the attention, but the majority of the model is the part
+            that processes each position alone. Second, the embedding and unembedding tables
+            together are under 1%: almost nothing in this model is a lookup table, and almost
+            everything is transformation.
+          </p>
+        </figure>
+
+        <div class="ai-prose light">
+          <p>
+            It is also worth naming what "parameter" is not. These numbers are frozen after
+            training. Your prompt does not modify them, your conversation does not modify them, and
+            nothing the model says gets written back. Every apparent act of learning inside a
+            session is <strong>text in the context window</strong>, not a change to the network —
+            which is exactly why the harness around the model is where the engineering happens.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  09 · CONSEQUENCES  ───────────────────── -->
+    <section class="ai-section section-shell">
+      <div class="ai-section-head">
+        <p class="section-number">09 / IN PRACTICE</p>
+        <div>
+          <h2>What the architecture<br /><em>predicts about the behaviour.</em></h2>
+          <p>
+            The value of holding this picture is that a lot of model behaviour stops being
+            mysterious and starts being derivable.
+          </p>
+        </div>
+      </div>
+      <ol class="ai-consequences">
+        {consequences.map(([title, body], index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <div><h3>{title}</h3><p>{body}</p></div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ─────────────────────  VOCABULARY  ───────────────────── -->
+    <section class="ai-section ai-section-tint">
+      <div class="section-shell">
+        <div class="ai-section-head">
+          <p class="section-number">10 / VOCABULARY</p>
+          <div>
+            <h2>Four terms the rest<br /><em>of this module assumes.</em></h2>
+            <p>Everything that follows in the harness track is built on these.</p>
+          </div>
+        </div>
+        <dl class="ai-concepts">
+          {foundationConcepts.map(([term, definition]) => (
+            <div class="ai-concept">
+              <dt>{term}</dt>
+              <dd>{definition}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- ─────────────────────  SOURCE  ───────────────────── -->
+    <section class="ai-section section-shell">
+      <aside class="ai-source">
+        <p class="ai-source-tag">SOURCE</p>
+        <div>
+          <p>
+            The explanation, the diagrams, and the wording here are mine. The framing I am following
+            — and every GPT-3 figure quoted above, including the parameter table — comes from
+            <strong><em>“Transformers, the tech behind LLMs”</em></strong>, chapter 5 of the Deep
+            Learning series by <strong>Grant Sanderson (3Blue1Brown)</strong>. If you want the
+            animated version of this walk, watch it there first; it is better than any article,
+            including this one.
+          </p>
+          <p>
+            This page is a companion, not a replacement: a static, skimmable map you can return to
+            without scrubbing a timeline.
+            <a href="https://youtu.be/wjZofJX0v4M" rel="noopener noreferrer" target="_blank">
+              Watch chapter 5 <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          </p>
+        </div>
+      </aside>
+
+      <nav class="ai-pager" aria-label="Module navigation">
+        <a class="ai-pager-back" href="/ai/#writing"><span aria-hidden="true">←</span> All articles</a>
+        <p class="ai-pager-next">Article 02 — Attention, worked out slowly <b>planned</b></p>
+      </nav>
+    </section>
+  </main>
+
+  <ModuleFooter label="ARTICLE 01 · INSIDE A TRANSFORMER" />
+</Layout>

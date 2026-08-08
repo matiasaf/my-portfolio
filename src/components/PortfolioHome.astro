@@ -16,9 +16,9 @@ const socialLinks = {
 
 const modules = en ? [
   {
-    number: '01', label: 'DATA · LEARNING IN PUBLIC', title: 'Microsoft Fabric',
-    description: 'Notes, mental models, and proofs of concept for understanding Fabric from a software builder’s perspective.',
-    href: '/fabric/', cta: 'Explore the module', accent: 'coral', status: 'In progress', diagram: ['Source', 'OneLake', 'Model'],
+    number: '01', label: 'AI · LEARNING IN PUBLIC', title: 'AI & Harnesses',
+    description: 'How language models actually work, what has to be built around them to make a product, and which trends survive contact with production.',
+    href: '/ai/', cta: 'Explore the module', accent: 'coral', status: 'In progress', diagram: ['Tokens', 'Attention', 'Harness'],
   },
   {
     number: '02', label: 'ARCHITECTURE · FOUNDATIONS', title: 'System Design',
@@ -28,14 +28,14 @@ const modules = en ? [
 ] : [
   {
     number: '01',
-    label: 'DATA · APRENDIZAJE EN PÚBLICO',
-    title: 'Microsoft Fabric',
-    description: 'Notas, mapas mentales y pruebas de concepto para entender Fabric desde la mirada de alguien que construye software.',
-    href: '/fabric/',
+    label: 'AI · APRENDIZAJE EN PÚBLICO',
+    title: 'AI & Harnesses',
+    description: 'Cómo funcionan realmente los modelos de lenguaje, qué hay que construir alrededor para que sean un producto y qué modas sobreviven a producción.',
+    href: '/ai/',
     cta: 'Explorar el módulo',
     accent: 'coral',
     status: 'En construcción',
-    diagram: ['Source', 'OneLake', 'Model'],
+    diagram: ['Tokens', 'Attention', 'Harness'],
   },
   {
     number: '02',
@@ -51,13 +51,13 @@ const modules = en ? [
 ];
 
 const notes = en ? [
-  { tag: 'FABRIC', date: 'MODULE 01', title: 'From operational software to an analytical system', href: '/fabric/#map' },
+  { tag: 'AI', date: 'MODULE 01 · ARTICLE 01', title: 'Inside a transformer: from a token to the next token', href: '/ai/transformer-architecture/' },
   { tag: 'SYSTEM DESIGN', date: 'MODULE 02', title: 'Building means choosing: an introduction to trade-offs', href: '/system-design/#tradeoffs' },
-  { tag: 'POC', date: 'CASE STUDY', title: 'Sales Lakehouse: from CSV to a trusted model', href: '/pocs/sales-lakehouse/' },
+  { tag: 'DDIA', date: 'BOOK STUDY', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
 ] : [
-  { tag: 'FABRIC', date: 'MÓDULO 01', title: 'De software operacional a un sistema analítico', href: '/fabric/#map' },
+  { tag: 'AI', date: 'MÓDULO 01 · ARTÍCULO 01', title: 'Inside a transformer: de un token al siguiente token', href: '/ai/transformer-architecture/' },
   { tag: 'SYSTEM DESIGN', date: 'MÓDULO 02', title: 'Construir es elegir: una introducción a los trade-offs', href: '/system-design/#tradeoffs' },
-  { tag: 'POC', date: 'CASO PRÁCTICO', title: 'Sales Lakehouse: del CSV a un modelo confiable', href: '/pocs/sales-lakehouse/' },
+  { tag: 'DDIA', date: 'ESTUDIO DEL LIBRO', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
 ];
 
 const capabilities = en ? [

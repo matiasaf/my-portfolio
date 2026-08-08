@@ -1,0 +1,211 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ModuleHeader from '../components/ai/ModuleHeader.astro';
+import ModuleFooter from '../components/ai/ModuleFooter.astro';
+import { aiModule, posts, tracks } from '../content/ai';
+import '../styles/ai.css';
+
+const featured = posts.find((post) => post.status === 'published');
+const published = posts.filter((post) => post.status === 'published').length;
+
+const stance = [
+  {
+    title: 'Draw it before believing it.',
+    copy: 'Most AI explanations are analogies stacked on analogies. If a mechanism cannot be drawn — the actual matrices, the actual loop, the actual numbers — it is usually not understood yet, only repeated.',
+  },
+  {
+    title: 'The model is a component, not the product.',
+    copy: 'Swapping the model is the cheapest change you can make. What decides whether the thing works is the harness around it: what enters the context, which tools exist, what happens on failure, and who is allowed to approve what.',
+  },
+  {
+    title: 'Every trend gets read against its cost.',
+    copy: 'Agents, MCP, long context, context engineering. Each one buys something real and charges for it in latency, tokens, or operability. The interesting question is never whether it is new — it is what it replaces.',
+  },
+  {
+    title: 'Notes in public, mistakes included.',
+    copy: 'This module is written while learning and while shipping AI features at work. Where something is uncertain it says so, and where a number comes from a source, the source is named.',
+  },
+];
+---
+
+<Layout
+  mainId="top"
+  title="AI & Harnesses — a visual lab on models, harnesses, and the current hype"
+  description="A visual, didactic module on how language models actually work, how harnesses turn them into products, and which AI trends survive contact with production."
+>
+  <ModuleHeader />
+
+  <main id="top" tabindex="-1" class="ai-page">
+    <!-- ─────────────────────────  HERO  ───────────────────────── -->
+    <section class="ai-hero section-shell">
+      <div>
+        <p class="eyebrow"><span></span> MODULE {aiModule.number} · LEARNING IN PUBLIC</p>
+        <h1>The model is<br />the easy part.<br /><strong>The harness<br />is the product.</strong></h1>
+        <p class="ai-hero-lede">
+          A visual lab about what is actually happening inside a language model, what has to be
+          built around it before it becomes software, and how to read each new wave of AI tooling
+          without buying the pitch.
+        </p>
+        <div class="ai-hero-actions">
+          <a class="button button-dark" href="/ai/transformer-architecture/">Start with article 01 <span>→</span></a>
+          <a class="text-link" href="#writing">See the whole index <span>↓</span></a>
+        </div>
+        <div class="ai-hero-notes">
+          <span>TOKENS → VECTORS → ATTENTION</span>
+          <span>CONTEXT · TOOLS · LOOPS</span>
+          <span>EVALS OVER VIBES</span>
+        </div>
+      </div>
+
+      <div class="ai-orbit" aria-label="A model at the centre, surrounded by the layers of a harness">
+        <p class="ai-orbit-caption"><span>WHAT SHIPS</span><b>MODEL + HARNESS</b></p>
+        <div class="ai-orbit-ring ai-ring-1" aria-hidden="true"></div>
+        <div class="ai-orbit-ring ai-ring-2" aria-hidden="true"></div>
+        <div class="ai-orbit-ring ai-ring-3" aria-hidden="true"></div>
+        <div class="ai-orbit-core">
+          <span>NEXT TOKEN</span>
+          <strong>MODEL</strong>
+          <small>a function</small>
+        </div>
+        <div class="ai-orbit-chip ai-chip-1"><b>01</b> CONTEXT</div>
+        <div class="ai-orbit-chip ai-chip-2"><b>02</b> TOOLS</div>
+        <div class="ai-orbit-chip ai-chip-3"><b>03</b> MEMORY</div>
+        <div class="ai-orbit-chip ai-chip-4"><b>04</b> GUARDRAILS</div>
+        <div class="ai-orbit-chip ai-chip-5"><b>05</b> EVALS</div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────  DEFINITION  ───────────────────────── -->
+    <section class="ai-band">
+      <div class="section-shell ai-band-grid">
+        <p>THE WORD "HARNESS"</p>
+        <blockquote>
+          Everything that decides what the model sees, what it is allowed to do, and what happens
+          when it is wrong. <em>The model answers. The harness is the software.</em>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────  TRACKS  ───────────────────────── -->
+    <section class="ai-section section-shell">
+      <div class="ai-section-head">
+        <p class="section-number">01 / WHAT THIS COVERS</p>
+        <div>
+          <h2>Three tracks,<br /><em>one argument.</em></h2>
+          <p>
+            You cannot design a good harness without a mental model of the thing you are wrapping,
+            and you cannot judge a trend without both. So the module runs in three lanes and they
+            keep referring to each other.
+          </p>
+        </div>
+      </div>
+
+      <div class="ai-tracks">
+        {tracks.map((track, index) => {
+          const count = posts.filter((post) => post.track === track.key).length;
+          return (
+            <article class={`ai-track ${track.tone}`}>
+              <span>0{index + 1}</span>
+              <h3>{track.label}</h3>
+              <p>{track.copy}</p>
+              <p class="ai-track-count">{count} {count === 1 ? 'ARTICLE' : 'ARTICLES'} IN THIS TRACK</p>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- ─────────────────────────  WRITING  ───────────────────────── -->
+    <section class="ai-section ai-section-tint" id="writing">
+      <div class="section-shell">
+        <div class="ai-section-head">
+          <p class="section-number">02 / THE WRITING</p>
+          <div>
+            <h2>Start with the machine,<br /><em>then the machinery.</em></h2>
+            <p>
+              Article 01 is the foundation the rest of the module leans on. Everything after it
+              assumes you can picture a token becoming a vector and a vector becoming a probability.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-shelf">
+          {featured && (
+            <article class="ai-spotlight">
+              <p class="ai-spotlight-kicker">
+                <span>ARTICLE {featured.number} · {featured.track.toUpperCase()}</span>
+                <span class="ai-badge">PUBLISHED</span>
+              </p>
+              <h3>{featured.title}</h3>
+              <p class="ai-spotlight-hook">{featured.hook}</p>
+              <ul class="ai-spotlight-topics">
+                <li>Why the whole thing is one function, run in a loop</li>
+                <li>Tokens, embeddings, and why direction carries meaning</li>
+                <li>Attention and the MLP, and what each one is for</li>
+                <li>Softmax, temperature, and where the 175 billion parameters live</li>
+              </ul>
+              <a class="ai-spotlight-cta" href={featured.href}>Read article {featured.number} <span aria-hidden="true">→</span></a>
+            </article>
+          )}
+
+          <div class="ai-index">
+            <p class="ai-index-head">
+              <span>Module index</span>
+              <span>{published} PUBLISHED · {posts.length - published} IN THE QUEUE</span>
+            </p>
+            <ul class="ai-index-list">
+              {posts.map((post) => (
+                <li class={`ai-index-item ${post.status === 'published' ? 'is-live' : ''}`}>
+                  <span class="ai-index-number">{post.number}</span>
+                  <span>
+                    {post.href ? <a href={post.href}>{post.title}</a> : post.title}
+                  </span>
+                  <span class="ai-index-track">{post.status === 'published' ? post.reading : post.track}</span>
+                </li>
+              ))}
+            </ul>
+            <p class="ai-index-note">
+              The queue is a direction, not a schedule. Articles ship when the diagrams hold up.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────  STANCE  ───────────────────────── -->
+    <section class="ai-section ai-dark">
+      <div class="section-shell">
+        <div class="ai-section-head light">
+          <p class="section-number">03 / HOW THIS IS WRITTEN</p>
+          <div>
+            <h2>Four rules<br /><em>for the whole module.</em></h2>
+          </div>
+        </div>
+        <ol class="ai-stance">
+          {stance.map((item, index) => (
+            <li>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────  CTA  ───────────────────────── -->
+    <section class="ai-final">
+      <div class="section-shell">
+        <p class="eyebrow"><span></span> WHERE TO BEGIN</p>
+        <h2>One token in.<br /><strong>One token out.</strong></h2>
+        <p>
+          Everything a language model does is that step, repeated. Article 01 takes it apart
+          completely — with diagrams instead of equations, and every number attributed.
+        </p>
+        <a class="button button-light" href="/ai/transformer-architecture/">Inside a transformer <span>→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <ModuleFooter />
+</Layout>

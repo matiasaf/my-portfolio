@@ -49,13 +49,15 @@ footer .brand-monogram { background: var(--coral); color: var(--ink); }
 .architecture-band, .steps-section, .customer-proof, .pipeline-expression,
 .e2e-proof, .ddia-spotlight, .ddia-section-dark, .tw-math, .tail-origin,
 .sd-system-map, .sd-dark, .sd-process, .pattern-visual,
+.ai-dark, .ai-orbit, .ai-spotlight,
 .akp-truth, .akp-decisions, .akp-footer, footer, .portfolio-footer {
   --accent-text: var(--coral);
   --focus-ring: var(--lime);
 }
 
 /* Superficies coral: el acento no puede ser texto sobre si mismo. */
-.contact-section, .cta-section, .thesis-band, .principle-layout, .sd-definition {
+.contact-section, .cta-section, .thesis-band, .principle-layout, .sd-definition,
+.ai-band, .ai-final {
   --accent-text: var(--ink);
 }
 

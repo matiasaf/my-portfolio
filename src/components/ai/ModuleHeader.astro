@@ -1,0 +1,13 @@
+---
+/** Header del modulo de AI. `label` cambia entre la portada y las paginas de post. */
+interface Props { label?: string; }
+const { label = 'MODULE 01 · AI LAB' } = Astro.props;
+---
+
+<header class="ai-header">
+  <a class="brand" href="/" aria-label="Back to the portfolio">
+    <span class="brand-monogram" aria-hidden="true">MF</span>
+    <span>Matías Fernández <em>/ AI &amp; Harnesses</em></span>
+  </a>
+  <span class="ai-header-label">{label}</span>
+</header>
