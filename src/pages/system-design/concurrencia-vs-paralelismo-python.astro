@@ -1,0 +1,552 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/system-design.css';
+import '../../styles/concurrency-article.css';
+
+const diagnosticRows = [
+  {
+    signal: 'La mayor parte del tiempo se va esperando red, disco o base de datos',
+    goal: 'Atender más trabajo sin dejar recursos ociosos',
+    model: 'Concurrencia',
+    python: 'asyncio; threads si la librería es bloqueante',
+  },
+  {
+    signal: 'La CPU permanece alta ejecutando Python puro',
+    goal: 'Reducir el tiempo total del cálculo',
+    model: 'Paralelismo',
+    python: 'ProcessPoolExecutor; intérpretes en Python 3.14+',
+  },
+  {
+    signal: 'Hay esperas y etapas intensivas de cómputo',
+    goal: 'Aislar cada cuello de botella y controlar el flujo',
+    model: 'Híbrido',
+    python: 'asyncio en el borde + cola + workers de CPU',
+  },
+  {
+    signal: 'La tarea es pequeña o necesita compartir estado constantemente',
+    goal: 'Evitar que la coordinación cueste más que el trabajo',
+    model: 'Secuencial primero',
+    python: 'Medir antes de agregar executors o coroutines',
+  },
+];
+
+const toolCards = [
+  {
+    number: '01',
+    tone: 'blue',
+    name: 'asyncio',
+    fit: 'Muchas operaciones de I/O con librerías async.',
+    gains: 'Miles de tareas livianas, cancelación y coordinación explícitas.',
+    cost: 'Una llamada bloqueante detiene el event loop completo.',
+  },
+  {
+    number: '02',
+    tone: 'lime',
+    name: 'Threads',
+    fit: 'I/O bloqueante, SDKs sin API async y compatibilidad con código existente.',
+    gains: 'Memoria compartida y una migración incremental sencilla.',
+    cost: 'Carreras, locks y, en CPython tradicional, sin speedup para CPU Python puro.',
+  },
+  {
+    number: '03',
+    tone: 'coral',
+    name: 'Procesos',
+    fit: 'Cómputo Python puro que puede dividirse en unidades independientes.',
+    gains: 'Paralelismo multinúcleo y aislamiento de memoria.',
+    cost: 'Serialización, memoria adicional, startup y comunicación entre procesos.',
+  },
+  {
+    number: '04',
+    tone: 'violet',
+    name: 'Intérpretes',
+    fit: 'CPU en Python 3.14+ cuando el aislamiento por intérprete encaja.',
+    gains: 'Paralelismo real dentro de un proceso, con un GIL por intérprete.',
+    cost: 'Estado mutable aislado y datos serializables entre workers.',
+  },
+];
+
+const failureCards = [
+  ['01', 'Fan-out sin límite', 'Crear una tarea por elemento parece eficiente hasta que 50.000 requests agotan sockets, memoria o el pool de la base de datos.', 'Límite explícito, cola acotada y rechazo o degradación cuando no hay capacidad.'],
+  ['02', 'CPU dentro del event loop', 'Una transformación pesada bloquea todas las conexiones aunque la ruta esté escrita con async def.', 'Mover la etapa a procesos, intérpretes o una librería nativa que libere el GIL.'],
+  ['03', 'Retries sincronizados', 'Cuando una dependencia vuelve lentamente, todos los workers reintentan juntos y provocan una segunda caída.', 'Backoff exponencial con jitter, presupuesto de reintentos e idempotencia.'],
+  ['04', 'Estado mutable compartido', 'El resultado depende del orden exacto de ejecución y aparecen carreras difíciles de reproducir.', 'Mensajes inmutables, ownership claro, locks pequeños o partición por clave.'],
+];
+
+const checklist = [
+  'Puedo decir si el cuello de botella es espera, CPU, memoria o contención.',
+  'Definí si optimizo latencia, throughput, costo o capacidad de respuesta.',
+  'Cada recurso finito tiene un límite: conexiones, tareas, cola y workers.',
+  'Timeout, cancelación y resultado parcial tienen una semántica de producto.',
+  'Los retries son acotados, espaciados e idempotentes.',
+  'El orden requerido está definido por entidad; no impongo orden global sin necesidad.',
+  'Mido tiempo en cola, tiempo de servicio, tareas activas, saturación y errores.',
+  'Probé con carga y fallos; no inferí capacidad desde un ejemplo local.',
+];
+---
+
+<Layout
+  mainId="top"
+  lang="es"
+  title="Concurrencia vs. paralelismo en Python — Cómo elegir y diseñar el sistema"
+  description="Una guía práctica para distinguir concurrencia de paralelismo en Python y diseñar sistemas con asyncio, threads, procesos, backpressure y fallos controlados."
+  ogType="article"
+  image="/concurrencia-vs-paralelismo-python-og.png"
+  publishedTime="2026-08-10"
+>
+  <header class="sd-header cp-header">
+    <a class="brand" href="/system-design/#field-notes" aria-label="Volver al módulo de System Design">
+      <span class="brand-monogram" aria-hidden="true">MF</span>
+      <span>Matías Fernández <em>/ System Design</em></span>
+    </a>
+    <span class="sd-header-label">PYTHON · FIELD NOTE 01</span>
+  </header>
+
+  <main id="top" tabindex="-1" class="cp-page">
+    <article>
+      <header class="cp-hero section-shell">
+        <p class="cp-breadcrumb">
+          <a href="/system-design/">System Design</a>
+          <span aria-hidden="true">/</span>
+          <a href="/system-design/#field-notes">Field Notes</a>
+          <span aria-hidden="true">/</span>
+          <b>Python</b>
+        </p>
+
+        <div class="cp-hero-grid">
+          <div>
+            <p class="cp-kicker"><span></span> PYTHON · EJECUCIÓN · DISEÑO DE SISTEMAS</p>
+            <h1>Concurrencia<br /><em>vs.</em> paralelismo.</h1>
+            <p class="cp-lede">
+              La diferencia importante no es cuántos threads aparecen en un diagrama. Es si el
+              sistema necesita <strong>administrar mejor la espera</strong> o
+              <strong>hacer más cálculo al mismo tiempo</strong>. Esa respuesta cambia el modelo de
+              ejecución, los límites, los fallos y hasta las métricas que importan.
+            </p>
+          </div>
+
+          <figure class="cp-hero-visual" aria-labelledby="hero-visual-title">
+            <figcaption id="hero-visual-title">
+              <span>EL MISMO TRABAJO</span><b>DOS FORMAS DE AVANZAR</b>
+            </figcaption>
+            <div class="cp-timeline">
+              <div class="cp-timeline-label"><b>CONCURRENCIA</b><span>1 worker · tareas intercaladas</span></div>
+              <div class="cp-lane concurrent-lane">
+                <i class="task-a">A</i><i class="task-b">B</i><i class="task-a">A</i><i class="task-c">C</i><i class="task-b">B</i><i class="task-c">C</i>
+              </div>
+              <div class="cp-axis"><span>t₀</span><i></i><span>tiempo →</span></div>
+            </div>
+            <div class="cp-timeline">
+              <div class="cp-timeline-label"><b>PARALELISMO</b><span>3 workers · ejecución simultánea</span></div>
+              <div class="cp-lane parallel-lane">
+                <i class="task-a">A</i><i class="task-b">B</i><i class="task-c">C</i>
+              </div>
+              <div class="cp-axis"><span>t₀</span><i></i><span>tiempo →</span></div>
+            </div>
+            <p class="cp-visual-equation">solapamiento <b>≠</b> simultaneidad</p>
+          </figure>
+        </div>
+
+        <dl class="cp-meta">
+          <div><dt>PUBLICADO</dt><dd>10 AGO 2026</dd></div>
+          <div><dt>LECTURA</dt><dd>~16 min</dd></div>
+          <div><dt>ENFOQUE</dt><dd>Python 3.11+</dd></div>
+          <div><dt>OBJETIVO</dt><dd>Decidir antes de escalar</dd></div>
+        </dl>
+      </header>
+
+      <aside class="cp-thesis">
+        <div class="section-shell">
+          <span>LA PREGUNTA CENTRAL</span>
+          <p>¿Querés <strong>tener más trabajo en progreso</strong> o <strong>terminar un cálculo antes</strong>?</p>
+        </div>
+      </aside>
+
+      <section class="cp-section section-shell" id="distincion">
+        <div class="cp-section-heading">
+          <p>01 / EL MODELO MENTAL</p>
+          <div>
+            <h2>Dos problemas distintos.<br /><em>Dos objetivos distintos.</em></h2>
+            <p>
+              Concurrencia y paralelismo pueden coexistir, pero no son sinónimos. Separarlos evita
+              optimizar el recurso equivocado y ayuda a explicar qué garantía compra cada pieza de
+              arquitectura.
+            </p>
+          </div>
+        </div>
+
+        <div class="cp-definition-grid">
+          <article class="cp-definition concurrent-definition">
+            <span>CONCURRENCIA</span>
+            <h3>Coordinar muchas tareas que están en progreso.</h3>
+            <p>
+              Una tarea avanza mientras otra espera. Pueden intercalarse en un solo core o correr
+              sobre varios. El objetivo principal es capacidad de respuesta, throughput y buen uso
+              de recursos que de otro modo quedarían ociosos.
+            </p>
+            <div><b>PREGUNTA</b><strong>¿Cómo atendemos muchas cosas sin bloquearnos?</strong></div>
+          </article>
+          <article class="cp-definition parallel-definition">
+            <span>PARALELISMO</span>
+            <h3>Ejecutar trabajo realmente al mismo tiempo.</h3>
+            <p>
+              El problema se divide entre cores, procesos, intérpretes o máquinas. El objetivo es
+              aumentar capacidad de cómputo o reducir la duración de una carga CPU-bound que admite
+              partición.
+            </p>
+            <div><b>PREGUNTA</b><strong>¿Cómo hacemos más cálculo simultáneo?</strong></div>
+          </article>
+        </div>
+
+        <div class="cp-prose cp-prose-two">
+          <p>
+            Pensalo con una API. Mientras espera una consulta a PostgreSQL, puede aceptar otra
+            conexión: eso es concurrencia. Si luego debe comprimir cuatro imágenes usando cuatro
+            cores a la vez, eso es paralelismo. El primer modelo <strong>aprovecha la espera</strong>;
+            el segundo <strong>agrega capacidad de ejecución</strong>.
+          </p>
+          <p>
+            Ninguno garantiza por sí solo que el sistema sea más rápido. Cada tarea concurrente
+            agrega estado vivo; cada worker paralelo agrega coordinación y movimiento de datos. A
+            partir de cierto punto, más unidades de ejecución solo producen colas, context switching
+            y contención.
+          </p>
+        </div>
+
+        <blockquote class="cp-pullquote">
+          <span>UNA DISTINCIÓN ÚTIL</span>
+          <p>Concurrencia es una propiedad del <strong>diseño</strong>. Paralelismo es una propiedad de la <strong>ejecución</strong>.</p>
+        </blockquote>
+      </section>
+
+      <section class="cp-section cp-dark" id="diagnostico">
+        <div class="section-shell">
+          <div class="cp-section-heading light">
+            <p>02 / DIAGNOSTICAR ANTES DE ELEGIR</p>
+            <div>
+              <h2>No empieces por<br /><em>async vs. threads.</em></h2>
+              <p>
+                Empezá por el perfil de la carga. Una decisión de ejecución sin mediciones es una
+                hipótesis disfrazada de arquitectura.
+              </p>
+            </div>
+          </div>
+
+          <ol class="cp-diagnostic-steps">
+            <li>
+              <span>01</span>
+              <div><h3>¿Dónde se va el tiempo?</h3><p>Separá espera externa, cómputo, memoria, serialización, locks y tiempo en cola. Usá perfiles y trazas, no intuición.</p></div>
+            </li>
+            <li>
+              <span>02</span>
+              <div><h3>¿Qué resultado querés mover?</h3><p>Latencia por request, throughput total, capacidad de respuesta, costo por tarea y tiempo de recuperación pueden pedir soluciones opuestas.</p></div>
+            </li>
+            <li>
+              <span>03</span>
+              <div><h3>¿Cuánto cuesta coordinar?</h3><p>Medí tamaño de los mensajes, frecuencia de sincronización, memoria por worker y granularidad. El trabajo debe amortizar ese costo.</p></div>
+            </li>
+            <li>
+              <span>04</span>
+              <div><h3>¿Qué pasa cuando se satura?</h3><p>Definí límites, prioridad, timeout, cancelación, degradación y rechazo. La capacidad finita necesita una conducta finita.</p></div>
+            </li>
+          </ol>
+
+          <div class="cp-table-wrap">
+            <table class="cp-decision-table">
+              <thead><tr><th>SEÑAL OBSERVADA</th><th>OBJETIVO</th><th>MODELO</th><th>PUNTO DE PARTIDA EN PYTHON</th></tr></thead>
+              <tbody>
+                {diagnosticRows.map((row) => (
+                  <tr><td>{row.signal}</td><td>{row.goal}</td><th>{row.model}</th><td><code>{row.python}</code></td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <aside class="cp-dark-callout">
+            <span>REGLA DE ORO</span>
+            <p>
+              Primero hacé correcta la versión secuencial y medí. Después aumentá concurrencia o
+              paralelismo hasta que el recurso limitante cambie. El número óptimo casi nunca es
+              “todo lo que la máquina permita”.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="cp-section section-shell" id="python">
+        <div class="cp-section-heading">
+          <p>03 / EL TOOLBOX DE PYTHON</p>
+          <div>
+            <h2>Elegí por el cuello de botella,<br /><em>no por familiaridad.</em></h2>
+            <p>
+              Python ofrece varias primitivas. La mejor es la que hace explícito el modelo de
+              ejecución y contiene su costo operativo.
+            </p>
+          </div>
+        </div>
+
+        <div class="cp-tool-grid">
+          {toolCards.map((tool) => (
+            <article class={`cp-tool-card tone-${tool.tone}`}>
+              <span>{tool.number}</span><h3>{tool.name}</h3>
+              <dl>
+                <div><dt>USALO PARA</dt><dd>{tool.fit}</dd></div>
+                <div><dt>COMPRA</dt><dd>{tool.gains}</dd></div>
+                <div><dt>COSTO</dt><dd>{tool.cost}</dd></div>
+              </dl>
+            </article>
+          ))}
+        </div>
+
+        <section class="cp-code-study" aria-labelledby="async-code-title">
+          <div class="cp-code-copy">
+            <p>CONCURRENCIA ACOTADA</p>
+            <h3 id="async-code-title">`async` no significa<br />“sin límites”.</h3>
+            <p>
+              Este ejemplo mantiene como máximo veinte requests en vuelo, aplica un timeout por
+              operación y agrupa el ciclo de vida de las tareas. Si una tarea falla con un error no
+              manejado, <code>TaskGroup</code> cancela sus hermanas: esa es una decisión de semántica,
+              no un detalle de sintaxis.
+            </p>
+            <ul>
+              <li><code>Semaphore</code> protege la dependencia.</li>
+              <li><code>asyncio.timeout</code> limita la espera.</li>
+              <li><code>TaskGroup</code> evita tareas huérfanas.</li>
+            </ul>
+          </div>
+          <div class="cp-code-panel">
+            <div><span>bounded_fetch.py</span><span>PYTHON 3.11+</span></div>
+            <pre><code><span class="kw">import</span> asyncio
+<span class="kw">import</span> httpx
+
+<span class="kw">async def</span> <span class="fn">fetch_one</span>(client, url, slots):
+    <span class="kw">async with</span> slots:
+        <span class="kw">try</span>:
+            <span class="kw">async with</span> asyncio.timeout(<span class="num">2.0</span>):
+                response = <span class="kw">await</span> client.get(url)
+                response.raise_for_status()
+                <span class="kw">return</span> response.json()
+        <span class="kw">except</span> TimeoutError:
+            <span class="kw">return</span> &#123;<span class="str">"url"</span>: url, <span class="str">"error"</span>: <span class="str">"timeout"</span>&#125;
+
+<span class="kw">async def</span> <span class="fn">fetch_many</span>(urls):
+    slots = asyncio.Semaphore(<span class="num">20</span>)
+    <span class="kw">async with</span> httpx.AsyncClient() <span class="kw">as</span> client:
+        <span class="kw">async with</span> asyncio.TaskGroup() <span class="kw">as</span> group:
+            tasks = [
+                group.create_task(fetch_one(client, url, slots))
+                <span class="kw">for</span> url <span class="kw">in</span> urls
+            ]
+    <span class="kw">return</span> [task.result() <span class="kw">for</span> task <span class="kw">in</span> tasks]</code></pre>
+          </div>
+        </section>
+
+        <div class="cp-prose cp-prose-two cp-after-code">
+          <p>
+            Si un SDK bloqueante no ofrece una API async, <code>await asyncio.to_thread(...)</code>
+            permite sacarlo del event loop. Es una herramienta de compatibilidad muy útil para I/O;
+            en la build tradicional de CPython no transforma automáticamente código Python
+            CPU-bound en trabajo multinúcleo.
+          </p>
+          <p>
+            Para cómputo independiente, un <code>ProcessPoolExecutor</code> evita el GIL usando
+            procesos separados. La función, argumentos y resultados deben poder serializarse, y el
+            bloque debe ser lo bastante grande para amortizar ese viaje.
+          </p>
+        </div>
+
+        <section class="cp-process-example" aria-labelledby="process-code-title">
+          <div class="cp-code-panel light-code">
+            <div><span>parallel_transform.py</span><span>CPU-BOUND</span></div>
+            <pre><code><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+
+<span class="kw">def</span> <span class="fn">transform</span>(chunk):
+    <span class="cm"># Trabajo CPU-bound, sin estado compartido.</span>
+    <span class="kw">return</span> expensive_normalization(chunk)
+
+<span class="kw">def</span> <span class="fn">transform_all</span>(chunks):
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+        <span class="kw">return</span> list(pool.map(transform, chunks, chunksize=<span class="num">8</span>))
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    result = transform_all(load_chunks())</code></pre>
+          </div>
+          <aside>
+            <span>GRANULARIDAD</span>
+            <h3>Dividí por unidades con ownership claro.</h3>
+            <p>
+              Un chunk por registro puede generar más serialización que cálculo. Un único chunk
+              gigante deja cores ociosos. Medí tamaño de lote, skew y tiempo de transferencia junto
+              con el speedup.
+            </p>
+          </aside>
+        </section>
+
+        <aside class="cp-gil-note">
+          <div><span>MATIZ 2026</span><strong>El GIL ya no es una respuesta de una sola línea.</strong></div>
+          <p>
+            Desde Python 3.13 existe una build <em>free-threaded</em> opcional de CPython; puede ejecutar
+            threads en paralelo, aunque algunas extensiones todavía pueden reactivar el GIL y hay
+            trade-offs de compatibilidad y memoria. Python 3.14 también suma
+            <code>InterpreterPoolExecutor</code>, donde cada worker tiene su propio intérprete y GIL.
+            En producción, verificá la build y el ecosistema real: no diseñes sobre una ausencia del
+            GIL que tu runtime quizá no tenga.
+          </p>
+        </aside>
+      </section>
+
+      <section class="cp-section cp-system" id="sistema">
+        <div class="section-shell">
+          <div class="cp-section-heading">
+            <p>04 / DEL RUNTIME AL SISTEMA</p>
+            <div>
+              <h2>El patrón que escala<br /><em>suele ser híbrido.</em></h2>
+              <p>
+                Una aplicación real mezcla conexiones, cómputo y dependencias lentas. El objetivo no
+                es elegir un ganador: es darle a cada etapa un modelo y un presupuesto propios.
+              </p>
+            </div>
+          </div>
+
+          <figure class="cp-architecture" aria-labelledby="architecture-title">
+            <figcaption id="architecture-title"><span>CASO: PIPELINE DE DOCUMENTOS</span><b>CONCURRENCIA EN EL BORDE · PARALELISMO EN CPU</b></figcaption>
+            <div class="cp-architecture-flow">
+              <div class="arch-node arch-clients"><span>01</span><strong>Clientes</strong><small>requests concurrentes</small></div>
+              <b class="arch-arrow" aria-hidden="true">→</b>
+              <div class="arch-node arch-api"><span>02</span><strong>API async</strong><small>validar + persistir</small></div>
+              <b class="arch-arrow" aria-hidden="true">→</b>
+              <div class="arch-node arch-queue"><span>03</span><strong>Cola acotada</strong><small>backpressure</small></div>
+              <b class="arch-arrow" aria-hidden="true">→</b>
+              <div class="arch-workers">
+                <span>04 · WORKERS CPU</span>
+                <div><i>OCR A</i><i>OCR B</i><i>OCR C</i></div>
+              </div>
+              <b class="arch-arrow" aria-hidden="true">→</b>
+              <div class="arch-node arch-store"><span>05</span><strong>Resultado</strong><small>estado idempotente</small></div>
+            </div>
+            <div class="cp-control-plane">
+              <span>LÍMITES</span><span>TIMEOUTS</span><span>RETRIES + JITTER</span><span>OBSERVABILIDAD</span><span>CANCELACIÓN</span>
+            </div>
+            <p>
+              La API no procesa OCR dentro del request. Acepta trabajo, lo hace durable y devuelve
+              un identificador. La cola desacopla ritmos; los workers paralelos consumen según la CPU
+              disponible; el cliente observa progreso sin mantener recursos pesados abiertos.
+            </p>
+          </figure>
+
+          <div class="cp-system-principles">
+            <article><span>01</span><h3>Bounded concurrency</h3><p>Si la base admite 40 conexiones, lanzar 400 queries no crea capacidad. Crea una cola dentro del lugar menos observable.</p></article>
+            <article><span>02</span><h3>Backpressure</h3><p>Cuando el consumidor se atrasa, el productor debe esperar, degradar o rechazar. Una cola infinita solo aplaza el incidente.</p></article>
+            <article><span>03</span><h3>Bulkheads</h3><p>Separá pools por tipo de trabajo o prioridad. Un reporte pesado no debería consumir la capacidad del login.</p></article>
+            <article><span>04</span><h3>Idempotencia</h3><p>Timeout no significa fracaso: significa resultado desconocido. Reintentar solo es seguro si repetir no duplica el efecto.</p></article>
+          </div>
+
+          <aside class="cp-capacity-note">
+            <div><span>INTUICIÓN DE CAPACIDAD</span><strong>trabajo en vuelo ≈ throughput × latencia</strong></div>
+            <p>
+              Si llegan 200 requests/s y cada operación tarda 250 ms, habrá unas 50 en vuelo en
+              promedio. Ese número sirve para iniciar la conversación sobre conexiones y memoria,
+              pero los percentiles y los picos mandan: diseñar con el promedio es esconder la cola.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="cp-section cp-dark" id="fallos">
+        <div class="section-shell">
+          <div class="cp-section-heading light">
+            <p>05 / CÓMO FALLA EN PRODUCCIÓN</p>
+            <div>
+              <h2>Más tareas también son<br /><em>más estados posibles.</em></h2>
+              <p>
+                La complejidad real aparece en saturación, cancelaciones y resultados parciales. El
+                modelo está incompleto hasta que esos estados tienen una respuesta explícita.
+              </p>
+            </div>
+          </div>
+
+          <div class="cp-failure-grid">
+            {failureCards.map(([number, title, failure, response]) => (
+              <article>
+                <span>{number}</span><h3>{title}</h3>
+                <div><b>FALLA</b><p>{failure}</p></div>
+                <div><b>DISEÑO</b><p>{response}</p></div>
+              </article>
+            ))}
+          </div>
+
+          <div class="cp-semantics">
+            <p>LAS PREGUNTAS QUE EL CÓDIGO NO RESPONDE SOLO</p>
+            <ul>
+              <li><span>TIMEOUT</span><p>¿El usuario puede reintentar o el trabajo continúa en background?</p></li>
+              <li><span>CANCELACIÓN</span><p>¿Se propaga a subtareas y workers o solo dejamos de esperar?</p></li>
+              <li><span>PARCIAL</span><p>¿Devolvemos lo disponible, fallamos todo o marcamos cada elemento?</p></li>
+              <li><span>ORDEN</span><p>¿Importa globalmente, por cliente, por documento o no importa?</p></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="cp-section section-shell" id="metodo">
+        <div class="cp-section-heading">
+          <p>06 / UN MÉTODO REPETIBLE</p>
+          <div>
+            <h2>Diseñar desde la carga<br /><em>hasta la operación.</em></h2>
+            <p>
+              Este recorrido sirve para una API, un crawler, un pipeline de datos o un servicio de
+              procesamiento multimedia.
+            </p>
+          </div>
+        </div>
+
+        <ol class="cp-method">
+          <li><span>01</span><div><h3>Medí la versión simple</h3><p>Perfilá CPU, I/O, memoria y locks. Registrá p50, p95 y p99, no solo duración media.</p></div></li>
+          <li><span>02</span><div><h3>Nombrá la unidad de trabajo</h3><p>Request, archivo, partición, imagen o cliente. Definí qué estado comparte y qué orden necesita.</p></div></li>
+          <li><span>03</span><div><h3>Elegí el modelo por etapa</h3><p>Async para esperar sin bloquear; threads para I/O bloqueante; procesos o intérpretes para CPU aislable.</p></div></li>
+          <li><span>04</span><div><h3>Poné límites donde nace el trabajo</h3><p>Semáforos, pools y colas acotadas. Si no hay capacidad, la respuesta debe ser visible y deliberada.</p></div></li>
+          <li><span>05</span><div><h3>Diseñá el ciclo de vida</h3><p>Timeout, cancelación, retry, idempotencia, shutdown y recuperación de tareas huérfanas.</p></div></li>
+          <li><span>06</span><div><h3>Probá el sistema, no el happy path</h3><p>Carga sostenida, bursts, dependencia lenta, worker muerto y datos con skew. Observá dónde aparece la primera cola.</p></div></li>
+        </ol>
+
+        <section class="cp-checklist" aria-labelledby="checklist-title">
+          <div>
+            <p>DESIGN REVIEW</p>
+            <h3 id="checklist-title">Antes de aprobar<br />el diagrama.</h3>
+          </div>
+          <ul>
+            {checklist.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span>{item}</li>)}
+          </ul>
+        </section>
+      </section>
+
+      <section class="cp-conclusion">
+        <div class="section-shell">
+          <p class="cp-kicker"><span></span> LA DECISIÓN EN UNA LÍNEA</p>
+          <h2>Espera mejor con <strong>concurrencia.</strong><br />Calculá más con <strong>paralelismo.</strong></h2>
+          <p>
+            Y cuando el sistema haga ambas cosas, separá las etapas, acotá el trabajo en vuelo y
+            tratá saturación, cancelación y retries como comportamiento de producto. La arquitectura
+            correcta no es la que ejecuta más tareas: es la que mantiene control cuando llega el pico.
+          </p>
+        </div>
+      </section>
+
+      <section class="cp-sources section-shell" aria-labelledby="sources-title">
+        <div><p>07 / FUENTES Y PRÓXIMOS PASOS</p><h2 id="sources-title">Para seguir<br /><em>profundizando.</em></h2></div>
+        <ol>
+          <li><span>01</span><a href="https://www.freecodecamp.org/news/concurrency-vs-parallelism-whats-the-difference-and-why-should-you-care/" target="_blank" rel="noopener noreferrer"><strong>Concurrency vs. Parallelism</strong><small>El artículo que disparó esta nota · freeCodeCamp ↗</small></a></li>
+          <li><span>02</span><a href="https://docs.python.org/3/library/asyncio-task.html" target="_blank" rel="noopener noreferrer"><strong>Coroutines and Tasks</strong><small>TaskGroup, cancelación y timeouts · Python Docs ↗</small></a></li>
+          <li><span>03</span><a href="https://docs.python.org/3.14/library/concurrent.futures.html" target="_blank" rel="noopener noreferrer"><strong>concurrent.futures</strong><small>Threads, procesos e intérpretes · Python Docs ↗</small></a></li>
+          <li><span>04</span><a href="https://docs.python.org/3/howto/free-threading-python.html" target="_blank" rel="noopener noreferrer"><strong>Python support for free threading</strong><small>Builds sin GIL y limitaciones actuales · Python Docs ↗</small></a></li>
+        </ol>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="/system-design/#field-notes" aria-label="Volver al módulo de System Design">
+      <span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span>
+    </a>
+    <p>PYTHON · FIELD NOTE 01</p>
+    <a href="#top">VOLVER ARRIBA ↑</a>
+  </footer>
+</Layout>

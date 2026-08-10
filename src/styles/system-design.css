@@ -110,6 +110,24 @@
 .process-list div { display: grid; grid-template-columns: 230px 1fr; align-items: baseline; gap: 45px; padding: 24px 0; }
 .process-list h3 { margin: 0; font-size: 22px; }.process-list p { margin: 0; max-width: 700px; color: rgba(255,255,255,0.66); font-size: 13px; line-height: 1.65; }
 
+.sd-notes { background: var(--paper-2); }
+.sd-note-feature { display: grid; grid-template-columns: 1.15fr .85fr; min-height: 470px; border: 1px solid var(--ink); background: var(--paper); box-shadow: 9px 9px 0 var(--ink); transition: transform .2s, box-shadow .2s; }
+.sd-note-feature:hover { transform: translate(-3px, -3px); box-shadow: 12px 12px 0 var(--ink); }
+.sd-note-feature-copy { display: flex; flex-direction: column; padding: 42px; }
+.sd-note-kicker { margin: 0; color: var(--accent-text); font: 500 9px var(--mono); letter-spacing: .11em; }
+.sd-note-feature h3 { margin: 54px 0 22px; font-size: clamp(39px, 4.2vw, 61px); line-height: .98; letter-spacing: -.065em; }
+.sd-note-feature h3 em { color: var(--accent-text); font-style: normal; }
+.sd-note-feature-copy > p:not(.sd-note-kicker) { max-width: 650px; margin: 0; color: rgba(23,32,30,.76); font-size: 14px; line-height: 1.72; }
+.sd-note-cta { margin-top: auto; padding-top: 32px; font-size: 12px; font-weight: 800; }
+.sd-note-cta b { margin-left: 14px; color: var(--accent-text); font-size: 19px; }
+.sd-note-signal { display: flex; flex-direction: column; justify-content: center; padding: 38px; background: var(--ink); color: white; }
+.signal-labels { display: flex; justify-content: space-between; margin: 18px 0 10px; color: rgba(255,255,255,.66); font: 500 8px var(--mono); letter-spacing: .09em; }
+.signal-track { display: grid; gap: 6px; min-height: 67px; padding: 10px; border: 1px solid rgba(255,255,255,.2); }
+.signal-track i { display: grid; place-items: center; color: var(--ink); font: normal 700 10px var(--mono); }
+.signal-concurrent { grid-template-columns: repeat(6, 1fr); }.signal-concurrent i:nth-child(3n+1) { background: var(--coral); }.signal-concurrent i:nth-child(3n+2) { background: var(--blue); }.signal-concurrent i:nth-child(3n) { background: var(--lime); }
+.signal-parallel { grid-template-columns: repeat(3, 1fr); }.signal-parallel i:nth-child(1) { background: var(--coral); }.signal-parallel i:nth-child(2) { background: var(--blue); }.signal-parallel i:nth-child(3) { background: var(--lime); }
+.sd-note-signal > p { margin: 48px 0 0; font: 500 11px var(--mono); text-align: center; }.sd-note-signal > p b { margin-inline: 14px; color: var(--coral); font-size: 20px; }
+
 .sd-final { min-height: 650px; display: grid; place-items: center; padding-block: 100px; background: var(--coral); text-align: center; }
 .sd-final .eyebrow { justify-content: center; }.sd-final .eyebrow span { background: var(--ink); }
 .sd-final h2 { margin: 25px 0; font-size: clamp(65px, 9vw, 118px); line-height: .88; letter-spacing: -.08em; font-weight: 500; }.sd-final h2 strong { font-weight: 800; }
@@ -119,6 +137,7 @@
   .sd-hero { grid-template-columns: 1fr; }.sd-hero-copy { max-width: 760px; }.sd-system-map { width: min(650px, 100%); }
   .sd-section-heading, .definition-grid { grid-template-columns: 1fr 2.2fr; }.foundation-grid { grid-template-columns: 1fr 1fr; }.foundation-card:nth-child(2) { border-right: 0; }.foundation-card:nth-child(-n+2) { border-bottom: 1px solid var(--ink); }
   .block-list article { grid-template-columns: 35px 115px 1fr; }.case-body { grid-template-columns: 1fr; }.case-flow { grid-row: 2; }
+  .sd-note-feature { grid-template-columns: 1fr; }.sd-note-signal { min-height: 330px; }
 }
 
 @media (max-width: 680px) {
@@ -132,4 +151,5 @@
   .pattern-grid article { min-height: 320px; padding: 23px 20px; }.pattern-visual { padding: 10px; gap: 6px; }.pattern-visual i { min-width: 47px; padding-inline: 7px; font-size: 7px; }
   .case-card { box-shadow: 5px 5px 0 var(--ink); }.case-card > header { align-items: flex-start; flex-direction: column; gap: 12px; padding: 22px 20px; }.case-card header div { gap: 14px; }.case-card h3 { font-size: 25px; }.case-body { padding: 24px 20px; }.case-flow i { font-size: 7px; }
   .process-list li { grid-template-columns: 50px 1fr; }.process-list div { grid-template-columns: 1fr; gap: 8px; }.sd-final { min-height: 550px; }.sd-final h2 { font-size: 68px; }
+  .sd-note-feature { box-shadow: 6px 6px 0 var(--ink); }.sd-note-feature-copy { min-height: 500px; padding: 28px 20px; }.sd-note-feature h3 { margin-top: 45px; font-size: 40px; }.sd-note-signal { min-height: 300px; padding: 24px 18px; }
 }

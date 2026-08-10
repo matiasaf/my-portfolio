@@ -1,0 +1,38 @@
+---
+import SectionHeading from './SectionHeading.astro';
+---
+
+<section class="sd-section sd-notes" id="field-notes">
+  <div class="section-shell">
+    <SectionHeading
+      number="08 / FIELD NOTES"
+      title="Architecture decisions"
+      emphasis="inside the runtime."
+      description="Practical essays that connect language-level execution models with the behavior, limits, and failure modes of production systems."
+    />
+
+    <a class="sd-note-feature" href="/system-design/concurrencia-vs-paralelismo-python/" lang="es">
+      <div class="sd-note-feature-copy">
+        <p class="sd-note-kicker">PYTHON · CONCURRENCIA · 16 MIN</p>
+        <h3>Concurrencia vs. paralelismo:<br /><em>cómo elegir y diseñar el sistema.</em></h3>
+        <p>
+          Una guía para distinguir espera de cómputo, elegir entre asyncio, threads y procesos,
+          y convertir esa decisión en un sistema con límites, backpressure y fallos controlados.
+        </p>
+        <span class="sd-note-cta">Leer el artículo <b aria-hidden="true">↗</b></span>
+      </div>
+
+      <div class="sd-note-signal" aria-hidden="true">
+        <div class="signal-labels"><span>CONCURRENCIA</span><span>1 WORKER</span></div>
+        <div class="signal-track signal-concurrent">
+          <i>A</i><i>B</i><i>A</i><i>C</i><i>B</i><i>C</i>
+        </div>
+        <div class="signal-labels"><span>PARALELISMO</span><span>3 WORKERS</span></div>
+        <div class="signal-track signal-parallel">
+          <i>A</i><i>B</i><i>C</i>
+        </div>
+        <p>esperar mejor <b>≠</b> calcular más rápido</p>
+      </div>
+    </a>
+  </div>
+</section>

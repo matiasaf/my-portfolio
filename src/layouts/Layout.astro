@@ -6,14 +6,27 @@ interface Props {
   description: string;
   lang?: string;
   alternateHref?: string;
+  ogType?: 'website' | 'article';
+  image?: string;
+  publishedTime?: string;
   /** id del <main> de la pagina: es el destino del skip link. */
   mainId?: string;
 }
 
-const { title, description, lang = 'en', alternateHref, mainId = 'main-content' } = Astro.props;
+const {
+  title,
+  description,
+  lang = 'en',
+  alternateHref,
+  ogType = 'website',
+  image,
+  publishedTime,
+  mainId = 'main-content',
+} = Astro.props;
 const skipLabel = lang === 'es' ? 'Saltar al contenido' : 'Skip to content';
 const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin);
 const alternateUrl = alternateHref ? new URL(alternateHref, Astro.url.origin) : undefined;
+const imageUrl = image ? new URL(image, Astro.url.origin) : undefined;
 ---
 
 <!doctype html>
@@ -36,11 +49,15 @@ const alternateUrl = alternateHref ? new URL(alternateHref, Astro.url.origin) : 
     <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content={lang === 'es' ? 'es_AR' : 'en_US'} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Matías Fernández" />
-    <meta name="twitter:card" content="summary" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && <meta property="og:image:alt" content={title} />}
+    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     <link rel="canonical" href={canonicalUrl} />
     {alternateUrl && <link rel="alternate" hreflang={lang === 'es' ? 'en' : 'es'} href={alternateUrl} />}
     {alternateUrl && <link rel="alternate" hreflang={lang} href={canonicalUrl} />}
