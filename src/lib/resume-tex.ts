@@ -64,7 +64,11 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 \addtolength{\evensidemargin}{-0.5in}
 \addtolength{\textwidth}{1in}
 \addtolength{\topmargin}{-0.7in}
-\addtolength{\textheight}{1.6in}
+% El estirado del alto es asimetrico a proposito: el -0.7in de \topmargin ya
+% subio el bloque de texto, asi que agrandar el alto lo mismo devolveria todo
+% ese margen al pie. Con 1.1in la ultima linea corta ~0.5in antes del borde y
+% la pagina respira abajo (con \raggedbottom el sobrante se acumula ahi).
+\addtolength{\textheight}{1.1in}
 
 \urlstyle{same}
 \raggedbottom
@@ -76,7 +80,7 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 % con \vspace negativos calibrados contra el espaciado por defecto de las
 % listas; al compactar las listas esos negativos se acumulaban y las lineas
 % terminaban superpuestas.
-\setlist{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=0pt}
+\setlist{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=1.5pt}
 
 % Titulo de seccion: versalitas y filete, el \scshape del template.
 % Requiere que el titulo venga en Title Case: \scshape sobre texto ya en
@@ -104,8 +108,11 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
 % label explicito: al estar anidada, esta lista tomaria \labelitemii (una raya)
 % en vez de la vinieta del template.
-\newcommand{\resumeItemListStart}{\begin{itemize}[label=$\bullet$, leftmargin=1.2em, topsep=1pt]}
-\newcommand{\resumeItemListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[label=$\bullet$, leftmargin=1.2em, topsep=2pt]}
+% El \vspace de cierre es lo que separa un puesto del siguiente: sin el, los
+% bullets de uno quedan pegados al encabezado del que sigue y el bloque de
+% experiencia se lee como un unico muro de texto.
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{7pt}}
 `;
 
 function renderHeader(r: Resume): string {
