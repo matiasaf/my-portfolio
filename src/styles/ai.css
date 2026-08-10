@@ -129,8 +129,8 @@
 .ai-post-meta span { font: 500 8px var(--mono); letter-spacing: .1em; color: rgba(23,32,30,0.88); }
 .ai-post-meta b { font-size: 15px; letter-spacing: -.03em; }
 
-.ai-prose { max-width: 72ch; }
-.ai-prose p { margin: 0 0 20px; font-size: 15.5px; line-height: 1.78; color: rgba(23,32,30,.86); }
+.ai-prose, .ai-callout, .ai-figure-note { max-width: 50rem; }
+.ai-prose p { margin: 0 0 20px; font-size: clamp(16px, calc(15px + .15vw), 17px); line-height: 1.75; color: rgba(23,32,30,.86); }
 .ai-prose p:last-child { margin-bottom: 0; }
 .ai-prose strong { color: var(--ink); font-weight: 700; }
 .ai-prose em { font-style: italic; }
@@ -148,12 +148,12 @@
 .ai-figure-cap span { padding: 4px 8px; background: var(--coral); color: var(--ink); }
 .ai-figure-cap b { color: rgba(23,32,30,0.88); font-weight: 500; }
 .ai-figure-cap.light b { color: rgba(255,255,255,0.66); }
-.ai-figure-note { max-width: 72ch; margin: 18px 0 0; font-size: 13.5px; line-height: 1.7; color: rgba(23,32,30,0.88); }
+.ai-figure-note { margin: 18px 0 0; font-size: 13.5px; line-height: 1.7; color: rgba(23,32,30,0.88); }
 .ai-dark .ai-figure-note { color: rgba(255,255,255,0.66); }
 .ai-figure-note b, .ai-figure-note strong { color: var(--ink); }
 .ai-dark .ai-figure-note b, .ai-dark .ai-figure-note strong { color: white; }
 
-.ai-callout { max-width: 72ch; margin: 34px 0 0; padding: 24px 26px; border: 1px solid var(--ink); background: var(--blue); }
+.ai-callout { margin: 34px 0 0; padding: 24px 26px; border: 1px solid var(--ink); background: var(--blue); }
 .ai-callout-tag { margin: 0 0 12px; font: 500 9px var(--mono); letter-spacing: .11em; color: rgba(23,32,30,0.88); }
 .ai-callout p:last-child { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--ink); }
 
@@ -278,7 +278,7 @@
 .ai-params { width: 100%; border-collapse: collapse; }
 .ai-params caption { margin-bottom: 14px; font: 500 9px var(--mono); letter-spacing: .11em; text-align: left; color: rgba(23,32,30,.88); }
 .ai-params th, .ai-params td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; font-size: 12px; vertical-align: middle; }
-.ai-params thead th { background: var(--ink); color: white; font: 500 8.5px var(--mono); letter-spacing: .08em; }
+.ai-params thead th { position: relative; background: var(--ink); color: white; font: 500 8.5px var(--mono); letter-spacing: .08em; }
 .ai-params tbody th { font-size: 13px; font-weight: 700; white-space: nowrap; }
 .ai-params .ai-params-num { font: 500 11px var(--mono); white-space: nowrap; }
 /* La barra mide contra el ancho de su celda, asi que la celda necesita un
@@ -289,7 +289,12 @@
 .ai-params-bar.is-big { background: var(--coral); }
 .ai-params-bar.is-small { background: var(--violet); }
 .ai-params tfoot th, .ai-params tfoot td { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 800; }
-.ai-params-wrap { overflow-x: auto; }
+.ai-params-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
 .ai-params-wrap table { min-width: 640px; }
 /* Sobre la seccion oscura la tabla hereda el texto blanco, pero los bordes y la
    cabecera se declararon contra papel: hay que reponerlos. */
@@ -357,12 +362,18 @@
   .ai-band-grid, .ai-section-head { grid-template-columns: 1fr; gap: 18px; }
   .ai-band-grid blockquote { font-size: 31px; }
   .ai-section { padding-block: 66px; }
-  .ai-section-head h2 { font-size: 38px; }
+  .ai-section-head { min-width: 0; margin-bottom: 38px; }
+  .ai-section-head > div, .ai-section-head h2 { min-width: 0; }
+  .ai-section-head h2 { font-size: clamp(32px, 9vw, 38px); overflow-wrap: anywhere; }
   .ai-post-hero { padding-block: 74px 52px; }
   .ai-post-meta { grid-template-columns: repeat(2, 1fr); }
   .ai-post-meta div:nth-child(2) { border-right: 0; }
   .ai-post-meta div:nth-child(-n+2) { border-bottom: 1px solid var(--ink); }
+  .ai-figure, .ai-frame { min-width: 0; }
+  .ai-figure-cap { align-items: flex-start; gap: 10px; }
+  .ai-figure-cap b { min-width: 0; overflow-wrap: anywhere; }
   .ai-frame { padding: 20px 16px; }
+  .ai-frame-label { overflow-wrap: anywhere; }
   .ai-loop-step { padding: 10px 11px; font-size: 8.5px; }
   .ai-stack-lane, .ai-stack-block, .ai-stack-out { grid-template-columns: 1fr; gap: 8px; }
   .ai-stack-cells { grid-template-columns: repeat(3, 1fr); }
