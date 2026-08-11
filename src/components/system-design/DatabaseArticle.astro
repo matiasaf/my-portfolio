@@ -1,0 +1,408 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/system-design.css';
+import '../../styles/database-article.css';
+
+interface Props { lang: 'es' | 'en' }
+const { lang } = Astro.props;
+const es = lang === 'es';
+
+const alternatePath = es
+  ? '/en/system-design/choosing-a-database/'
+  : '/system-design/elegir-base-de-datos/';
+
+const t = es ? {
+  title: 'Elegir una base de datos — Diseñá desde las preguntas, no desde el logo',
+  description: 'Una guía práctica para elegir y diseñar bases de datos desde los patrones de acceso, las invariantes, la escala y los modos de fallo.',
+  back: 'Volver al módulo de System Design', headerLabel: 'BASES DE DATOS · FIELD NOTE 02',
+  breadcrumb: ['System Design', 'Field Notes', 'Bases de datos'], switchLabel: 'Read in English', switchShort: 'EN',
+  kicker: 'MODELOS DE DATOS · ESCALA · GARANTÍAS',
+  heroA: 'La base de datos', heroEm: 'no es un logo.',
+  lede: 'Es el lugar donde convertís reglas del negocio en estructura, acceso y garantías. Elegir bien no empieza comparando productos: empieza escribiendo qué preguntas debe responder el sistema, qué estados jamás puede aceptar y cómo debería fallar.',
+  meta: [['PUBLICADO', '10 AGO 2026'], ['LECTURA', '~18 min'], ['IDIOMA', 'ES · EN'], ['ORIGEN', 'Video de BettaTech']],
+  visualCaption: ['UNA DECISIÓN EN CADENA', 'DEL PRODUCTO AL STORAGE'],
+  visualFlow: ['PREGUNTAS', 'MODELO', 'GARANTÍAS', 'MOTOR'],
+  visualNotes: ['qué leemos y escribimos', 'cómo se conectan los datos', 'qué debe seguir siendo verdad', 'qué operación aceptamos'],
+  thesisLabel: 'LA IDEA CENTRAL',
+  thesis: 'La mejor base de datos no es la más rápida en abstracto. Es la que hace simples las operaciones críticas y explícitos sus costos.',
+  s1Number: '01 / EMPEZAR POR LAS PREGUNTAS', s1Title: ['Diseñá las consultas', 'antes que las tablas.'],
+  s1Intro: 'El mismo conjunto de entidades admite modelos completamente distintos. La forma correcta depende de cómo entra, cambia y sale la información.',
+  questionTitle: 'Un workload, no una lista de features.',
+  questionCopy: 'Antes de elegir tecnología, escribí los caminos críticos como contratos observables. Cada uno debería tener volumen, latencia, consistencia y patrón de fallo esperados.',
+  queryLabels: ['IDENTIDAD', 'LISTADO', 'ESCRITURA CRÍTICA', 'BÚSQUEDA'],
+  questionCalloutLabel: 'HEURÍSTICA',
+  questionCallout: 'Si no podés enumerar las cinco consultas más importantes, todavía no tenés evidencia para elegir una base de datos.',
+  canvasTitle: 'El canvas mínimo de decisión',
+  canvas: [
+    ['01', 'Acceso', 'Qué se lee, qué se escribe, con qué filtros, orden y cardinalidad.'],
+    ['02', 'Invariantes', 'Qué debe ser único, atómico, ordenado o referencialmente válido.'],
+    ['03', 'Carga', 'Volumen actual y pico, ratio lectura/escritura, crecimiento y tamaño por ítem.'],
+    ['04', 'Distribución', 'Regiones, residencia, partición natural, hot keys y tolerancia a latencia.'],
+    ['05', 'Fallos', 'Qué devuelve el sistema si un nodo, una región o una proyección queda atrasada.'],
+    ['06', 'Operación', 'Backups, restore, migraciones, observabilidad y experiencia real del equipo.'],
+  ],
+  s2Number: '02 / CUATRO MODELOS, NO CUATRO MARCAS', s2Title: ['Cada modelo optimiza', 'una forma de preguntar.'],
+  s2Intro: 'Relacional, documental, clave–valor y grafo no son niveles de madurez. Son representaciones que vuelven naturales algunas operaciones y costosas otras.',
+  modelLabels: ['BRILLA CUANDO', 'CONSULTA NATURAL', 'PAGA CON'],
+  modelFoot: 'Los ejemplos son familias, no fronteras rígidas. Los motores modernos incorporan documentos, búsqueda, grafos o transacciones en distintos grados. Evaluá la garantía concreta, no la etiqueta comercial.',
+  s3Number: '03 / NORMALIZAR Y DESNORMALIZAR', s3Title: ['La forma del dato', 'también es un trade-off.'],
+  s3Intro: 'Normalizar reduce duplicación y concentra las reglas. Desnormalizar acerca el dato a una lectura concreta. Lo importante es decidir cuál representación es autoridad y cuál es una proyección.',
+  normalizeLabel: 'MODELO DE ESCRITURA · NORMALIZADO', normalizeTitle: 'Una regla vive en un solo lugar.',
+  normalizeCopy: 'Cliente, pedido, producto y línea de pedido tienen identidad propia. Las claves y constraints protegen relaciones: cambiar el email no obliga a reescribir el historial de pedidos.',
+  denormalizeLabel: 'MODELO DE LECTURA · DESNORMALIZADO', denormalizeTitle: 'Una pantalla se resuelve de una vez.',
+  denormalizeCopy: 'Una proyección puede repetir nombre, total y productos para servir un detalle sin joins. Se reconstruye desde eventos o desde la fuente de verdad y acepta una frescura definida.',
+  authorityLabel: 'REGLA DE OWNERSHIP', authority: 'Duplicar datos puede ser correcto. Duplicar autoridad casi nunca lo es.',
+  s4Number: '04 / ÍNDICES', s4Title: ['Acelerá una pregunta,', 'no “la base”.'],
+  s4Intro: 'Un índice es otra representación que el motor mantiene para encontrar filas sin recorrer toda la tabla. Compra lecturas más rápidas con almacenamiento y trabajo adicional en cada escritura.',
+  scanLabel: 'SIN ÍNDICE', scanTitle: 'Table scan', scanCopy: 'El costo crece con las filas examinadas.',
+  indexLabel: 'CON ÍNDICE', indexTitle: 'B-tree lookup', indexCopy: 'El motor recorre una estructura ordenada hasta el rango útil.',
+  indexRuleLabel: 'LO QUE SE MIDE', indexRule: 'query + selectividad + plan + frecuencia',
+  indexCards: [
+    ['01', 'Diseñá desde WHERE, JOIN y ORDER BY', 'El orden de columnas en un índice compuesto cambia qué prefijos puede aprovechar el planner.'],
+    ['02', 'Contá el costo de escritura', 'INSERT, UPDATE y DELETE también mantienen índices. Un índice sin uso es deuda activa.'],
+    ['03', 'Leé el plan real', 'EXPLAIN y métricas de producción muestran si el índice reduce trabajo o si un scan es más barato.'],
+  ],
+  s5Number: '05 / ESCALAR SIN ATAJOS', s5Title: ['Más nodos cambian', 'las garantías.'],
+  s5Intro: 'Escalar no es una propiedad binaria. Replicar, particionar y distribuir mueven el límite, pero también introducen lag, coordinación y nuevos estados intermedios.',
+  scaleAxis: ['MÁS RECURSOS', 'MÁS COPIAS', 'MÁS PARTICIONES'],
+  scaleCards: [
+    ['01', 'Escala vertical', 'Más CPU, RAM o I/O para una instancia.', 'Simple y efectiva hasta el límite físico o económico; no resuelve por sí sola disponibilidad.'],
+    ['02', 'Réplicas', 'Copias para lecturas, failover o cercanía regional.', 'Aumentan capacidad de lectura, pero obligan a definir lag y read-after-write.'],
+    ['03', 'Sharding', 'Cada partición es dueña de un subconjunto de claves.', 'Distribuye storage y escrituras; complica joins, transacciones, rebalanceo y hot keys.'],
+  ],
+  scaleCalloutLabel: 'CORRECCIÓN ÚTIL', scaleCallout: 'SQL no significa “solo vertical” y NoSQL no significa “horizontal gratis”. La unidad real de evaluación es el motor, su arquitectura y tu clave de partición.',
+  s6Number: '06 / CAP, SIN EL ESLOGAN', s6Title: ['No es elegir', 'dos letras para siempre.'],
+  s6Intro: 'CAP describe qué puede prometer un sistema replicado cuando existe una partición de red. En ese intervalo, una operación no puede ofrecer simultáneamente consistencia linealizable y respuesta exitosa desde ambos lados.',
+  capLabels: ['CONSISTENCIA', 'DISPONIBILIDAD', 'PARTICIÓN ACTIVA'],
+  capNotes: ['una única historia vigente', 'cada request recibe respuesta', 'los nodos no pueden comunicarse'],
+  capDecisionA: 'RECHAZAR O ESPERAR', capDecisionATitle: 'Preservar consistencia', capDecisionACopy: 'Una parte queda temporalmente no disponible antes que aceptar estados divergentes.',
+  capDecisionB: 'RESPONDER EN AMBOS LADOS', capDecisionBTitle: 'Preservar disponibilidad', capDecisionBCopy: 'Se aceptan versiones concurrentes o datos atrasados y luego hay reconciliación.',
+  capNuanceLabel: 'EL MATIZ', capNuance: 'La partición es la condición, no una feature que se descarta. Fuera de ella, consistencia y disponibilidad pueden convivir. La elección puede variar por operación, dato y momento.',
+  acidNote: 'ACID y BASE tampoco son equipos obligatorios de SQL versus NoSQL. Son conjuntos de propiedades y estrategias; verificá qué garantiza cada operación del motor elegido.',
+  s7Number: '07 / UN SISTEMA, VARIAS VISTAS', s7Title: ['Polyglot persistence,', 'con una sola verdad.'],
+  s7Intro: 'Usar más de un motor es válido cuando los workloads realmente difieren. El diseño sostenible asigna una responsabilidad a cada storage y hace explícita la propagación.',
+  systemCaption: ['CASO: COMMERCE', 'SOURCE OF TRUTH + PROYECCIONES'],
+  systemNodes: [['API', 'comandos'], ['POSTGRES', 'pedidos + pagos'], ['OUTBOX', 'eventos durables'], ['REDIS', 'lecturas calientes'], ['SEARCH', 'catálogo']],
+  systemGuarantees: [
+    ['POSTGRES', 'Autoridad transaccional. Un pedido y su pago respetan invariantes juntos.'],
+    ['REDIS', 'Proyección descartable. Puede vencer o perderse sin perder la verdad.'],
+    ['SEARCH', 'Proyección eventualmente consistente, optimizada para texto y filtros.'],
+  ],
+  systemWarningLabel: 'COSTO OPERATIVO', systemWarning: 'Cada motor agrega backups, upgrades, alertas, permisos, SDKs, incidentes y una estrategia de reconciliación. Empezá con uno y sumá otro cuando una medición justifique la frontera.',
+  s8Number: '08 / MÉTODO DE DECISIÓN', s8Title: ['De la pregunta', 'a una elección defendible.'],
+  s8Intro: 'Una tecnología es una conclusión. Este orden mantiene la conversación conectada con el producto y permite revisar la decisión cuando cambie la carga.',
+  method: [
+    ['01', 'Escribí los access patterns', 'Queries, comandos, frecuencia, cardinalidad, orden, filtros y objetivo de latencia.'],
+    ['02', 'Definí invariantes y autoridad', 'Qué estados son inválidos y qué sistema decide la versión aceptada.'],
+    ['03', 'Estimá carga y crecimiento', 'Picos, ratio lectura/escritura, bytes por entidad, retención y distribución geográfica.'],
+    ['04', 'Elegí el modelo más simple', 'El que resuelve el camino crítico sin proyecciones o coordinación prematuras.'],
+    ['05', 'Diseñá índices y partición', 'Con consultas reales, distribución de claves y planes observados.'],
+    ['06', 'Probá fallos y operación', 'Restore, lag, nodo caído, partición, migración, hot key y degradación visible al usuario.'],
+  ],
+  checklistTitle: 'Preguntas para el design review',
+  checklist: ['¿Cuál es la fuente de verdad?', '¿Qué consulta define el modelo?', '¿Qué inconsistencia es inaceptable?', '¿Qué dato puede estar atrasado y cuánto?', '¿Cuál es la clave de partición y puede calentarse?', '¿Cómo se restaura y se prueba ese restore?', '¿Qué señal demuestra que necesitamos otro motor?'],
+  conclusionKicker: 'LA DECISIÓN EN UNA LÍNEA', conclusionA: 'Primero las preguntas.', conclusionB: 'Después el modelo. Al final, el motor.',
+  conclusionCopy: 'El diseño de datos durable no memoriza una tabla comparativa: conecta comportamiento de producto, invariantes, volumen y fallos. Cuando esa cadena está escrita, elegir tecnología deja de ser una discusión de preferencias.',
+  sourceNumber: '09 / FUENTES Y PRÓXIMOS PASOS', sourceTitle: ['Para seguir', 'profundizando.'],
+  sourceDescriptions: ['El video que disparó esta nota · BettaTech', 'Constraints, claves e integridad referencial', 'Índices, planner y costo de escritura', 'Modelar desde access patterns', 'Particiones y claves de distribución', 'Nodos, relaciones y casos de uso', 'Por qué “2 de 3” simplifica demasiado'],
+  footer: 'BASES DE DATOS · FIELD NOTE 02', top: 'VOLVER ARRIBA ↑',
+} : {
+  title: 'Choosing a database — Design from questions, not logos',
+  description: 'A practical guide to choosing and designing databases from access patterns, invariants, scale, and failure modes.',
+  back: 'Back to the System Design module', headerLabel: 'DATABASES · FIELD NOTE 02',
+  breadcrumb: ['System Design', 'Field Notes', 'Databases'], switchLabel: 'Leer en español', switchShort: 'ES',
+  kicker: 'DATA MODELS · SCALE · GUARANTEES',
+  heroA: 'A database', heroEm: 'is not a logo.',
+  lede: 'It is where business rules become structure, access, and guarantees. Choosing well does not begin with a product comparison: it begins by writing down the questions the system must answer, the states it must never accept, and how it should fail.',
+  meta: [['PUBLISHED', 'AUG 10 2026'], ['READING', '~18 min'], ['LANGUAGE', 'EN · ES'], ['ORIGIN', 'BettaTech video']],
+  visualCaption: ['ONE DECISION CHAIN', 'FROM PRODUCT TO STORAGE'],
+  visualFlow: ['QUESTIONS', 'MODEL', 'GUARANTEES', 'ENGINE'],
+  visualNotes: ['what we read and write', 'how data connects', 'what must remain true', 'what we can operate'],
+  thesisLabel: 'THE CENTRAL IDEA',
+  thesis: 'The best database is not the fastest in the abstract. It is the one that makes critical operations simple and their costs explicit.',
+  s1Number: '01 / START WITH THE QUESTIONS', s1Title: ['Design the queries', 'before the tables.'],
+  s1Intro: 'The same set of entities can support completely different models. The right shape depends on how information enters, changes, and leaves the system.',
+  questionTitle: 'A workload, not a feature list.',
+  questionCopy: 'Before choosing technology, write the critical paths as observable contracts. Each one should have expected volume, latency, consistency, and failure behavior.',
+  queryLabels: ['IDENTITY', 'LIST', 'CRITICAL WRITE', 'SEARCH'],
+  questionCalloutLabel: 'HEURISTIC',
+  questionCallout: 'If you cannot list the five most important queries, you do not have enough evidence to choose a database yet.',
+  canvasTitle: 'The minimum decision canvas',
+  canvas: [
+    ['01', 'Access', 'What is read and written, with which filters, ordering, and cardinality.'],
+    ['02', 'Invariants', 'What must be unique, atomic, ordered, or referentially valid.'],
+    ['03', 'Load', 'Current and peak volume, read/write ratio, growth, and bytes per item.'],
+    ['04', 'Distribution', 'Regions, residency, natural partitions, hot keys, and latency tolerance.'],
+    ['05', 'Failure', 'What the system returns when a node, region, or projection falls behind.'],
+    ['06', 'Operations', 'Backups, restore, migrations, observability, and the team’s real experience.'],
+  ],
+  s2Number: '02 / FOUR MODELS, NOT FOUR BRANDS', s2Title: ['Each model optimizes', 'a way of asking.'],
+  s2Intro: 'Relational, document, key–value, and graph are not maturity levels. They are representations that make some operations natural and others expensive.',
+  modelLabels: ['SHINES WHEN', 'NATURAL QUERY', 'PAYS WITH'],
+  modelFoot: 'Examples are families, not rigid borders. Modern engines add documents, search, graphs, or transactions to varying degrees. Evaluate the concrete guarantee, not the marketing label.',
+  s3Number: '03 / NORMALIZE AND DENORMALIZE', s3Title: ['The shape of data', 'is also a trade-off.'],
+  s3Intro: 'Normalization reduces duplication and centralizes rules. Denormalization brings data closer to a specific read. The key is deciding which representation is authoritative and which is a projection.',
+  normalizeLabel: 'WRITE MODEL · NORMALIZED', normalizeTitle: 'One rule lives in one place.',
+  normalizeCopy: 'Customer, order, product, and order line each have an identity. Keys and constraints protect relationships: changing an email does not require rewriting order history.',
+  denormalizeLabel: 'READ MODEL · DENORMALIZED', denormalizeTitle: 'One screen resolves in one read.',
+  denormalizeCopy: 'A projection can repeat name, total, and products to serve order details without joins. It is rebuilt from events or the source of truth and accepts a defined freshness window.',
+  authorityLabel: 'OWNERSHIP RULE', authority: 'Duplicating data can be correct. Duplicating authority almost never is.',
+  s4Number: '04 / INDEXES', s4Title: ['Speed up a question,', 'not “the database.”'],
+  s4Intro: 'An index is another representation maintained by the engine so it can find rows without scanning the entire table. It buys faster reads with storage and extra work on every write.',
+  scanLabel: 'WITHOUT INDEX', scanTitle: 'Table scan', scanCopy: 'Cost grows with the rows examined.',
+  indexLabel: 'WITH INDEX', indexTitle: 'B-tree lookup', indexCopy: 'The engine walks an ordered structure to the useful range.',
+  indexRuleLabel: 'WHAT TO MEASURE', indexRule: 'query + selectivity + plan + frequency',
+  indexCards: [
+    ['01', 'Design from WHERE, JOIN, and ORDER BY', 'Column order in a composite index changes which prefixes the planner can use.'],
+    ['02', 'Count the write cost', 'INSERT, UPDATE, and DELETE maintain indexes too. An unused index is active debt.'],
+    ['03', 'Read the real plan', 'EXPLAIN and production metrics show whether the index removes work or a scan is cheaper.'],
+  ],
+  s5Number: '05 / SCALE WITHOUT SHORTCUTS', s5Title: ['More nodes change', 'the guarantees.'],
+  s5Intro: 'Scale is not a binary property. Replication, partitioning, and distribution move the limit, but also introduce lag, coordination, and new intermediate states.',
+  scaleAxis: ['MORE RESOURCES', 'MORE COPIES', 'MORE PARTITIONS'],
+  scaleCards: [
+    ['01', 'Vertical scale', 'More CPU, RAM, or I/O for one instance.', 'Simple and effective up to a physical or economic limit; it does not solve availability on its own.'],
+    ['02', 'Replicas', 'Copies for reads, failover, or regional proximity.', 'They increase read capacity but require a definition for lag and read-after-write.'],
+    ['03', 'Sharding', 'Each partition owns a subset of keys.', 'It distributes storage and writes; joins, transactions, rebalancing, and hot keys become harder.'],
+  ],
+  scaleCalloutLabel: 'USEFUL CORRECTION', scaleCallout: 'SQL does not mean “vertical only,” and NoSQL does not mean “horizontal for free.” Evaluate the engine, its architecture, and your partition key.',
+  s6Number: '06 / CAP, WITHOUT THE SLOGAN', s6Title: ['It is not choosing', 'two letters forever.'],
+  s6Intro: 'CAP describes what a replicated system can promise during a network partition. In that interval, an operation cannot provide both linearizable consistency and a successful response from both sides.',
+  capLabels: ['CONSISTENCY', 'AVAILABILITY', 'ACTIVE PARTITION'],
+  capNotes: ['one current history', 'every request gets a response', 'nodes cannot communicate'],
+  capDecisionA: 'REJECT OR WAIT', capDecisionATitle: 'Preserve consistency', capDecisionACopy: 'One side becomes temporarily unavailable rather than accept divergent states.',
+  capDecisionB: 'ANSWER ON BOTH SIDES', capDecisionBTitle: 'Preserve availability', capDecisionBCopy: 'Concurrent versions or stale data are accepted and reconciled later.',
+  capNuanceLabel: 'THE NUANCE', capNuance: 'The partition is the condition, not a feature to discard. Outside it, consistency and availability can coexist. The choice may vary by operation, data, and time.',
+  acidNote: 'ACID and BASE are not mandatory SQL-versus-NoSQL teams either. They describe properties and strategies; verify the guarantees of each operation in the chosen engine.',
+  s7Number: '07 / ONE SYSTEM, MULTIPLE VIEWS', s7Title: ['Polyglot persistence,', 'with one truth.'],
+  s7Intro: 'Using multiple engines is valid when workloads genuinely differ. Sustainable design assigns one responsibility to each store and makes propagation explicit.',
+  systemCaption: ['CASE: COMMERCE', 'SOURCE OF TRUTH + PROJECTIONS'],
+  systemNodes: [['API', 'commands'], ['POSTGRES', 'orders + payments'], ['OUTBOX', 'durable events'], ['REDIS', 'hot reads'], ['SEARCH', 'catalog']],
+  systemGuarantees: [
+    ['POSTGRES', 'Transactional authority. An order and its payment protect invariants together.'],
+    ['REDIS', 'Disposable projection. It may expire or disappear without losing truth.'],
+    ['SEARCH', 'Eventually consistent projection optimized for text and filters.'],
+  ],
+  systemWarningLabel: 'OPERATIONAL COST', systemWarning: 'Every engine adds backups, upgrades, alerts, permissions, SDKs, incidents, and a reconciliation strategy. Start with one; add another when a measurement justifies the boundary.',
+  s8Number: '08 / DECISION METHOD', s8Title: ['From a question', 'to a defensible choice.'],
+  s8Intro: 'Technology is a conclusion. This order keeps the conversation connected to the product and makes the choice reviewable when the workload changes.',
+  method: [
+    ['01', 'Write the access patterns', 'Queries, commands, frequency, cardinality, ordering, filters, and latency target.'],
+    ['02', 'Define invariants and authority', 'Which states are invalid and which system decides the accepted version.'],
+    ['03', 'Estimate load and growth', 'Peaks, read/write ratio, bytes per entity, retention, and geographic distribution.'],
+    ['04', 'Choose the simplest model', 'The one that solves the critical path without premature projections or coordination.'],
+    ['05', 'Design indexes and partitioning', 'Using real queries, key distribution, and observed plans.'],
+    ['06', 'Test failure and operations', 'Restore, lag, dead node, partition, migration, hot key, and user-visible degradation.'],
+  ],
+  checklistTitle: 'Questions for the design review',
+  checklist: ['What is the source of truth?', 'Which query shapes the model?', 'Which inconsistency is unacceptable?', 'Which data may be stale, and for how long?', 'What is the partition key, and can it become hot?', 'How is restore performed and tested?', 'Which signal proves we need another engine?'],
+  conclusionKicker: 'THE DECISION IN ONE LINE', conclusionA: 'Questions first.', conclusionB: 'Model second. Engine last.',
+  conclusionCopy: 'Durable data design does not memorize a comparison table: it connects product behavior, invariants, volume, and failure. Once that chain is written, choosing technology stops being a preference contest.',
+  sourceNumber: '09 / SOURCES AND NEXT STEPS', sourceTitle: ['Keep going', 'deeper.'],
+  sourceDescriptions: ['The video that sparked this note · BettaTech', 'Constraints, keys, and referential integrity', 'Indexes, planner, and write cost', 'Modeling from access patterns', 'Partitions and distribution keys', 'Nodes, relationships, and use cases', 'Why “2 of 3” is too simple'],
+  footer: 'DATABASES · FIELD NOTE 02', top: 'BACK TO TOP ↑',
+};
+
+const models = es ? [
+  { number: '01', tone: 'blue', name: 'Relacional', fit: 'Las invariantes y relaciones importan, y las preguntas cambian.', query: 'JOIN, filtro, agregación y transacción entre entidades.', cost: 'Esquema y migraciones explícitas; coordinar distribución tiene costo.', examples: 'PostgreSQL · MySQL · SQL Server' },
+  { number: '02', tone: 'violet', name: 'Documental', fit: 'Los datos se leen juntos y su forma varía por tipo o versión.', query: 'Obtener un agregado completo por identidad y navegar campos.', cost: 'Duplicación y updates multi-documento; flexibilidad no elimina el diseño.', examples: 'MongoDB · Couchbase' },
+  { number: '03', tone: 'lime', name: 'Clave–valor', fit: 'La clave se conoce y el acceso debe ser predecible a gran escala.', query: 'GET/PUT por partition key; rangos si existe sort key.', cost: 'Consultas ad hoc limitadas; una mala clave crea hot partitions.', examples: 'Redis · DynamoDB' },
+  { number: '04', tone: 'coral', name: 'Grafo', fit: 'La profundidad y el patrón de las relaciones son el producto.', query: 'Vecinos, caminos, comunidades y traversal variable.', cost: 'Otro lenguaje y operación; no mejora una relación simple por arte de magia.', examples: 'Neo4j · Amazon Neptune' },
+] : [
+  { number: '01', tone: 'blue', name: 'Relational', fit: 'Invariants and relationships matter, while questions evolve.', query: 'JOIN, filter, aggregate, and transact across entities.', cost: 'Explicit schema and migrations; distributed coordination has a cost.', examples: 'PostgreSQL · MySQL · SQL Server' },
+  { number: '02', tone: 'violet', name: 'Document', fit: 'Data is read together and its shape varies by type or version.', query: 'Fetch one complete aggregate by identity and navigate fields.', cost: 'Duplication and multi-document updates; flexibility still needs design.', examples: 'MongoDB · Couchbase' },
+  { number: '03', tone: 'lime', name: 'Key–value', fit: 'The key is known and access must stay predictable at scale.', query: 'GET/PUT by partition key; ranges when a sort key exists.', cost: 'Limited ad hoc queries; a poor key creates hot partitions.', examples: 'Redis · DynamoDB' },
+  { number: '04', tone: 'coral', name: 'Graph', fit: 'Relationship depth and shape are the product.', query: 'Neighbors, paths, communities, and variable traversals.', cost: 'Another language and operating model; simple relationships do not improve by magic.', examples: 'Neo4j · Amazon Neptune' },
+];
+
+const projectionCode = `{
+  "order_id": "1042",
+  "customer": "Ana",
+  "total": 129.90,
+  "items": ["keyboard", "mouse"]
+}`;
+
+const sources = [
+  ['Video', 'https://youtu.be/xz1fJ7M2g-o', 'Todo lo que necesitas saber sobre Bases de Datos en 25 minutos'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/ddl-constraints.html', 'Constraints'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/indexes-intro.html', 'Indexes: Introduction'],
+  ['MongoDB', 'https://www.mongodb.com/docs/manual/data-modeling/', 'Data Modeling'],
+  ['AWS', 'https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling.html', 'DynamoDB Data Modeling'],
+  ['Neo4j', 'https://neo4j.com/docs/getting-started/data-modeling/', 'Graph Data Modeling'],
+  ['Eric Brewer', 'https://doi.org/10.1109/MC.2012.37', 'CAP Twelve Years Later'],
+];
+---
+
+<Layout
+  mainId="top"
+  title={t.title}
+  description={t.description}
+  lang={lang}
+  alternateHref={alternatePath}
+  ogType="article"
+  image="/database-design-og.png"
+  publishedTime="2026-08-10"
+>
+  <header class="sd-header db-header">
+    <a class="brand" href="/system-design/#field-notes" aria-label={t.back}>
+      <span class="brand-monogram" aria-hidden="true">MF</span>
+      <span>Matías Fernández <em>/ System Design</em></span>
+    </a>
+    <div class="db-header-actions">
+      <a href={alternatePath} aria-label={t.switchLabel}>{t.switchShort}</a>
+      <span class="sd-header-label">{t.headerLabel}</span>
+    </div>
+  </header>
+
+  <main id="top" tabindex="-1" class="db-page">
+    <article>
+      <header class="db-hero section-shell">
+        <div class="db-breadcrumb-row">
+          <p class="db-breadcrumb">
+            <a href="/system-design/">{t.breadcrumb[0]}</a><span>/</span>
+            <a href="/system-design/#field-notes">{t.breadcrumb[1]}</a><span>/</span><b>{t.breadcrumb[2]}</b>
+          </p>
+          <a class="db-language-link" href={alternatePath}>{t.switchLabel} <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="db-hero-grid">
+          <div class="db-hero-copy">
+            <p class="db-kicker"><span></span>{t.kicker}</p>
+            <h1>{t.heroA}<br /><em>{t.heroEm}</em></h1>
+            <p>{t.lede}</p>
+          </div>
+
+          <figure class="db-decision-chain" aria-label={t.visualCaption[0]}>
+            <figcaption><span>{t.visualCaption[0]}</span><b>{t.visualCaption[1]}</b></figcaption>
+            <ol>
+              {t.visualFlow.map((step, index) => (
+                <li class={`chain-${index + 1}`}>
+                  <span>0{index + 1}</span><strong>{step}</strong><small>{t.visualNotes[index]}</small>
+                  {index < 3 && <b aria-hidden="true">↓</b>}
+                </li>
+              ))}
+            </ol>
+            <p><span>PRODUCT</span><i></i><span>STORAGE</span></p>
+          </figure>
+        </div>
+
+        <dl class="db-meta">
+          {t.meta.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}
+        </dl>
+      </header>
+
+      <aside class="db-thesis"><div class="section-shell"><span>{t.thesisLabel}</span><p>{t.thesis}</p></div></aside>
+
+      <section class="db-section section-shell" id="questions">
+        <div class="db-section-heading"><p>{t.s1Number}</p><div><h2>{t.s1Title[0]}<br /><em>{t.s1Title[1]}</em></h2><p>{t.s1Intro}</p></div></div>
+
+        <div class="db-query-board">
+          <div class="db-query-intro"><p>QUERY-FIRST DESIGN</p><h3>{t.questionTitle}</h3><p>{t.questionCopy}</p></div>
+          <ol>
+            {['get_order(order_id)', 'list_orders(customer_id, created_at DESC)', 'reserve_stock(sku, quantity)', 'search_products(text, filters)'].map((query, index) => (
+              <li><span>0{index + 1} · {t.queryLabels[index]}</span><code>{query}</code></li>
+            ))}
+          </ol>
+          <aside><span>{t.questionCalloutLabel}</span><p>{t.questionCallout}</p></aside>
+        </div>
+
+        <h3 class="db-subheading">{t.canvasTitle}</h3>
+        <div class="db-canvas-grid">
+          {t.canvas.map(([number, title, copy]) => <article><span>{number}</span><h4>{title}</h4><p>{copy}</p></article>)}
+        </div>
+      </section>
+
+      <section class="db-section db-dark" id="models"><div class="section-shell">
+        <div class="db-section-heading light"><p>{t.s2Number}</p><div><h2>{t.s2Title[0]}<br /><em>{t.s2Title[1]}</em></h2><p>{t.s2Intro}</p></div></div>
+        <div class="db-model-grid">
+          {models.map((model) => (
+            <article class={`db-model-card tone-${model.tone}`}>
+              <div><span>{model.number}</span><small>{model.examples}</small></div><h3>{model.name}</h3>
+              <dl>
+                <div><dt>{t.modelLabels[0]}</dt><dd>{model.fit}</dd></div>
+                <div><dt>{t.modelLabels[1]}</dt><dd>{model.query}</dd></div>
+                <div><dt>{t.modelLabels[2]}</dt><dd>{model.cost}</dd></div>
+              </dl>
+            </article>
+          ))}
+        </div>
+        <aside class="db-dark-note"><span>MODEL ≠ PRODUCT</span><p>{t.modelFoot}</p></aside>
+      </div></section>
+
+      <section class="db-section section-shell" id="shape">
+        <div class="db-section-heading"><p>{t.s3Number}</p><div><h2>{t.s3Title[0]}<br /><em>{t.s3Title[1]}</em></h2><p>{t.s3Intro}</p></div></div>
+        <div class="db-shape-grid">
+          <article class="db-normalized">
+            <p>{t.normalizeLabel}</p><h3>{t.normalizeTitle}</h3>
+            <div class="db-schema-map" aria-hidden="true">
+              <div><strong>CUSTOMERS</strong><span>customer_id · email</span></div>
+              <b>1 → N</b><div><strong>ORDERS</strong><span>order_id · customer_id</span></div>
+              <b>1 → N</b><div><strong>ORDER_ITEMS</strong><span>order_id · product_id</span></div>
+              <b>N → 1</b><div><strong>PRODUCTS</strong><span>product_id · price</span></div>
+            </div>
+            <p>{t.normalizeCopy}</p>
+          </article>
+          <article class="db-denormalized">
+            <p>{t.denormalizeLabel}</p><h3>{t.denormalizeTitle}</h3>
+            <pre><code>{projectionCode}</code></pre><p>{t.denormalizeCopy}</p>
+          </article>
+        </div>
+        <blockquote class="db-authority"><span>{t.authorityLabel}</span><p>{t.authority}</p></blockquote>
+      </section>
+
+      <section class="db-section db-index-section" id="indexes"><div class="section-shell">
+        <div class="db-section-heading"><p>{t.s4Number}</p><div><h2>{t.s4Title[0]}<br /><em>{t.s4Title[1]}</em></h2><p>{t.s4Intro}</p></div></div>
+        <figure class="db-index-figure">
+          <div class="db-scan-side"><span>{t.scanLabel}</span><h3>{t.scanTitle}</h3><div>{Array.from({ length: 20 }, (_, i) => <i class={i === 16 ? 'is-hit' : ''}>{i === 16 ? '●' : ''}</i>)}</div><p>{t.scanCopy}</p></div>
+          <div class="db-index-side"><span>{t.indexLabel}</span><h3>{t.indexTitle}</h3><div class="db-tree" aria-hidden="true"><i>50</i><b>↙</b><b>↘</b><i>20</i><i>80</i><b>↙</b><b>↘</b><i class="is-hit">17</i><i>24</i></div><p>{t.indexCopy}</p></div>
+          <figcaption><span>{t.indexRuleLabel}</span><code>{t.indexRule}</code></figcaption>
+        </figure>
+        <div class="db-index-cards">{t.indexCards.map(([n, title, copy]) => <article><span>{n}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
+      </div></section>
+
+      <section class="db-section section-shell" id="scale">
+        <div class="db-section-heading"><p>{t.s5Number}</p><div><h2>{t.s5Title[0]}<br /><em>{t.s5Title[1]}</em></h2><p>{t.s5Intro}</p></div></div>
+        <div class="db-scale-axis" aria-hidden="true">{t.scaleAxis.map((label, i) => <><span>{label}</span>{i < 2 && <b>→</b>}</>)}</div>
+        <div class="db-scale-cards">{t.scaleCards.map(([n,title,summary,cost], i) => <article class={`scale-${i + 1}`}><span>{n}</span><h3>{title}</h3><strong>{summary}</strong><p>{cost}</p></article>)}</div>
+        <aside class="db-scale-callout"><span>{t.scaleCalloutLabel}</span><p>{t.scaleCallout}</p></aside>
+      </section>
+
+      <section class="db-section db-cap" id="cap"><div class="section-shell">
+        <div class="db-section-heading light"><p>{t.s6Number}</p><div><h2>{t.s6Title[0]}<br /><em>{t.s6Title[1]}</em></h2><p>{t.s6Intro}</p></div></div>
+        <figure class="db-cap-figure">
+          <div class="db-cap-state"><div><span>C</span><strong>{t.capLabels[0]}</strong><small>{t.capNotes[0]}</small></div><div><span>A</span><strong>{t.capLabels[1]}</strong><small>{t.capNotes[1]}</small></div><div class="partition"><span>P</span><strong>{t.capLabels[2]}</strong><small>{t.capNotes[2]}</small></div></div>
+          <div class="db-cap-decisions"><article><span>{t.capDecisionA}</span><h3>{t.capDecisionATitle}</h3><p>{t.capDecisionACopy}</p></article><b>OR</b><article><span>{t.capDecisionB}</span><h3>{t.capDecisionBTitle}</h3><p>{t.capDecisionBCopy}</p></article></div>
+          <figcaption><span>{t.capNuanceLabel}</span><p>{t.capNuance}</p></figcaption>
+        </figure>
+        <aside class="db-acid-note"><span>ACID ≠ SQL · BASE ≠ NoSQL</span><p>{t.acidNote}</p></aside>
+      </div></section>
+
+      <section class="db-section db-system-section" id="system"><div class="section-shell">
+        <div class="db-section-heading"><p>{t.s7Number}</p><div><h2>{t.s7Title[0]}<br /><em>{t.s7Title[1]}</em></h2><p>{t.s7Intro}</p></div></div>
+        <figure class="db-system-map">
+          <figcaption><span>{t.systemCaption[0]}</span><b>{t.systemCaption[1]}</b></figcaption>
+          <div class="db-system-flow">
+            {t.systemNodes.map(([name, role], index) => <><div class={`system-node node-${index + 1}`}><strong>{name}</strong><small>{role}</small></div>{index < t.systemNodes.length - 1 && <b aria-hidden="true">→</b>}</>)}
+          </div>
+          <div class="db-system-guarantees">{t.systemGuarantees.map(([name, copy]) => <div><span>{name}</span><p>{copy}</p></div>)}</div>
+        </figure>
+        <aside class="db-system-warning"><span>{t.systemWarningLabel}</span><p>{t.systemWarning}</p></aside>
+      </div></section>
+
+      <section class="db-section section-shell" id="method">
+        <div class="db-section-heading"><p>{t.s8Number}</p><div><h2>{t.s8Title[0]}<br /><em>{t.s8Title[1]}</em></h2><p>{t.s8Intro}</p></div></div>
+        <ol class="db-method">{t.method.map(([n,title,copy]) => <li><span>{n}</span><div><h3>{title}</h3><p>{copy}</p></div></li>)}</ol>
+        <section class="db-checklist"><div><p>DESIGN REVIEW</p><h3>{t.checklistTitle}</h3></div><ol>{t.checklist.map((item,index) => <li><span>{String(index + 1).padStart(2,'0')}</span>{item}</li>)}</ol></section>
+      </section>
+
+      <section class="db-conclusion"><div class="section-shell"><p class="db-kicker"><span></span>{t.conclusionKicker}</p><h2>{t.conclusionA}<br /><strong>{t.conclusionB}</strong></h2><p>{t.conclusionCopy}</p></div></section>
+
+      <section class="db-sources section-shell">
+        <div><p>{t.sourceNumber}</p><h2>{t.sourceTitle[0]}<br /><em>{t.sourceTitle[1]}</em></h2></div>
+        <ol>{sources.map(([publisher,href,title],index) => <li><span>{String(index + 1).padStart(2,'0')}</span><a href={href} target="_blank" rel="noopener noreferrer"><small>{publisher}</small><strong>{title}</strong><p>{t.sourceDescriptions[index]} ↗</p></a></li>)}</ol>
+      </section>
+    </article>
+  </main>
+
+  <footer><a class="brand footer-brand" href="/system-design/#field-notes" aria-label={t.back}><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href="#top">{t.top}</a></footer>
+</Layout>

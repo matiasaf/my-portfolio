@@ -7,9 +7,31 @@ import SectionHeading from './SectionHeading.astro';
     <SectionHeading
       number="08 / FIELD NOTES"
       title="Architecture decisions"
-      emphasis="inside the runtime."
-      description="Practical essays that connect language-level execution models with the behavior, limits, and failure modes of production systems."
+      emphasis="from runtime to storage."
+      description="Practical essays that connect execution and data models with the behavior, limits, and failure modes of production systems."
     />
+
+    <article class="sd-note-feature sd-note-database">
+      <div class="sd-note-feature-copy">
+        <p class="sd-note-kicker">DATABASES · DATA MODELING · 18 MIN · ES/EN</p>
+        <h3>Choose a database from<br /><em>the questions, not the logo.</em></h3>
+        <p>
+          A practical guide to access patterns, relational and NoSQL models, normalization,
+          indexes, sharding, CAP, and polyglot persistence with one source of truth.
+        </p>
+        <div class="sd-note-links">
+          <a href="/en/system-design/choosing-a-database/">Read in English <b aria-hidden="true">↗</b></a>
+          <a href="/system-design/elegir-base-de-datos/" lang="es">Leer en español <b aria-hidden="true">↗</b></a>
+        </div>
+      </div>
+
+      <div class="sd-note-signal database-signal" aria-hidden="true">
+        <p>ACCESS PATTERN</p><b>↓</b>
+        <div class="database-models"><span>REL</span><span>DOC</span><span>KV</span><span>GRAPH</span></div>
+        <b>↓</b><p>GUARANTEES</p>
+        <div class="database-guarantees"><span>CONSISTENCY</span><span>LATENCY</span><span>SCALE</span></div>
+      </div>
+    </article>
 
     <a class="sd-note-feature" href="/system-design/concurrencia-vs-paralelismo-python/" lang="es">
       <div class="sd-note-feature-copy">
