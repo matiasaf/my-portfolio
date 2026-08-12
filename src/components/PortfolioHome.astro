@@ -6,63 +6,13 @@ interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
-const alternatePath = en ? '/' : '/en/';
+const alternatePath = en ? '/sobre-mi/' : '/en/about/';
 const resumePath = en ? '/en/cv/' : '/cv/';
 const socialLinks = {
   linkedin: 'https://linkedin.com/in/fernandez-amatias',
   github: 'https://github.com/matiasaf',
   email: 'mailto:fernandez.amatias@gmail.com',
 };
-
-const modules = en ? [
-  {
-    number: '01', label: 'AI · LEARNING IN PUBLIC', title: 'AI & Harnesses',
-    description: 'How language models actually work, what has to be built around them to make a product, and which trends survive contact with production.',
-    href: '/ai/', cta: 'Explore the module', accent: 'coral', status: 'In progress', diagram: ['Tokens', 'Attention', 'Harness'],
-  },
-  {
-    number: '02', label: 'ARCHITECTURE · FOUNDATIONS', title: 'System Design',
-    description: 'A visual guide to the decisions, trade-offs, and patterns behind systems built to grow.',
-    href: '/system-design/', cta: 'Open the guide', accent: 'blue', status: 'Visual guide', diagram: ['Client', 'Service', 'Data'],
-  },
-] : [
-  {
-    number: '01',
-    label: 'AI · APRENDIZAJE EN PÚBLICO',
-    title: 'AI & Harnesses',
-    description: 'Cómo funcionan realmente los modelos de lenguaje, qué hay que construir alrededor para que sean un producto y qué modas sobreviven a producción.',
-    href: '/ai/',
-    cta: 'Explorar el módulo',
-    accent: 'coral',
-    status: 'En construcción',
-    diagram: ['Tokens', 'Attention', 'Harness'],
-  },
-  {
-    number: '02',
-    label: 'ARQUITECTURA · FUNDAMENTOS',
-    title: 'System Design',
-    description: 'Una guía visual sobre decisiones, trade-offs y patrones para diseñar sistemas que puedan crecer.',
-    href: '/system-design/',
-    cta: 'Entrar a la guía',
-    accent: 'blue',
-    status: 'Guía visual',
-    diagram: ['Client', 'Service', 'Data'],
-  },
-];
-
-const notes = en ? [
-  { tag: 'DATABASES', date: 'SYSTEM DESIGN · BILINGUAL', title: 'Choosing a database: design from questions, not logos', href: '/en/system-design/choosing-a-database/' },
-  { tag: 'PYTHON', date: 'SYSTEM DESIGN · SPANISH', title: 'Concurrency vs. parallelism: how to choose and design the system', href: '/system-design/concurrencia-vs-paralelismo-python/' },
-  { tag: 'AI', date: 'MODULE 01 · ARTICLE 01', title: 'Inside a transformer: from a token to the next token', href: '/ai/transformer-architecture/' },
-  { tag: 'SYSTEM DESIGN', date: 'MODULE 02', title: 'Building means choosing: an introduction to trade-offs', href: '/system-design/#tradeoffs' },
-  { tag: 'DDIA', date: 'BOOK STUDY', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
-] : [
-  { tag: 'BASES DE DATOS', date: 'SYSTEM DESIGN · BILINGÜE', title: 'Elegir una base de datos: diseñá desde las preguntas, no desde el logo', href: '/system-design/elegir-base-de-datos/' },
-  { tag: 'PYTHON', date: 'SYSTEM DESIGN · ARTÍCULO 01', title: 'Concurrencia vs. paralelismo: cómo elegir y diseñar el sistema', href: '/system-design/concurrencia-vs-paralelismo-python/' },
-  { tag: 'AI', date: 'MÓDULO 01 · ARTÍCULO 01', title: 'Inside a transformer: de un token al siguiente token', href: '/ai/transformer-architecture/' },
-  { tag: 'SYSTEM DESIGN', date: 'MÓDULO 02', title: 'Construir es elegir: una introducción a los trade-offs', href: '/system-design/#tradeoffs' },
-  { tag: 'DDIA', date: 'ESTUDIO DEL LIBRO', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
-];
 
 const capabilities = en ? [
   { number: '01', label: 'PRODUCT FRONTEND', title: 'Interfaces for complex products', copy: 'Frontend architecture and product experiences built with React, Next.js, and TypeScript, with clarity, accessibility, and maintainability as first-class constraints.', tone: 'coral' },
@@ -81,20 +31,6 @@ const stackGroups = [
   { label: en ? 'REALTIME & DATA' : 'TIEMPO REAL & DATOS', items: ['SignalR', 'Azure Web PubSub', 'WebSockets', 'PostgreSQL', 'Azure SQL', 'Prisma', 'DynamoDB'] },
   { label: en ? 'CLOUD & DELIVERY' : 'CLOUD & ENTREGA', items: ['Azure App Service', 'Container Apps', 'Azure DevOps', 'Bicep', 'Entra ID', 'AWS', 'Docker', 'Terraform'] },
   { label: en ? 'QUALITY' : 'CALIDAD', items: ['Vitest', 'Playwright', 'React Testing Library', 'Cypress', 'xUnit', 'Web Vitals'] },
-];
-
-const writingTopics = en ? [
-  'Frontend architecture with React and TypeScript', 'Building interfaces for AI products',
-  'RAG and retrieval systems from a product perspective', 'React applications with Python and FastAPI',
-  'Document processing and indexing', 'Streaming and real-time communication',
-  'Maintaining and evolving legacy systems', 'Design systems and reusable components',
-  'Quality, testing, and maintainability', 'Hands-on technical leadership',
-] : [
-  'Arquitectura frontend con React y TypeScript', 'Cómo construir interfaces para productos de AI',
-  'RAG y recuperación desde una perspectiva de producto', 'Aplicaciones React con Python y FastAPI',
-  'Procesamiento e indexación de documentos', 'Streaming y comunicación en tiempo real',
-  'Mantenimiento y evolución de sistemas heredados', 'Design systems y componentes reutilizables',
-  'Calidad, testing y mantenibilidad', 'Liderazgo técnico hands-on',
 ];
 
 const experience = en ? [
@@ -126,11 +62,11 @@ const work = en ? [
 ];
 
 const t = en ? {
-  title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
-  description: 'Senior Full-Stack Engineer with 10+ years building web products, enterprise platforms, and applied AI systems with React, Next.js, TypeScript, Python, and cloud technologies.',
-  navLabel: 'Main navigation', about: 'Profile', archive: 'Experience', work: 'Work', projects: 'Writing', talk: 'View résumé',
-  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Senior Full-Stack Engineer with 10+ years turning complex frontend, backend, cloud, and AI systems into clear, reliable, maintainable products.',
-  explore: 'View experience', knowMe: 'Explore the lab', boardLabel: 'Professional focus map', now: 'HOW I BUILD / 2026', decisions: 'Architecture & scale ↗', boardNote: 'interface + intelligence + infrastructure',
+  title: 'About — Matías Fernández',
+  description: 'Professional profile, selected experience, current work, and technical toolbox of Matías Fernández, Senior Full-Stack and Applied AI Engineer.',
+  navLabel: 'Main navigation', about: 'About', archive: 'Experience', work: 'Work', projects: 'Writing', talk: 'View résumé',
+  kicker: 'ABOUT · SENIOR FULL-STACK ENGINEER · APPLIED AI', summary: 'Senior Full-Stack Engineer with 10+ years turning complex frontend, backend, cloud, and AI systems into clear, reliable, maintainable products.',
+  explore: 'View experience', knowMe: 'Back to writing', boardLabel: 'Professional focus map', now: 'HOW I BUILD / 2026', decisions: 'Architecture & scale ↗', boardNote: 'interface + intelligence + infrastructure',
   currentLabel: 'Core expertise', exploring: 'CORE STACK',
   aboutIndex: '01 / PROFILE', aboutHeadingA: 'Frontend depth. ', aboutHeadingEm: 'Full-stack reach.', aboutHeadingB: ' Product ownership.',
   aboutP1: 'I’m a Senior Full-Stack Engineer with more than ten years of experience building web products, enterprise platforms, and internal tools. Frontend architecture is my deepest specialty, but I work comfortably across the systems behind the interface.',
@@ -151,11 +87,11 @@ const t = en ? {
   openRolesLabel: 'BEST-FIT ROLES', openRoles: 'Senior or Lead Frontend Engineer · Staff Frontend in a hands-on role · Senior Full-Stack with a frontend focus · React/TypeScript Tech Lead · Full-Stack AI Product Engineer',
   openEnvLabel: 'PREFERRED ENVIRONMENT', openEnv: 'Remote from Argentina with overlap with American time zones · B2B SaaS, AI platforms, developer tools, data products, fintech, healthtech, and enterprise software · Product teams with technical autonomy and room to make architectural decisions',
 } : {
-  title: 'Matías Fernández — Senior Full-Stack & Applied AI Engineer',
-  description: 'Senior Full-Stack Engineer con más de 10 años construyendo productos web, plataformas empresariales y sistemas de AI aplicada con React, Next.js, TypeScript, Python y cloud.',
-  navLabel: 'Navegación principal', about: 'Perfil', archive: 'Experiencia', work: 'Proyectos', projects: 'Escritura', talk: 'Ver CV',
-  kicker: 'Senior Full-Stack Engineer · Applied AI', summary: 'Senior Full-Stack Engineer con más de 10 años convirtiendo sistemas complejos de frontend, backend, cloud y AI en productos claros, confiables y mantenibles.',
-  explore: 'Ver experiencia', knowMe: 'Explorar el lab', boardLabel: 'Mapa de enfoque profesional', now: 'CÓMO CONSTRUYO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'interfaz + inteligencia + infraestructura',
+  title: 'Sobre mí — Matías Fernández',
+  description: 'Perfil profesional, experiencia seleccionada, trabajo actual y herramientas de Matías Fernández, Senior Full-Stack y Applied AI Engineer.',
+  navLabel: 'Navegación principal', about: 'Sobre mí', archive: 'Experiencia', work: 'Proyectos', projects: 'Escritura', talk: 'Ver CV',
+  kicker: 'SOBRE MÍ · SENIOR FULL-STACK ENGINEER · APPLIED AI', summary: 'Senior Full-Stack Engineer con más de 10 años convirtiendo sistemas complejos de frontend, backend, cloud y AI en productos claros, confiables y mantenibles.',
+  explore: 'Ver experiencia', knowMe: 'Volver a publicaciones', boardLabel: 'Mapa de enfoque profesional', now: 'CÓMO CONSTRUYO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'interfaz + inteligencia + infraestructura',
   currentLabel: 'Experiencia principal', exploring: 'STACK PRINCIPAL',
   aboutIndex: '01 / PERFIL', aboutHeadingA: 'Profundidad frontend. ', aboutHeadingEm: 'Alcance full-stack.', aboutHeadingB: ' Criterio de producto.',
   aboutP1: 'Soy Senior Full-Stack Engineer con más de diez años de experiencia construyendo productos web, plataformas empresariales y herramientas internas. La arquitectura frontend es mi especialidad más profunda, pero trabajo cómodamente sobre los sistemas detrás de la interfaz.',
@@ -186,22 +122,22 @@ const t = en ? {
   mainId="inicio"
 >
   <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href="#inicio" aria-label="Matías Fernández, inicio">
+    <a class="portfolio-brand" href={en ? '/en/' : '/'} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
       <span class="brand-monogram" aria-hidden="true">MF</span>
       <span>Matías Fernández</span>
     </a>
 
     <nav aria-label={t.navLabel}>
-      <a href="#about">{t.about}</a>
+      <a href={en ? '/en/' : '/'}>{en ? 'Writing' : 'Publicaciones'}</a>
       <a href="#experience">{t.archive}</a>
       <a href="#work">{t.work}</a>
-      <a href="#writing">{t.projects}</a>
+      <a href="#about">{t.about}</a>
     </nav>
 
     <div class="portfolio-header-actions">
       <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
-        <a href="/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-        <a href="/en/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+        <a href="/sobre-mi/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <a href="/en/about/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
       </nav>
       <a class="header-note" href={resumePath}>{t.talk} <span aria-hidden="true">↗</span></a>
     </div>
@@ -215,7 +151,7 @@ const t = en ? {
         <p class="hero-summary">{t.summary}</p>
         <div class="portfolio-actions">
           <a class="primary-action" href="#experience">{t.explore} <span aria-hidden="true">↓</span></a>
-          <a class="quiet-action" href="#archive">{t.knowMe} <span aria-hidden="true">→</span></a>
+          <a class="quiet-action" href={en ? '/en/' : '/'}>{t.knowMe} <span aria-hidden="true">→</span></a>
         </div>
         <ul class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
           <li><strong>10+</strong><span>{en ? 'years shipping software' : 'años entregando software'}</span></li>
@@ -359,38 +295,6 @@ const t = en ? {
       </div>
     </section>
 
-    <section class="archive-section" id="archive">
-      <div class="portfolio-shell">
-        <div class="section-heading">
-          <div>
-            <p class="section-index">{t.archiveIndex}</p>
-            <h2>{t.archiveA}<br /><em>{t.archiveB}</em></h2>
-          </div>
-          <p>{t.archiveCopy}</p>
-        </div>
-
-        <div class="module-grid">
-          {modules.map((module) => (
-            <a class={`module-card accent-${module.accent}`} href={module.href}>
-              <div class="module-top">
-                <span>{module.number}</span>
-                <small>{module.status}</small>
-              </div>
-              <p class="module-label">{module.label}</p>
-              <h3>{module.title}</h3>
-              <p class="module-description">{module.description}</p>
-              <div class="module-diagram" aria-hidden="true">
-                {module.diagram.map((item, index) => (
-                  <><span>{item}</span>{index < module.diagram.length - 1 && <i>→</i>}</>
-                ))}
-              </div>
-              <div class="module-link">{module.cta} <span aria-hidden="true">↗</span></div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-
     <section class="stack-section portfolio-shell">
       <div class="stack-heading">
         <p class="section-index">{t.stackIndex}</p>
@@ -403,63 +307,6 @@ const t = en ? {
             <ul>{group.items.map((item) => <li>{item}</li>)}</ul>
           </article>
         ))}
-      </div>
-    </section>
-
-    <section class="notes-section portfolio-shell" aria-labelledby="notes-title">
-      <div class="notes-title-row">
-        <div>
-          <p class="section-index">{t.notesIndex}</p>
-          <h2 id="notes-title">{t.notesTitle}</h2>
-        </div>
-        <span class="edition">{t.edition}</span>
-      </div>
-      <div class="note-list">
-        {notes.map((note, index) => (
-          <a href={note.href}>
-            <span class="note-number">0{index + 1}</span>
-            <div><small>{note.tag} · {note.date}</small><h3>{note.title}</h3></div>
-            <span class="note-arrow" aria-hidden="true">↗</span>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <section class="writing-section" id="writing">
-      <div class="portfolio-shell writing-layout">
-        <div class="writing-intro">
-          <p class="section-index">{t.writingIndex}</p>
-          <h2>{t.writingTitle}</h2>
-          <p>{t.writingCopy}</p>
-        </div>
-        <ol class="writing-topics">
-          {writingTopics.map((topic, index) => <li><span>{String(index + 1).padStart(2, '0')}</span>{topic}</li>)}
-        </ol>
-      </div>
-    </section>
-
-    <section class="projects-section" id="projects">
-      <div class="portfolio-shell projects-layout">
-        <div>
-          <p class="section-index">{t.projectsIndex}</p>
-          <h2>{t.soon}<br /><em>{t.alive}</em></h2>
-        </div>
-        <article class="project-card">
-          <div class="project-card-top">
-            <span class="project-status"><i></i> {t.projectStatus}</span>
-            <span class="project-progress">{t.projectProgress}</span>
-          </div>
-          <p class="project-label">APPLIED AI · RAG · PRODUCT ENGINEERING</p>
-          <h3>{t.projectTitle}</h3>
-          <p class="project-copy">{t.projectCopy}</p>
-          <div class="project-pipeline" aria-label={en ? 'Project roadmap' : 'Roadmap del proyecto'}>
-            <strong>{t.projectStage}</strong><span aria-hidden="true">→</span><span>Retrieval</span><span aria-hidden="true">→</span><span>{en ? 'Grounded answers' : 'Respuestas con citas'}</span>
-          </div>
-          <div class="project-links">
-            <a href={en ? '/en/projects/ai-knowledge-platform/' : '/projects/ai-knowledge-platform/'}>{t.projectDetail} <span aria-hidden="true">→</span></a>
-            <a href="https://github.com/matiasaf/ai-knowledge-platform" target="_blank" rel="noreferrer">{t.projectRepo} <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
-          </div>
-        </article>
       </div>
     </section>
 
@@ -484,7 +331,7 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer">
-    <a class="portfolio-brand" href="#inicio"><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={en ? '/en/' : '/'}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
     <p>Product · Applied AI · Systems</p>
     <span>{t.footer}</span>
   </footer>
