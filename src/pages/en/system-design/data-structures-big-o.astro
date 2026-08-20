@@ -1,0 +1,230 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import '../../../styles/system-design.css';
+import '../../../styles/concurrency-article.css';
+import '../../../styles/data-structures-article.css';
+
+const complexityRows = [
+  ['Dynamic array', 'Θ(1)', 'O(n)', 'Amortized Θ(1)', 'O(n)', 'Fast indexed reads and iteration'],
+  ['Linked list', 'O(n)', 'O(n)', 'Θ(1)*', 'Θ(1)*', 'Known-node insertion or removal'],
+  ['Hash table', '—', 'Average Θ(1)', 'Average Θ(1)', 'Average Θ(1)', 'Exact-key lookup'],
+  ['Balanced BST', 'Min/max O(log n)', 'O(log n)', 'O(log n)', 'O(log n)', 'Ordered keys and range queries'],
+  ['Binary heap', 'Peek Θ(1)', 'O(n)', 'O(log n)', 'Root O(log n)', 'Repeated min/max extraction'],
+  ['Stack / queue', 'Peek Θ(1)', '—', 'Θ(1)', 'Θ(1)', 'LIFO / FIFO workflows'],
+  ['Trie', '—', 'O(L)', 'O(L)', 'O(L)', 'Prefix search over strings'],
+];
+
+const structureCards = [
+  { number: '01', tone: 'blue', name: 'Dynamic array', fit: 'Indexed reads, compact storage, and full scans.', wins: 'Better locality than linked nodes; often faster in practice even when both operations are O(n).', cost: 'Middle insertion shifts elements; growth occasionally copies the backing storage.' },
+  { number: '02', tone: 'violet', name: 'Hash table', fit: 'Membership, deduplication, counters, caches, and exact-key joins.', wins: 'Average O(1) lookup beats a tree or array when ordering is irrelevant.', cost: 'No sorted traversal; collisions, resizing, and hash quality affect latency and memory.' },
+  { number: '03', tone: 'lime', name: 'Balanced tree', fit: 'Sorted iteration, predecessor/successor, and range queries.', wins: 'O(log n) operations with useful order—something a hash table cannot provide.', cost: 'More pointer chasing and slower exact lookup constants than a good hash table.' },
+  { number: '04', tone: 'coral', name: 'Binary heap', fit: 'Schedulers, top-k queries, and priority queues.', wins: 'O(1) peek and O(log n) push/pop without paying to keep every element fully sorted.', cost: 'Finding an arbitrary item is O(n); it is not a general-purpose search structure.' },
+  { number: '05', tone: 'blue', name: 'Stack / queue', fit: 'Undo, parsing, BFS, work buffers, and streaming pipelines.', wins: 'O(1) operations encode the required order directly and keep the API constrained.', cost: 'They intentionally do not optimize arbitrary access or search.' },
+  { number: '06', tone: 'violet', name: 'Trie', fit: 'Autocomplete, routing tables, and prefix dictionaries.', wins: 'O(L) depends on key length, not the number of stored keys.', cost: 'High memory overhead; a sorted array can be smaller and cache-friendlier.' },
+];
+
+const decisions = [
+  ['Need item #i', 'Dynamic array', 'Direct addressing gives Θ(1) access and contiguous memory.'],
+  ['Need exact key x', 'Hash table', 'Average Θ(1) membership; use a set when values are unnecessary.'],
+  ['Need keys between a and b', 'Balanced tree', 'Ordering makes range traversal O(log n + k) for k results.'],
+  ['Need the next highest priority', 'Binary heap', 'Peek in O(1), then remove in O(log n).'],
+  ['Need all keys beginning with pre', 'Trie', 'Walk the prefix in O(L), then enumerate its subtree.'],
+  ['Need FIFO or LIFO only', 'Queue or stack', 'The restricted interface makes both end operations O(1).'],
+  ['Need to scan everything', 'Dynamic array', 'Contiguous layout usually wins on cache locality and overhead.'],
+];
+
+const checklist = [
+  'What operations dominate: lookup, traversal, insertion, deletion, range, or min/max?',
+  'Do I need ordering, stable iteration, prefixes, or only exact keys?',
+  'Am I comparing average, amortized, or worst-case guarantees?',
+  'What are n and L in this workload, and how large will they become?',
+  'Does memory layout or allocation overhead matter more than asymptotic growth?',
+  'Can the standard library structure express this workload safely?',
+  'Did I benchmark with production-like size, distribution, and access patterns?',
+];
+---
+
+<Layout
+  mainId="top"
+  lang="en"
+  title="Data Structures and Big O — Choose by workload, not habit"
+  description="A practical guide to arrays, linked lists, hash tables, trees, heaps, queues, and tries: their Big O costs and when each one wins."
+  ogType="article"
+  publishedTime="2026-08-13"
+>
+  <header class="sd-header cp-header">
+    <a class="brand" href="/system-design/#field-notes" aria-label="Back to the System Design module">
+      <span class="brand-monogram" aria-hidden="true">MF</span>
+      <span>Matías Fernández <em>/ System Design</em></span>
+    </a>
+    <span class="sd-header-label">ALGORITHMS · FIELD NOTE 03</span>
+  </header>
+
+  <main id="top" tabindex="-1" class="cp-page ds-page">
+    <article>
+      <header class="cp-hero section-shell">
+        <p class="cp-breadcrumb">
+          <a href="/system-design/">System Design</a><span aria-hidden="true">/</span>
+          <a href="/system-design/#field-notes">Field Notes</a><span aria-hidden="true">/</span>
+          <b>Data Structures</b>
+        </p>
+
+        <div class="cp-hero-grid">
+          <div>
+            <p class="cp-kicker"><span></span> DATA STRUCTURES · COMPLEXITY · TRADE-OFFS</p>
+            <h1>Big O is<br /><em>not a speed.</em></h1>
+            <p class="cp-lede">
+              It describes how cost grows as input grows. The fastest structure is therefore not a
+              universal winner: it is the one whose <strong>cheap operations match your hot path</strong>,
+              whose guarantees match your risk, and whose memory layout fits the machine.
+            </p>
+          </div>
+
+          <figure class="cp-hero-visual ds-hero-visual" aria-labelledby="complexity-visual-title">
+            <figcaption id="complexity-visual-title"><span>GROWTH, NOT STOPWATCH TIME</span><b>n → ∞</b></figcaption>
+            <div class="ds-chart" aria-hidden="true">
+              <span class="ds-axis-y">operations</span>
+              <i class="curve constant"><b>O(1)</b></i>
+              <i class="curve logarithmic"><b>O(log n)</b></i>
+              <i class="curve linear"><b>O(n)</b></i>
+              <i class="curve quadratic"><b>O(n²)</b></i>
+              <span class="ds-axis-x">input size →</span>
+            </div>
+            <p class="cp-visual-equation">same Big O <b>≠</b> same runtime</p>
+          </figure>
+        </div>
+
+        <dl class="cp-meta">
+          <div><dt>PUBLISHED</dt><dd>AUG 13 2026</dd></div>
+          <div><dt>READING</dt><dd>~14 min</dd></div>
+          <div><dt>SCOPE</dt><dd>Core structures</dd></div>
+          <div><dt>GOAL</dt><dd>Choose by workload</dd></div>
+        </dl>
+      </header>
+
+      <aside class="cp-thesis ds-thesis">
+        <div class="section-shell"><span>THE CENTRAL QUESTION</span><p>Which operation must stay cheap <strong>as the data grows?</strong></p></div>
+      </aside>
+
+      <section class="cp-section section-shell" id="model">
+        <div class="cp-section-heading">
+          <p>01 / READ THE NOTATION</p>
+          <div><h2>One letter hides<br /><em>three different promises.</em></h2><p>Complexity claims are only useful when you know which case they describe and what the input variable represents.</p></div>
+        </div>
+
+        <div class="ds-definition-grid">
+          <article><span>WORST CASE</span><h3>O( )</h3><p>An upper bound. The operation will not grow faster than this class beyond some input size. It is the safety-oriented view.</p></article>
+          <article><span>TIGHT BOUND</span><h3>Θ( )</h3><p>The actual growth class is bounded above and below. Saying array indexing is Θ(1) is more precise than merely O(1).</p></article>
+          <article><span>AMORTIZED</span><h3>Σ / m</h3><p>An expensive operation is spread across a sequence. Dynamic-array append is usually constant on average over many appends, although one resize is O(n).</p></article>
+        </div>
+
+        <div class="cp-prose cp-prose-two">
+          <p><strong>Average case</strong> assumes a distribution of inputs. Hash-table lookup is average Θ(1), but collisions can produce O(n) worst-case behavior. That distinction matters for untrusted keys and latency-sensitive systems.</p>
+          <p>Also name the variable. A trie lookup is O(L), where <em>L</em> is key length. Graph traversal is O(V + E), not simply O(n). Good analysis defines the unit before comparing curves.</p>
+        </div>
+
+        <blockquote class="cp-pullquote"><span>THE FIRST RULE</span><p>Drop constants in the model. <strong>Measure them in the system.</strong></p></blockquote>
+      </section>
+
+      <section class="cp-section cp-dark" id="table">
+        <div class="section-shell">
+          <div class="cp-section-heading light">
+            <p>02 / THE COMPARISON TABLE</p>
+            <div><h2>Complexity is a<br /><em>cost profile.</em></h2><p>These are common implementation guarantees. Language runtimes can differ, so treat the table as a map and verify the concrete container you use.</p></div>
+          </div>
+
+          <div class="cp-table-wrap">
+            <table class="cp-decision-table ds-complexity-table">
+              <thead><tr><th>STRUCTURE</th><th>ACCESS / PEEK</th><th>SEARCH</th><th>INSERT</th><th>DELETE</th><th>BEST FIT</th></tr></thead>
+              <tbody>{complexityRows.map((row) => <tr>{row.map((cell, index) => index === 0 ? <th scope="row">{cell}</th> : <td><code>{index < 5 ? cell : ''}</code>{index === 5 ? cell : ''}</td>)}</tr>)}</tbody>
+            </table>
+          </div>
+
+          <div class="cp-dark-callout"><span>* THE POINTER TAX</span><p>Linked-list insert and delete are Θ(1) only when you already have the relevant node (and, for deletion, the required predecessor or a doubly linked list). Finding that node is O(n). This footnote changes many interview answers—and many production designs.</p></div>
+        </div>
+      </section>
+
+      <section class="cp-section section-shell" id="structures">
+        <div class="cp-section-heading">
+          <p>03 / WHERE EACH ONE WINS</p>
+          <div><h2>No champion.<br /><em>Only a better fit.</em></h2><p>A structure wins when it makes the dominant operation cheap without charging unacceptable costs elsewhere.</p></div>
+        </div>
+
+        <div class="ds-structure-grid">
+          {structureCards.map((item) => (
+            <article class={`cp-tool-card tone-${item.tone}`}>
+              <span>{item.number}</span><h3>{item.name}</h3>
+              <dl><div><dt>USE WHEN</dt><dd>{item.fit}</dd></div><div><dt>WINS</dt><dd>{item.wins}</dd></div><div><dt>PAYS WITH</dt><dd>{item.cost}</dd></div></dl>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="cp-section cp-system" id="scenarios">
+        <div class="section-shell">
+          <div class="cp-section-heading">
+            <p>04 / START FROM THE QUERY</p>
+            <div><h2>Turn requirements<br /><em>into operations.</em></h2><p>“Store some items” is not a workload. The question you ask repeatedly is what should shape the structure.</p></div>
+          </div>
+
+          <ol class="cp-method ds-decision-list">
+            {decisions.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{item[0]}</h3><p><strong>{item[1]}.</strong> {item[2]}</p></div></li>)}
+          </ol>
+
+          <div class="cp-capacity-note ds-composition-note"><div><span>COMPOSITION BEATS LOYALTY</span><strong>Real systems combine structures.</strong></div><p>An LRU cache commonly uses a hash table for O(1) key lookup plus a doubly linked list for O(1) recency updates. A database index may use a B-tree while its buffer manager uses a hash table and queues. Choose per operation, not once per application.</p></div>
+        </div>
+      </section>
+
+      <section class="cp-section cp-dark" id="reality">
+        <div class="section-shell">
+          <div class="cp-section-heading light">
+            <p>05 / BIG O MEETS HARDWARE</p>
+            <div><h2>Asymptotics predict.<br /><em>Machines decide.</em></h2><p>For finite data, representation and access pattern can outweigh the headline complexity.</p></div>
+          </div>
+
+          <div class="cp-failure-grid ds-reality-grid">
+            <article><span>01</span><h3>Cache locality</h3><div><b>WHY</b><p>Arrays place neighboring values together. CPUs fetch cache lines, so sequential scans can beat pointer-heavy structures by a wide margin.</p></div><div><b>RESULT</b><p>An O(n) array scan may outperform theoretically better lookup at small or moderate n.</p></div></article>
+            <article><span>02</span><h3>Memory overhead</h3><div><b>WHY</b><p>Pointers, empty hash buckets, tree nodes, and trie edges consume memory beyond the stored values.</p></div><div><b>RESULT</b><p>A compact sorted array can be the better read-mostly index despite O(log n) lookup.</p></div></article>
+            <article><span>03</span><h3>Input distribution</h3><div><b>WHY</b><p>Hash collisions, skewed trees, hot keys, and repeated prefixes change observed behavior.</p></div><div><b>RESULT</b><p>Benchmark representative data, including adversarial or pathological cases when relevant.</p></div></article>
+            <article><span>04</span><h3>Mutation rate</h3><div><b>WHY</b><p>A structure optimized for reads may pay heavily to preserve order or rebuild storage on writes.</p></div><div><b>RESULT</b><p>Include the read/write ratio, batching, concurrency, and allocation cost in the decision.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cp-section section-shell" id="method">
+        <div class="cp-section-heading"><p>06 / A PRACTICAL METHOD</p><div><h2>Choose, measure,<br /><em>then defend.</em></h2><p>The simplest structure that meets the actual access pattern is usually the best starting point.</p></div></div>
+        <ol class="cp-method">
+          <li><span>01</span><div><h3>List the operations</h3><p>Write down reads, writes, deletes, scans, ranges, prefix queries, and min/max extraction.</p></div></li>
+          <li><span>02</span><div><h3>Weight the hot path</h3><p>A million lookups and ten insertions should not influence the choice equally.</p></div></li>
+          <li><span>03</span><div><h3>Require the right guarantee</h3><p>Separate average, amortized, and worst case; decide which latency tail can hurt the product.</p></div></li>
+          <li><span>04</span><div><h3>Estimate scale and memory</h3><p>Use realistic n, key length, object size, growth, and concurrency—not an abstract infinite input.</p></div></li>
+          <li><span>05</span><div><h3>Prefer the standard library</h3><p>Its containers are tested and optimized. Introduce a custom structure only with evidence.</p></div></li>
+          <li><span>06</span><div><h3>Benchmark the workload</h3><p>Measure latency distribution, memory, allocations, and throughput with production-shaped data.</p></div></li>
+        </ol>
+
+        <section class="cp-checklist" aria-labelledby="ds-checklist-title">
+          <div><p>DESIGN REVIEW</p><h3 id="ds-checklist-title">Before choosing<br />the container.</h3></div>
+          <ul>{checklist.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span>{item}</li>)}</ul>
+        </section>
+      </section>
+
+      <section class="cp-conclusion ds-conclusion">
+        <div class="section-shell"><p class="cp-kicker"><span></span> THE DECISION IN ONE LINE</p><h2>Optimize the <strong>operation</strong>,<br />not the <strong>name.</strong></h2><p>Big O narrows the search. Workload shape, guarantees, memory behavior, and measurement finish the decision. Start with what the system does most, then make that path deliberately cheap.</p></div>
+      </section>
+
+      <section class="cp-sources section-shell" aria-labelledby="ds-sources-title">
+        <div><p>07 / SOURCES &amp; NEXT STEPS</p><h2 id="ds-sources-title">Keep<br /><em>exploring.</em></h2></div>
+        <ol>
+          <li><span>01</span><a href="https://algs4.cs.princeton.edu/home/" target="_blank" rel="noopener noreferrer"><strong>Algorithms, 4th Edition</strong><small>Data structures, analysis, and implementations · Princeton ↗</small></a></li>
+          <li><span>02</span><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/" target="_blank" rel="noopener noreferrer"><strong>Introduction to Algorithms</strong><small>Open course materials and lectures · MIT OpenCourseWare ↗</small></a></li>
+          <li><span>03</span><a href="https://docs.python.org/3/tutorial/datastructures.html" target="_blank" rel="noopener noreferrer"><strong>Python Data Structures</strong><small>Concrete standard-library containers · Python Docs ↗</small></a></li>
+        </ol>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="/system-design/#field-notes" aria-label="Back to the System Design module"><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a>
+    <p>ALGORITHMS · FIELD NOTE 03</p><a href="#top">BACK TO TOP ↑</a>
+  </footer>
+</Layout>

@@ -160,28 +160,17 @@ const t = en ? {
         </ul>
       </div>
 
-      <div class="hero-board" role="group" aria-label={t.boardLabel}>
-        <div class="board-grid" aria-hidden="true"></div>
-        <div class="board-label board-label-top">{t.now}</div>
-        <div class="topic-orbit orbit-main">
-          <div class="topic-core"><span>SHIP</span><strong>Product</strong></div>
-        </div>
-        <a class="topic-card topic-data" href="#expertise">
-          <span aria-hidden="true">01</span><strong>Applied AI</strong><small>RAG · Products ↗</small>
-        </a>
-        <a class="topic-card topic-systems" href="/system-design/">
-          <span aria-hidden="true">02</span><strong>Systems</strong><small>{t.decisions}</small>
-        </a>
-        <a class="topic-card topic-interface" href="#about">
-          <span aria-hidden="true">03</span><strong>{en ? 'Product UI' : 'Producto UI'}</strong><small>React · Next.js ↗</small>
-        </a>
-        <div class="board-note">{t.boardNote}</div>
-      </div>
-    </section>
-
-    <section class="now-strip" aria-label={t.currentLabel}>
-      <span>{t.exploring}</span>
-      <p>React + Next.js</p><i aria-hidden="true">✦</i><p>Applied AI</p><i aria-hidden="true">✦</i><p>Python + Cloud</p>
+      <aside class="hero-index" aria-label={t.boardLabel}>
+        <header>
+          <span>{t.now}</span>
+          <p>{t.boardNote}</p>
+        </header>
+        <nav aria-label={en ? 'Professional focus' : 'Enfoque profesional'}>
+          <a href="#expertise"><span>01</span><strong>Applied AI</strong><small>RAG · Products · Evals</small><b aria-hidden="true">↓</b></a>
+          <a href="/system-design/"><span>02</span><strong>System Design</strong><small>{t.decisions}</small><b aria-hidden="true">→</b></a>
+          <a href="#about"><span>03</span><strong>{en ? 'Product UI' : 'Producto UI'}</strong><small>React · Next.js · UX</small><b aria-hidden="true">↓</b></a>
+        </nav>
+      </aside>
     </section>
 
     <section class="about-section portfolio-shell" id="about">

@@ -36,7 +36,17 @@ const imageUrl = image ? new URL(image, Astro.url.origin) : undefined;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f5f1e8" />
+    <meta name="theme-color" content="#111513" data-theme-color />
+    <script is:inline>
+      (() => {
+        const storageKey = 'mf-color-theme';
+        let storedTheme = null;
+        try { storedTheme = localStorage.getItem(storageKey); } catch {}
+        const theme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : 'dark';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -66,6 +76,51 @@ const imageUrl = image ? new URL(image, Astro.url.origin) : undefined;
   </head>
   <body>
     <a class="skip-link" href={`#${mainId}`}>{skipLabel}</a>
+    <button
+      class="theme-toggle"
+      type="button"
+      data-theme-toggle
+      aria-label={lang === 'es' ? 'Cambiar tema de color' : 'Change color theme'}
+      title={lang === 'es' ? 'Cambiar tema de color' : 'Change color theme'}
+    >
+      <span class="theme-toggle-icon" data-theme-icon aria-hidden="true">◐</span>
+      <span class="theme-toggle-label" data-theme-label>{lang === 'es' ? 'Tema' : 'Theme'}</span>
+    </button>
     <slot />
+    <script is:inline define:vars={{ lang }}>
+      (() => {
+        const storageKey = 'mf-color-theme';
+        const button = document.querySelector('[data-theme-toggle]');
+        const icon = button?.querySelector('[data-theme-icon]');
+        const label = button?.querySelector('[data-theme-label]');
+        const themeColor = document.querySelector('[data-theme-color]');
+        const isSpanish = lang === 'es';
+
+        const renderTheme = (theme) => {
+          const isDark = theme === 'dark';
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+          if (icon) icon.textContent = isDark ? '☾' : '☀';
+          if (label) label.textContent = isSpanish
+            ? (isDark ? 'Oscuro' : 'Claro')
+            : (isDark ? 'Dark' : 'Light');
+          if (button) button.setAttribute(
+            'aria-label',
+            isSpanish
+              ? `Cambiar a tema ${isDark ? 'claro' : 'oscuro'}`
+              : `Switch to ${isDark ? 'light' : 'dark'} theme`,
+          );
+          button?.setAttribute('aria-pressed', String(isDark));
+          themeColor?.setAttribute('content', isDark ? '#111513' : '#fafaf8');
+        };
+
+        renderTheme(document.documentElement.dataset.theme || 'light');
+        button?.addEventListener('click', () => {
+          const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          try { localStorage.setItem(storageKey, nextTheme); } catch {}
+          renderTheme(nextTheme);
+        });
+      })();
+    </script>
   </body>
 </html>

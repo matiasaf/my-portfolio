@@ -165,19 +165,17 @@ const t = en ? {
         </ul>
       </div>
 
-      <div class="hero-board" role="group" aria-label={t.board}>
-        <div class="board-grid" aria-hidden="true"></div>
-        <div class="board-label board-label-top">{t.boardTop}</div>
-        <div class="topic-orbit"><div class="topic-core"><span>LEARN</span><strong>in public</strong></div></div>
-        <a class="topic-card topic-data" href="/ai/"><span>01</span><strong>AI</strong><small>Models · Harnesses ↗</small></a>
-        <a class="topic-card topic-systems" href="/system-design/"><span>02</span><strong>Systems</strong><small>Trade-offs · Scale ↗</small></a>
-        <a class="topic-card topic-interface" href="#projects"><span>03</span><strong>{en ? 'Builds' : 'Proyectos'}</strong><small>Code · Evidence ↗</small></a>
-        <div class="board-note">{t.boardNote}</div>
-      </div>
-    </section>
-
-    <section class="now-strip" aria-label={t.strip}>
-      <span>{t.strip}</span><p>Applied AI</p><i aria-hidden="true">✦</i><p>Agent harnesses</p><i aria-hidden="true">✦</i><p>RAG & evals</p><i aria-hidden="true">✦</i><p>Tool use</p>
+      <aside class="hero-index" aria-label={t.board}>
+        <header>
+          <span>{t.boardTop}</span>
+          <p>{t.boardNote}</p>
+        </header>
+        <nav aria-label={en ? 'Browse by topic' : 'Explorar por tema'}>
+          <a href="/ai/"><span>01</span><strong>AI & Harnesses</strong><small>Models · Tools · Evals</small><b aria-hidden="true">→</b></a>
+          <a href="/system-design/"><span>02</span><strong>System Design</strong><small>Trade-offs · Data · Scale</small><b aria-hidden="true">→</b></a>
+          <a href="#projects"><span>03</span><strong>{en ? 'Side projects' : 'Side projects'}</strong><small>Code · Evidence · Notes</small><b aria-hidden="true">↓</b></a>
+        </nav>
+      </aside>
     </section>
 
     <section class="notes-section portfolio-shell home-notes" id="notes" aria-labelledby="notes-title">
