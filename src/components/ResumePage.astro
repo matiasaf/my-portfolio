@@ -7,7 +7,7 @@ interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
-const homePath = en ? '/en/' : '/';
+const homePath = en ? '/en/' : '/es/';
 const alternatePath = en ? '/cv/' : '/en/cv/';
 
 /* All résumé content lives in src/content/resume.ts, which also feeds the

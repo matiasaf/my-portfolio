@@ -58,7 +58,8 @@ Tectonic.
 
 | Route | Content |
 |---|---|
-| `/` and `/en/` | Spanish and English editorial home pages |
+| `/` | Redirect to the default English home page |
+| `/en/` and `/es/` | English and Spanish editorial home pages |
 | `/sobre-mi/` and `/en/about/` | Professional profile |
 | `/cv/` and `/en/cv/` | Web résumé and PDF downloads |
 | `/ai/` | Series about models, transformers, and harnesses |

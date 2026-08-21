@@ -121,13 +121,13 @@ const t = en ? {
   mainId="inicio"
 >
   <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href={en ? '/en/' : '/'} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
+    <a class="portfolio-brand" href={en ? '/en/' : '/es/'} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
       <span class="brand-monogram" aria-hidden="true">MF</span>
       <span>Matías Fernández</span>
     </a>
 
     <nav aria-label={t.navLabel}>
-      <a href={en ? '/en/' : '/'}>{en ? 'Writing' : 'Publicaciones'}</a>
+      <a href={en ? '/en/' : '/es/'}>{en ? 'Writing' : 'Publicaciones'}</a>
       <a href="#experience">{t.archive}</a>
       <a href="#work">{t.work}</a>
       <a href="#about">{t.about}</a>
@@ -150,7 +150,7 @@ const t = en ? {
         <p class="hero-summary">{t.summary}</p>
         <div class="portfolio-actions">
           <a class="primary-action" href="#experience">{t.explore} <span aria-hidden="true">↓</span></a>
-          <a class="quiet-action" href={en ? '/en/' : '/'}>{t.knowMe} <span aria-hidden="true">→</span></a>
+          <a class="quiet-action" href={en ? '/en/' : '/es/'}>{t.knowMe} <span aria-hidden="true">→</span></a>
         </div>
         <ul class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
           <li><strong>10+</strong><span>{en ? 'years shipping software' : 'años entregando software'}</span></li>
@@ -319,7 +319,7 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer">
-    <a class="portfolio-brand" href={en ? '/en/' : '/'}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={en ? '/en/' : '/es/'}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
     <p>Product · Applied AI · Systems</p>
     <span>{t.footer}</span>
   </footer>

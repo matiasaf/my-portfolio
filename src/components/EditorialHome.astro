@@ -5,7 +5,7 @@ import '../styles/portfolio.css';
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
-const alternatePath = en ? '/' : '/en/';
+const alternatePath = en ? '/es/' : '/en/';
 const aboutPath = en ? '/en/about/' : '/sobre-mi/';
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
 
@@ -139,7 +139,7 @@ const t = en ? {
 
     <div class="portfolio-header-actions">
       <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
-        <a href="/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <a href="/es/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
         <a href="/en/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
       </nav>
       <a class="header-note" href={aboutPath}>{t.about} <span aria-hidden="true">→</span></a>

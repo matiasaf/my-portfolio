@@ -25,8 +25,9 @@ articles may contain their page structure directly.
 
 | Route | Entry file |
 |---|---|
-| `/` | `src/pages/index.astro` |
+| `/` | Redirect to `/en/` from `astro.config.mjs` |
 | `/en/` | `src/pages/en/index.astro` |
+| `/es/` | `src/pages/es/index.astro` |
 | `/sobre-mi/` | `src/pages/sobre-mi.astro` |
 | `/en/about/` | `src/pages/en/about.astro` |
 | `/cv/` | `src/pages/cv/index.astro` |
@@ -93,8 +94,9 @@ manifest, and the generated résumé PDFs.
 
 The strategy is intentionally explicit and small:
 
-- Spanish uses `/` and unprefixed routes.
-- English uses `/en/` when a translation exists.
+- `/` redirects to `/en/`, making English the default language for new visits.
+- English uses `/en/` and Spanish uses `/es/` for the bilingual editorial home page.
+- Other translated sections retain their established routes, such as `/sobre-mi/` and `/en/about/`.
 - `Layout.astro` receives `lang` and `alternateHref`.
 - A page without a translation does not publish a fabricated `hreflang` alternate.
 
