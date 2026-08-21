@@ -1,6 +1,0 @@
-crm_customer_id,full_name,email,city,segment,updated_at
-CRM-001,Ana Torres," Ana.Torres@example.com ",Buenos Aires,Enterprise,2026-03-01T09:00:00Z
-CRM-002,Bruno Silva,bruno.silva@example.com,Cordoba,SMB,2026-03-01T09:05:00Z
-CRM-003,Carla Ruiz,CARLA.RUIZ@example.com,Rosario,SMB,2026-03-01T09:10:00Z
-CRM-004,Diego Lopez,diego.lopez@example.com,Mendoza,Mid-market,2026-03-01T09:15:00Z
-CRM-005,Elena Costa,elena.costa@example.com,Cordoba,Enterprise,2026-03-01T09:20:00Z

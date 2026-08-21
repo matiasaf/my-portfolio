@@ -2,8 +2,7 @@
 
 .sd-header {
   position: sticky; top: 0; z-index: 50; height: 76px; display: flex; align-items: center; justify-content: space-between;
-  /* Mismo margen interno que .section-shell, para que la marca quede alineada
-     con el contenido en cualquier ancho. */
+  /* Match .section-shell padding so the brand aligns at every width. */
   padding-inline: max(var(--shell-gutter), calc((100% - var(--shell-max)) / 2));
   border-bottom: 1px solid var(--line); background: rgb(var(--paper-rgb) / .92); backdrop-filter: blur(14px);
 }

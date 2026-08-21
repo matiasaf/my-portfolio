@@ -1,16 +1,16 @@
 /**
- * Fuente unica del CV. La consumen:
- *   - src/components/ResumePage.astro  → HTML (pantalla e impresion)
+ * Single source of truth for the résumé. It is consumed by:
+ *   - src/components/ResumePage.astro  → HTML (screen and print)
  *   - src/pages/cv.tex.ts / en/cv.tex.ts → LaTeX
  *
- * Cualquier salida nueva (JSON Resume, DOCX) deberia leer de aca y no
- * duplicar contenido.
+ * Any new output format, such as JSON Resume or DOCX, should read from this
+ * file instead of duplicating content.
  */
 
 export interface ResumeContact {
-  /** Texto que muestra el HTML. */
+  /** Text displayed by the HTML view. */
   label: string;
-  /** Texto que imprime el PDF de LaTeX: la URL legible, como en el template. */
+  /** Text printed by the LaTeX PDF: a readable URL, as required by the template. */
   display: string;
   href: string;
 }
@@ -18,7 +18,7 @@ export interface ResumeContact {
 export interface ResumeRole {
   company: string;
   role: string;
-  /** Cliente o ambito; en el PDF va a la derecha, en itálica. */
+  /** Client or scope; rendered in italics on the right side of the PDF. */
   context: string;
   period: string;
   bullets: string[];
@@ -29,8 +29,8 @@ export interface Resume {
   headline: string;
   location: string;
   contacts: ResumeContact[];
-  /** Titulos de seccion, en Title Case: cada salida decide como capitalizarlos
-   *  (LaTeX usa \scshape, el HTML usa font-variant-caps). */
+  /** Title Case section names. Each output controls capitalization independently:
+   *  LaTeX uses \scshape and HTML uses font-variant-caps. */
   labels: {
     profile: string;
     experience: string;
@@ -39,10 +39,10 @@ export interface Resume {
     languages: string;
   };
   summary: {
-    /** Titular de display, solo para la web. El PDF no lo usa: en un CV
-     *  impreso una frase de posicionamiento lee como landing, no como CV. */
+    /** Display headline used only on the web. The PDF omits it because a positioning
+     *  statement reads like landing-page copy in a printed résumé. */
     headline: string;
-    /** El resumen profesional propiamente dicho. Lo usan web y PDF. */
+    /** Professional summary shared by the web and PDF outputs. */
     body: string;
   };
   roles: ResumeRole[];

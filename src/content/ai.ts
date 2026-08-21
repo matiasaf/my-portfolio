@@ -1,6 +1,6 @@
 /**
- * Indice del modulo de AI. Lo comparten la portada del modulo (/ai/) y cada
- * pagina de articulo, para que el estado de un post se declare en un solo lugar.
+ * AI module index shared by the module home (/ai/) and every article page so
+ * each post's status is declared in one place.
  */
 
 export const aiModule = {
@@ -23,7 +23,7 @@ export interface Post {
   hook?: string;
 }
 
-/** Los tres carriles del modulo. El orden es el orden de lectura sugerido. */
+/** The module's three tracks in suggested reading order. */
 export const tracks: { key: Track; label: string; tone: string; copy: string }[] = [
   {
     key: 'Foundations',
@@ -99,7 +99,7 @@ export const posts: Post[] = [
   },
 ];
 
-/** Vocabulario que el articulo 01 deja instalado para el resto del modulo. */
+/** Vocabulary established by article 01 for the rest of the module. */
 export const foundationConcepts = [
   ['Token', 'The unit the model actually sees. Not a word and not a character — a fragment produced by a tokenizer, which is why letter-level questions confuse models that reason fluently about paragraphs.'],
   ['Embedding', 'The vector a token becomes. Its direction, not its identity, is what carries meaning, so relationships between words show up as directions shared across the space.'],

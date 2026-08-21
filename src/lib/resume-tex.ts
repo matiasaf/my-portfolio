@@ -1,23 +1,22 @@
 /**
- * Render de un Resume a LaTeX, siguiendo el template clasico de Jake Ryan
- * (una columna, versalitas con filete, fechas a la derecha).
+ * Renders a Resume as LaTeX following the classic Jake Ryan template:
+ * one column, small-cap ruled headings, and right-aligned dates.
  *
- * Motor: pensado para XeLaTeX / LuaLaTeX (que es lo que usa Tectonic por
- * defecto), donde el UTF-8 funciona nativo. El preambulo igual detecta el
- * motor con `iftex`, asi que tambien compila con pdfLaTeX.
+ * Designed for XeLaTeX or LuaLaTeX, which Tectonic uses by default and where
+ * UTF-8 works natively. The preamble still detects the engine with `iftex`, so
+ * it also compiles with pdfLaTeX.
  */
 import type { Resume, ResumeRole } from '../content/resume';
 
 /**
- * Escapa los metacaracteres de LaTeX.
+ * Escapes LaTeX metacharacters.
  *
- * El caso peligroso es `%`: en LaTeX abre un comentario, asi que "35%" se
- * comeria en silencio el resto de la linea y el PDF saldria con la frase
- * cortada, sin ningun error de compilacion. `&` en cambio rompe ruidosamente
- * porque es separador de columnas dentro de tabular.
+ * `%` is particularly dangerous because it begins a LaTeX comment. A value
+ * such as "35%" would silently discard the remainder of the line and truncate
+ * the PDF. `&` fails loudly because it separates columns inside tabular.
  *
- * La barra invertida va primero: si no, escaparia las barras que introducen
- * los reemplazos siguientes.
+ * Backslashes are handled first so later replacements do not escape the
+ * backslashes they introduce.
  */
 export function escapeTex(input: string): string {
   return input
@@ -25,28 +24,28 @@ export function escapeTex(input: string): string {
     .replace(/([&%$#_{}])/g, '\\$1')
     .replace(/~/g, '\\textasciitilde{}')
     .replace(/\^/g, '\\textasciicircum{}')
-    // Guiones tipograficos a las ligaduras de TeX.
+    // Convert typographic dashes to TeX ligatures.
     .replace(/—/g, '---')
     .replace(/–/g, '--');
 }
 
-/** Escapa una URL para \href: ahi `%` y `#` siguen siendo especiales. */
+/** Escapes a URL for \href, where `%` and `#` remain special. */
 function escapeUrl(input: string): string {
   return input.replace(/([%#\\])/g, '\\$1');
 }
 
 const PREAMBLE = String.raw`% !TEX program = xelatex
 % ─────────────────────────────────────────────────────────────────────────
-%  CV — generado automaticamente desde src/content/resume.ts
-%  NO editar a mano: los cambios se pisan en el proximo build.
-%  Compilar:  tectonic cv.tex     (o xelatex/lualatex/pdflatex cv.tex)
+%  Résumé — generated automatically from src/content/resume.ts
+%  DO NOT edit manually: the next build overwrites any changes.
+%  Compile: tectonic cv.tex     (or xelatex/lualatex/pdflatex cv.tex)
 % ─────────────────────────────────────────────────────────────────────────
 \documentclass[a4paper,11pt]{article}
 
 \usepackage{iftex}
 \ifPDFTeX
-  % pdfLaTeX necesita declarar la codificacion; ademas glyphtounicode es lo
-  % que hace que el texto del PDF sea extraible por un ATS.
+  % pdfLaTeX requires an explicit encoding. glyphtounicode also keeps the PDF
+  % text extractable by an applicant tracking system.
   \usepackage[utf8]{inputenc}
   \usepackage[T1]{fontenc}
   \input{glyphtounicode}
@@ -64,10 +63,10 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 \addtolength{\evensidemargin}{-0.5in}
 \addtolength{\textwidth}{1in}
 \addtolength{\topmargin}{-0.7in}
-% El estirado del alto es asimetrico a proposito: el -0.7in de \topmargin ya
-% subio el bloque de texto, asi que agrandar el alto lo mismo devolveria todo
-% ese margen al pie. Con 1.1in la ultima linea corta ~0.5in antes del borde y
-% la pagina respira abajo (con \raggedbottom el sobrante se acumula ahi).
+% Height expansion is intentionally asymmetric. The -0.7in top margin already
+% moved the text block upward; increasing the height by the same amount would
+% return all that space at the bottom. With 1.1in, the final line ends roughly
+% 0.5in before the edge and \raggedbottom leaves breathing room below.
 \addtolength{\textheight}{1.1in}
 
 \urlstyle{same}
@@ -76,26 +75,25 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 \setlength{\tabcolsep}{0in}
 \setlength{\parindent}{0pt}
 
-% El espaciado se controla SOLO desde aca. El template original lo ajustaba
-% con \vspace negativos calibrados contra el espaciado por defecto de las
-% listas; al compactar las listas esos negativos se acumulaban y las lineas
-% terminaban superpuestas.
+% Spacing is controlled only here. The original template used negative \vspace
+% values calibrated against default list spacing. Compacting the lists caused
+% those offsets to accumulate and overlap lines.
 \setlist{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=1.5pt}
 
-% Titulo de seccion: versalitas y filete, el \scshape del template.
-% Requiere que el titulo venga en Title Case: \scshape sobre texto ya en
-% mayusculas no produce versalitas, deja mayusculas normales.
+% Section heading: small caps and a rule, following the template's \scshape.
+% Input must use Title Case because \scshape over uppercase text produces
+% regular capitals rather than small caps.
 \titleformat{\section}{\vspace{-6pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
 
-% ── Comandos de entrada ──────────────────────────────────────────────────
+% ── Input commands ───────────────────────────────────────────────────────
 \newcommand{\resumeItem}[1]{\item\small{#1}}
 
-% Linea de stack con sangria francesa, para que las continuaciones alineen
-% bajo el contenido y no se lean como items nuevos. Va como parrafo suelto y
-% no como \item: dentro de un itemize la lista pisa el \hangindent.
+% Stack line with a hanging indent so wrapped lines align with the content and
+% do not look like new items. It is a standalone paragraph rather than an
+% \item because itemize overrides \hangindent.
 \newcommand{\resumeSkill}[2]{\par\hangindent=1.7em\hangafter=1\noindent\textbf{#1}: #2\par}
 
-% #1 titulo  #2 fechas (derecha)  #3 subtitulo  #4 contexto (derecha)
+% #1 title  #2 dates (right)  #3 subtitle  #4 context (right)
 \newcommand{\resumeSubheading}[4]{%
   \item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
@@ -106,12 +104,11 @@ const PREAMBLE = String.raw`% !TEX program = xelatex
 
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-% label explicito: al estar anidada, esta lista tomaria \labelitemii (una raya)
-% en vez de la vinieta del template.
+% Explicit label: when nested, this list would otherwise inherit \labelitemii,
+% a dash, instead of the template's bullet.
 \newcommand{\resumeItemListStart}{\begin{itemize}[label=$\bullet$, leftmargin=1.2em, topsep=2pt]}
-% El \vspace de cierre es lo que separa un puesto del siguiente: sin el, los
-% bullets de uno quedan pegados al encabezado del que sigue y el bloque de
-% experiencia se lee como un unico muro de texto.
+% Closing \vspace separates one role from the next. Without it, one role's
+% bullets touch the next heading and the experience section becomes a wall.
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{7pt}}
 `;
 
@@ -119,9 +116,8 @@ function renderHeader(r: Resume): string {
   const link = (c: Resume['contacts'][number]) =>
     `\\href{${escapeUrl(c.href)}}{\\underline{${escapeTex(c.display)}}}`;
 
-  /* En una sola linea los cuatro datos desbordan y el salto automatico deja
-     un "|" colgando al final del renglon. Se parte a proposito: ubicacion y
-     mail arriba, perfiles web abajo. */
+  /* Four values overflow on one line, and automatic wrapping leaves a dangling
+     separator. Split deliberately: location and email above, web profiles below. */
   const mail = r.contacts.filter((c) => c.href.startsWith('mailto:'));
   const web = r.contacts.filter((c) => !c.href.startsWith('mailto:'));
   const line1 = [escapeTex(r.location), ...mail.map(link)].join(' $|$ ');
@@ -152,7 +148,7 @@ export function renderResumeTex(r: Resume): string {
     .map(([group, items]) => `   \\resumeSkill{${escapeTex(group)}}{${escapeTex(items)}}`)
     .join('\n');
 
-  // Educacion e idiomas van al final, no al principio como en el template original.
+  // Education and languages belong at the end, unlike the original template.
   return `${PREAMBLE}
 \\begin{document}
 

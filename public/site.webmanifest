@@ -1,7 +1,7 @@
 {
   "name": "Matías Fernández",
   "short_name": "MF",
-  "description": "Portfolio, notas y pruebas de concepto sobre datos, arquitectura y system design.",
+  "description": "Portfolio, technical notes, and projects about applied AI, system design, data, and product engineering.",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#f5f1e8",

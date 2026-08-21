@@ -1,6 +1,0 @@
-kpi_name,definition,grain,owner,expected_value,validation
-Total Revenue,"Sum of completed, matched order amount",Order,Sales Operations,2350.00,"SUM(fact_sales.amount)"
-Completed Orders,"Distinct completed orders matched to a governed customer",Order,Sales Operations,5,"COUNT(DISTINCT fact_sales.order_id)"
-Purchasing Customers,"Distinct governed customers with at least one completed order",Customer,Customer Analytics,4,"COUNT(DISTINCT fact_sales.customer_key)"
-Open Tickets,"Distinct matched support tickets whose current status is Open",Ticket,Support Operations,3,"COUNT(DISTINCT ticket_id) WHERE status='Open'"
-Unmatched Revenue,"Completed order amount that cannot resolve to dim_customer",Order,Data Steward,120.00,"SUM(unmatched_orders.amount) WHERE status='Completed'"

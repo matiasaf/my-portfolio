@@ -3,19 +3,18 @@
 .resume-toolbar-actions,.resume-language { background: var(--surface); }
 .resume-language a { color: var(--muted); }
 .resume-language a:hover { background: rgb(var(--ink-rgb) / .08); color: var(--ink); }.resume-language a[aria-current="page"] { background: var(--strong-surface); color: var(--strong-text); font-weight: 700; }.resume-toolbar button { border: 1px solid var(--ink); background: var(--strong-surface); color: var(--strong-text); padding: 11px 14px; cursor: pointer; font: inherit; }.resume-toolbar button span { margin-left: 18px; }
-/* El PDF de LaTeX es la descarga primaria; imprimir queda como secundaria. */
+/* The LaTeX PDF is the primary download; browser printing is secondary. */
 .resume-download { padding: 11px 14px; border: 1px solid var(--ink); background: var(--coral); color: var(--ink); font-weight: 700; }
 .resume-download span { margin-left: 18px; }
 .resume-download:hover { background: var(--strong-surface); color: var(--strong-text); }
 .resume-toolbar button { background: none; color: var(--ink); }
 .resume-toolbar button:hover { background: var(--strong-surface); color: var(--strong-text); }
 .resume-sheet { width: min(1100px,100%); margin: auto; padding: 58px; background: var(--surface); box-shadow: var(--shadow-soft); }
-.resume-identity { display: grid; grid-template-columns: 1.6fr 1fr; gap: 50px; padding-bottom: 42px; border-bottom: 4px solid var(--ink); }/* El h1 va primero en el DOM para que un ATS lea el nombre como primera linea;
-   en pantalla el volante se reordena por encima con flex. */
+.resume-identity { display: grid; grid-template-columns: 1.6fr 1fr; gap: 50px; padding-bottom: 42px; border-bottom: 4px solid var(--ink); }/* The h1 comes first in the DOM so an ATS reads the name first. Flex reorders
+   the headline above it on screen. */
 .resume-identity > div:first-child { display: flex; flex-direction: column; }
 .resume-identity > div:first-child > p { order: -1; color: var(--accent-text); font: 500 10px var(--mono); letter-spacing: .12em; }.resume-identity h1 { margin: 15px 0 0; font-size: clamp(62px,8vw,100px); line-height: .77; letter-spacing: -.08em; }.resume-contact { display: flex; flex-direction: column; align-items: flex-end; justify-content: end; gap: 9px; font-size: 11px; }.resume-contact span { margin-bottom: 6px; opacity: .78; }.resume-contact a { padding-bottom: 2px; border-bottom: 1px solid var(--line); }
-.resume-sheet section { display: grid; grid-template-columns: 150px 1fr; gap: 45px; padding-block: 42px; border-bottom: 1px solid var(--line); }/* Los labels vienen en Title Case (los necesita \scshape en LaTeX); en pantalla
-   se muestran en mayusculas, como siempre. */
+.resume-sheet section { display: grid; grid-template-columns: 150px 1fr; gap: 45px; padding-block: 42px; border-bottom: 1px solid var(--line); }/* Labels use Title Case for LaTeX \scshape and render as uppercase on screen. */
 .resume-section-label { margin: 0; color: var(--muted); font: 500 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .resume-summary h2 { max-width: 700px; margin: 0 0 20px; font-size: 36px; line-height: 1.05; letter-spacing: -.055em; }.resume-summary div > p { margin: 0; font-size: 13px; line-height: 1.8; color: var(--muted-strong); }
 .resume-experience > div > article { padding: 0 0 32px; margin-bottom: 32px; border-bottom: 1px solid var(--line); }.resume-experience > div > article:last-child { margin: 0; padding: 0; border: 0; }.resume-role-heading { display: flex; justify-content: space-between; gap: 25px; }.resume-role-heading small { color: var(--accent-text); font: 500 9px var(--mono); }.resume-role-heading h3 { margin: 7px 0 3px; font-size: 24px; letter-spacing: -.04em; }.resume-role-heading p { margin: 0; font-size: 11px; font-weight: 700; }.resume-role-heading > span { flex: 0 0 auto; font: 500 9px var(--mono); color: var(--muted); }.resume-experience ul { margin: 20px 0 0; padding-left: 17px; }.resume-experience li { margin: 9px 0; padding-left: 5px; font-size: 11px; line-height: 1.65; color: var(--muted-strong); }
@@ -24,19 +23,18 @@
 @media (max-width: 700px) { .resume-page { padding: 12px; }.resume-toolbar { padding: 5px; }.resume-sheet { padding: 28px 22px; }.resume-identity { grid-template-columns: 1fr; }.resume-contact { align-items: flex-start; }.resume-sheet section { grid-template-columns: 1fr; gap: 22px; }.resume-skills article { grid-template-columns: 1fr; gap: 8px; }.resume-sheet .resume-bottom { grid-template-columns: 1fr; gap: 35px; }.resume-role-heading { display: grid; }.resume-role-heading > span { grid-row: 1; }.resume-toolbar button { font-size: 0; }.resume-toolbar button span { margin: 0; font-size: 12px; } }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   EXPORTACION A PDF — una sola columna, estilo LaTeX, compatible con ATS.
-   Toma el patron del template clasico "Jake Ryan": serif, titulos de
-   seccion en versalitas con filete, y fechas alineadas a la derecha.
+   PDF EXPORT — one column, LaTeX-inspired, and ATS-compatible.
+   Follows the classic "Jake Ryan" template: serif type, small-cap ruled
+   section headings, and right-aligned dates.
 
-   Solo aplica a impresion: el diseno de pantalla queda intacto.
+   Applies only to print; the screen design remains unchanged.
 
-   Decisiones para ATS:
-   - Una columna real, sin tablas ni cajas de texto.
-   - Negro sobre blanco, sin depender del color para transmitir informacion.
-   - Serif con fallback a Times New Roman, la fuente que todo parser lee.
-   - Se ocultan numerales decorativos ("02 / ") y flechas, que ensucian la
-     extraccion de texto. El texto del DOM sigue siendo el original: las
-     transformaciones son solo visuales.
+   ATS decisions:
+   - One real column with no tables or text boxes.
+   - Black on white without relying on color to convey information.
+   - Serif with a Times New Roman fallback that parsers can read reliably.
+   - Decorative numbers and arrows are hidden to keep text extraction clean.
+     DOM text remains unchanged; transformations are visual only.
    ═══════════════════════════════════════════════════════════════════════ */
 @media print {
   @page { size: A4; margin: 12mm 13mm; }
@@ -58,8 +56,8 @@
     background: #fff;
     box-shadow: none;
     color: #000;
-    /* Latin Modern / CMU son las de LaTeX si estan instaladas; si no,
-       Times New Roman, que es la eleccion mas segura para ATS. */
+    /* Prefer LaTeX's Latin Modern or CMU when installed; otherwise use the
+       ATS-safe Times New Roman fallback. */
     font-family: 'Latin Modern Roman', 'CMU Serif', 'Times New Roman', Times, serif;
     font-size: 10pt;
     line-height: 1.28;
@@ -67,7 +65,7 @@
 
   .resume-label-index, .resume-ext { display: none; }
 
-  /* ── Encabezado: nombre centrado y linea de contacto ─────────────── */
+  /* ── Header: centered name and contact line ────────────────────── */
   .resume-identity {
     display: block;
     padding: 0;
@@ -82,10 +80,9 @@
     line-height: 1.05;
     letter-spacing: 0;
   }
-  .resume-identity h1 br { display: none; }   /* el nombre va en una linea */
+  .resume-identity h1 br { display: none; }   /* Keep the name on one line. */
 
-  /* order: 0 devuelve el orden natural del DOM (nombre y despues volante),
-     que es el del template; en pantalla el volante va arriba. */
+  /* Restore natural DOM order for print: name, then headline. */
   .resume-identity > div:first-child > p {
     order: 0;
     margin: 1.4mm 0 0;
@@ -109,7 +106,7 @@
     color: #000;
     text-decoration: underline;
   }
-  /* inline-block deja el separador fuera del subrayado del enlace */
+  /* inline-block keeps the separator outside the link underline. */
   .resume-contact > * + *::before {
     content: '|';
     display: inline-block;
@@ -117,7 +114,7 @@
     text-decoration: none;
   }
 
-  /* ── Titulos de seccion: versalitas con filete ───────────────────── */
+  /* ── Section headings: small caps with a rule ──────────────────── */
   .resume-sheet section {
     display: block;
     gap: 0;
@@ -136,19 +133,17 @@
     font-size: 11.5pt;
     font-weight: 400;
     letter-spacing: .03em;
-    /* Se anula el uppercase de pantalla: all-small-caps sobre texto ya en
-       mayusculas no produce versalitas, deja mayusculas normales. */
+    /* Disable screen uppercase because small caps need Title Case input. */
     text-transform: none;
-    /* all-small-caps y NO text-transform:lowercase. Ambos se ven igual, pero
-       text-transform cambia los glifos que se escriben en el PDF ("education"
-       en minuscula) y el ATS lee el PDF, no el DOM. Con all-small-caps el
-       texto extraible sigue siendo "EDUCATION". */
+    /* Use all-small-caps instead of lowercase transformation. Both look alike,
+       but text-transform changes the PDF glyphs read by an ATS, while
+       all-small-caps preserves the extractable uppercase text. */
     font-variant-caps: all-small-caps;
   }
-  /* Inicial mas grande: el remate del \scshape de LaTeX. */
+  /* Larger initial recreates the LaTeX \scshape finish. */
   .resume-section-label::first-letter { font-size: 1.2em; }
 
-  /* ── Perfil ──────────────────────────────────────────────────────── */
+  /* ── Profile ───────────────────────────────────────────────────── */
   .resume-summary h2 {
     max-width: none;
     margin: 0 0 1mm;
@@ -164,7 +159,7 @@
     color: #000;
   }
 
-  /* ── Experiencia: cargo | fechas sobre rol | contexto ────────────── */
+  /* ── Experience: company/dates above role/context ──────────────── */
   .resume-experience > div > article {
     margin: 0 0 2.4mm;
     padding: 0;
@@ -173,13 +168,13 @@
   }
   .resume-experience > div > article:last-child { margin-bottom: 0; }
 
-  /* display:contents sube small/h3/p a la grilla sin tocar el orden del
-     DOM, que es el que lee el ATS. */
+  /* display: contents promotes children into the grid without changing the
+     DOM order consumed by an ATS. */
   .resume-role-heading {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    /* gap y no column-gap: la regla de pantalla define gap:25px, que de otro
-       modo sobrevive como row-gap y abre una linea en blanco entre filas. */
+    /* Reset the complete gap because the screen rule would otherwise preserve
+       a row gap and add a blank line between rows. */
     gap: 0 6mm;
     align-items: baseline;
   }
@@ -232,7 +227,7 @@
     widows: 2;
   }
 
-  /* ── Stack: etiqueta en negrita seguida de la lista, en una linea ── */
+  /* ── Stack: bold label followed by an inline list ──────────────── */
   .resume-skills > div { display: block; }
   .resume-skills article {
     display: block;
@@ -256,7 +251,7 @@
     line-height: 1.3;
   }
 
-  /* ── Educacion e idiomas: al final, apilados ─────────────────────── */
+  /* ── Education and languages: stacked at the end ──────────────── */
   .resume-sheet .resume-bottom {
     display: block;
     gap: 0;

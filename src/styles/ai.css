@@ -1,6 +1,5 @@
-/* Modulo AI & Harnesses: portada (/ai/) y paginas de articulo.
-   Reutiliza los tokens y primitivas de global.css (.section-shell, .eyebrow,
-   .section-number, .brand, footer). Todo lo propio va con prefijo .ai-. */
+/* AI & Harnesses module: home (/ai/) and article pages. Reuses global.css
+   tokens and primitives. Module-specific selectors use the .ai- prefix. */
 
 .ai-page { background: var(--paper); }
 
@@ -13,7 +12,7 @@
 }
 .ai-header-label { font: 500 9px var(--mono); letter-spacing: .1em; color: rgb(var(--ink-rgb) / 0.88); }
 
-/* ── Portada del modulo ─────────────────────────────────────────── */
+/* ── Module home ───────────────────────────────────────────────── */
 .ai-hero { min-height: 720px; display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 70px; padding-block: 88px; }
 .ai-hero h1 { margin: 26px 0 28px; font-size: clamp(58px, 7vw, 98px); line-height: .88; letter-spacing: -.08em; font-weight: 500; }
 .ai-hero h1 strong { font-weight: 800; color: var(--accent-text); }
@@ -22,7 +21,7 @@
 .ai-hero-notes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 38px; }
 .ai-hero-notes span { padding: 9px 13px; border: 1px solid var(--ink); background: var(--surface); font: 500 9px var(--mono); letter-spacing: .08em; }
 
-/* Diagrama del hero: el modelo al centro, el harness como capas alrededor. */
+/* Hero diagram: the model at the center and the harness as surrounding layers. */
 .ai-orbit { position: relative; min-height: 540px; display: grid; place-items: center; padding: 40px; color: var(--strong-text); background: var(--strong-surface); box-shadow: 14px 14px 0 var(--coral); overflow: hidden; transform: rotate(-1deg); }
 .ai-orbit-caption { position: absolute; top: 20px; left: 22px; right: 22px; display: flex; justify-content: space-between; font: 500 8px var(--mono); letter-spacing: .09em; color: rgba(255,255,255,.66); }
 .ai-orbit-caption b { color: var(--lime); }
@@ -42,14 +41,14 @@
 .ai-chip-4 { bottom: 14%; right: 8%; }
 .ai-chip-5 { bottom: 6%; left: 32%; }
 
-/* Banda de definicion */
+/* Definition band */
 .ai-band { padding-block: 74px; background: var(--coral); }
 .ai-band-grid { display: grid; grid-template-columns: 1fr 3fr; gap: 56px; align-items: start; }
 .ai-band-grid > p { margin: 9px 0 0; font: 500 10px var(--mono); letter-spacing: .1em; }
 .ai-band-grid blockquote { margin: 0; max-width: 900px; font-size: clamp(29px, 4vw, 52px); line-height: 1.12; letter-spacing: -.055em; }
 .ai-band-grid blockquote em { font-style: normal; font-weight: 800; }
 
-/* Secciones */
+/* Sections */
 .ai-section { padding-block: 88px; }
 .ai-section-tint { background: var(--paper-2); }
 .ai-dark { background: var(--strong-surface); color: var(--strong-text); }
@@ -60,7 +59,7 @@
 .ai-section-head.light h2 { color: var(--strong-text); }
 .ai-section-head.light .section-number, .ai-section-head.light > div > p { color: rgba(255,255,255,0.66); }
 
-/* Carriles del modulo */
+/* Module tracks */
 .ai-tracks { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); }
 .ai-track { min-height: 320px; display: flex; flex-direction: column; padding: 28px 26px; border-right: 1px solid var(--ink); }
 .ai-track:last-child { border-right: 0; }
@@ -72,7 +71,7 @@
 .ai-track.blue { background: rgba(143,199,255,.15); }
 .ai-track.lime { background: rgba(216,255,88,.14); }
 
-/* Post destacado + indice */
+/* Featured post and index */
 .ai-shelf { display: grid; grid-template-columns: 1.05fr .95fr; gap: 34px; align-items: start; }
 .ai-spotlight { padding: 34px; border: 1px solid var(--ink); background: var(--strong-surface); color: var(--strong-text); box-shadow: 9px 9px 0 var(--coral); }
 .ai-spotlight-kicker { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 22px; font: 500 9px var(--mono); letter-spacing: .11em; color: rgba(255,255,255,0.66); }
@@ -100,7 +99,7 @@
 .ai-index-item a:hover { background: var(--coral); }
 .ai-index-note { margin: 20px 0 0; font-size: 11px; line-height: 1.6; color: rgb(var(--ink-rgb) / 0.88); }
 
-/* Postura del modulo */
+/* Module stance */
 .ai-stance { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255,255,255,.3); }
 .ai-stance li { display: grid; grid-template-columns: 70px 300px 1fr; gap: 30px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid rgba(255,255,255,.16); }
 .ai-stance span { color: var(--accent-text); font: 500 10px var(--mono); }
@@ -114,7 +113,7 @@
 .ai-final h2 strong { font-weight: 800; }
 .ai-final > div > p:not(.eyebrow) { max-width: 620px; margin: 0 auto 34px; font-size: 16px; line-height: 1.7; }
 
-/* ── Pagina de articulo ─────────────────────────────────────────── */
+/* ── Article page ──────────────────────────────────────────────── */
 .ai-post-hero { padding-block: 92px 70px; }
 .ai-breadcrumb { display: flex; align-items: center; gap: 10px; margin: 0 0 30px; font: 500 10px var(--mono); letter-spacing: .1em; color: rgb(var(--ink-rgb) / 0.88); }
 .ai-breadcrumb a { border-bottom: 1px solid transparent; }
@@ -157,13 +156,13 @@
 .ai-callout-tag { margin: 0 0 12px; font: 500 9px var(--mono); letter-spacing: .11em; color: rgb(var(--ink-rgb) / 0.88); }
 .ai-callout p:last-child { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--ink); }
 
-/* Marco compartido por casi todas las figuras claras. */
+/* Shared frame for most light-background figures. */
 .ai-frame { padding: 28px 26px; border: 1px solid var(--ink); background: var(--surface); }
 .ai-dark .ai-frame { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.05); }
 .ai-frame-label { margin: 0 0 18px; font: 500 9px var(--mono); letter-spacing: .11em; color: rgb(var(--ink-rgb) / 0.88); }
 .ai-dark .ai-frame-label { color: var(--lime); }
 
-/* Figura A — el bucle autorregresivo */
+/* Figure A — autoregressive loop */
 .ai-loop { display: grid; gap: 16px; }
 .ai-loop-row { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
 .ai-loop-step { display: grid; gap: 5px; padding: 13px 15px; border: 1px solid var(--ink); background: var(--surface); font: 500 9.5px var(--mono); letter-spacing: .05em; }
@@ -180,7 +179,7 @@
 .ai-loop-tape-row span { padding: 6px 8px; border: 1px solid var(--line); background: var(--surface); }
 .ai-loop-tape-row span.is-new { border-color: var(--ink); background: var(--coral); }
 
-/* Figura B — tokenizacion */
+/* Figure B — tokenization */
 .ai-token-strip { display: flex; flex-wrap: wrap; gap: 4px; }
 .ai-token { padding: 10px 11px; border: 1px solid var(--ink); background: var(--surface); font: 500 11px var(--mono); }
 .ai-token.t-1 { background: rgba(255,107,74,.22); }
@@ -191,7 +190,7 @@
 .ai-token-legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 18px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font: 500 9px var(--mono); letter-spacing: .07em; color: rgb(var(--ink-rgb) / .88); }
 .ai-token-legend b { color: var(--accent-text); }
 
-/* Figura C — el espacio de embeddings */
+/* Figure C — embedding space */
 .ai-vec-math { display: grid; gap: 14px; }
 .ai-vec-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .ai-vec { padding: 11px 14px; border: 1px solid var(--ink); background: var(--surface); font: 500 10.5px var(--mono); }
@@ -206,7 +205,7 @@
 .ai-dot span { font: 500 9px var(--mono); letter-spacing: .1em; }
 .ai-dot p { margin: 0; font-size: 13px; line-height: 1.65; }
 
-/* Figura D — la pila de bloques */
+/* Figure D — block stack */
 .ai-stack { display: grid; gap: 10px; }
 .ai-stack-lane { display: grid; grid-template-columns: 108px 1fr; gap: 14px; align-items: center; }
 .ai-stack-lane > i { font-style: normal; font: 500 8.5px var(--mono); letter-spacing: .09em; opacity: .8; }
@@ -226,7 +225,7 @@
 .ai-stack-out > i { font-style: normal; font: 500 8.5px var(--mono); letter-spacing: .09em; opacity: .8; }
 .ai-stack-out div { padding: 15px 18px; background: var(--lime); color: var(--ink); font: 500 10px var(--mono); letter-spacing: .06em; }
 
-/* Figura E — atencion */
+/* Figure E — attention */
 .ai-attn-sentence { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
 .ai-attn-word { padding: 12px 13px; border: 1px solid var(--ink); background: var(--surface); font: 500 11px var(--mono); }
 .ai-attn-word.is-target { background: var(--coral); }
@@ -242,9 +241,9 @@
 .ai-attn-case p { margin: 0; font-size: 12.5px; line-height: 1.65; }
 .ai-attn-case q { font-style: italic; }
 
-/* Figura F — MLP */
-/* Cinco hijos: columna, operador, columna, operador, columna. Si el
-   grid-template no los cuenta todos, la figura se parte en dos filas. */
+/* Figure F — MLP */
+/* Five children: column, operator, column, operator, column. If grid-template
+   does not account for all of them, the figure splits into two rows. */
 .ai-mlp { display: grid; grid-template-columns: repeat(5, auto); justify-content: space-between; align-items: center; gap: 16px; }
 .ai-mlp-col { display: grid; gap: 5px; justify-items: center; }
 .ai-mlp-col > b { margin-bottom: 6px; font: 500 8.5px var(--mono); letter-spacing: .09em; color: rgb(var(--ink-rgb) / .88); }
@@ -258,7 +257,7 @@
 .ai-mlp-lanes { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
 .ai-mlp-lanes span { padding: 11px 6px; border: 1px dashed var(--ink); text-align: center; font: 500 9px var(--mono); background: var(--surface); }
 
-/* Figura G — softmax y temperatura */
+/* Figure G — softmax and temperature */
 .ai-logits { display: grid; gap: 8px; margin-bottom: 26px; }
 .ai-logit-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 54px; gap: 14px; align-items: center; }
 .ai-logit-row > span:first-child { font: 500 11px var(--mono); }
@@ -274,16 +273,15 @@
 .ai-temp-bar i.is-top { background: var(--coral); }
 .ai-temp-note { margin: 6px 0 0; font-size: 9.5px; line-height: 1.5; color: rgb(var(--ink-rgb) / .75); }
 
-/* Figura H — presupuesto de parametros */
+/* Figure H — parameter budget */
 .ai-params { width: 100%; border-collapse: collapse; }
 .ai-params caption { margin-bottom: 14px; font: 500 9px var(--mono); letter-spacing: .11em; text-align: left; color: rgb(var(--ink-rgb) / .88); }
 .ai-params th, .ai-params td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; font-size: 12px; vertical-align: middle; }
 .ai-params thead th { position: relative; background: var(--strong-surface); color: var(--strong-text); font: 500 8.5px var(--mono); letter-spacing: .08em; }
 .ai-params tbody th { font-size: 13px; font-weight: 700; white-space: nowrap; }
 .ai-params .ai-params-num { font: 500 11px var(--mono); white-space: nowrap; }
-/* La barra mide contra el ancho de su celda, asi que la celda necesita un
-   ancho propio: si no, la columna colapsa al del encabezado y el 100% del
-   bloque mas grande son treinta pixeles. */
+/* Bars are measured against their cell width. Without a stable width, the
+   column collapses to its heading and the largest block's 100% is only a few pixels. */
 .ai-params td:last-child { width: 180px; }
 .ai-params-bar { display: block; height: 12px; min-width: 2px; border: 1px solid var(--ink); background: var(--blue); }
 .ai-params-bar.is-big { background: var(--coral); }
@@ -296,15 +294,15 @@
   -webkit-overflow-scrolling: touch;
 }
 .ai-params-wrap table { min-width: 640px; }
-/* Sobre la seccion oscura la tabla hereda el texto blanco, pero los bordes y la
-   cabecera se declararon contra papel: hay que reponerlos. */
+/* The table inherits white text on dark sections, but its borders and header
+   were designed for paper and require explicit contrast. */
 .ai-dark .ai-params caption { color: rgba(255,255,255,.66); }
 .ai-dark .ai-params th, .ai-dark .ai-params td { border-bottom-color: rgba(255,255,255,.16); }
 .ai-dark .ai-params thead th { background: rgba(255,255,255,.12); }
 .ai-dark .ai-params tfoot th, .ai-dark .ai-params tfoot td { border-top-color: rgba(255,255,255,.5); }
 .ai-dark .ai-params-bar { border-color: rgba(255,255,255,.45); }
 
-/* Consecuencias practicas */
+/* Practical consequences */
 .ai-consequences { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
 .ai-consequences li { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 24px; padding: 26px 4px; border-bottom: 1px solid var(--line); }
 .ai-consequences span { font: 500 11px var(--mono); color: var(--accent-text); }

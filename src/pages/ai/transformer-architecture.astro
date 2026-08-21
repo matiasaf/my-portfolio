@@ -5,9 +5,8 @@ import ModuleFooter from '../../components/ai/ModuleFooter.astro';
 import { foundationConcepts } from '../../content/ai';
 import '../../styles/ai.css';
 
-/* Presupuesto de parametros de GPT-3, tal como lo desglosa el video de
-   3Blue1Brown. `bar` es el ancho relativo al bloque mas grande (las dos
-   proyecciones del MLP), no un porcentaje del total. */
+/* GPT-3 parameter budget following the 3Blue1Brown breakdown. `bar` is relative
+   to the largest block, the two MLP projections, rather than the total. */
 const paramBudget = [
   { name: 'Embedding', shape: 'd_model × n_vocab', math: '12,288 × 50,257', count: '617,558,016', share: '0.4%', bar: 1, tone: 'is-small' },
   { name: 'Key', shape: 'd_head × d_model × heads × layers', math: '128 × 12,288 × 96 × 96', count: '14,495,514,624', share: '8.3%', bar: 25, tone: '' },
@@ -19,8 +18,8 @@ const paramBudget = [
   { name: 'Unembedding', shape: 'n_vocab × d_model', math: '50,257 × 12,288', count: '617,558,016', share: '0.4%', bar: 1, tone: 'is-small' },
 ];
 
-/* Softmax sobre cuatro logits inventados, calculado a mano para cada
-   temperatura. Sirve para que la figura muestre numeros que cierran. */
+/* Softmax over four illustrative logits, calculated manually for each
+   temperature so the figure displays internally consistent values. */
 const logits = [
   { token: '"mat"', value: 4.0, bar: 100 },
   { token: '"floor"', value: 3.2, bar: 80 },

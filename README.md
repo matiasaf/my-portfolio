@@ -1,65 +1,111 @@
-# Learning Microsoft Fabric from Scratch
+# Matías Fernández's Portfolio
 
-A personal repository for learning Microsoft Fabric progressively through concise theory,
-guided labs, and reproducible proofs of concept (POCs).
+Source code for [builtbymatias.dev](https://builtbymatias.dev), a bilingual editorial
+portfolio where I publish technical notes, visual guides, and projects about applied AI,
+system design, data, and product engineering.
 
-No prior Data Engineering experience is assumed. The roadmap starts with fundamental
-concepts and ends with an end-to-end analytics solution.
+## What is included
 
-## Where to start
+- Spanish and English editorial home pages.
+- Professional profile and web/PDF résumé in both languages.
+- A visual series about AI, transformers, and agent harnesses.
+- A System Design guide, long-form articles, and
+  *Designing Data-Intensive Applications* notes.
+- A step-by-step AI Knowledge Platform project log.
+- Light and dark themes, responsive layouts, and social/SEO metadata.
 
-1. Read [Start here](docs/00-start-here.md).
-2. Complete the [initial assessment](docs/01-initial-assessment.md).
-3. Follow the [learning roadmap](docs/02-learning-roadmap.md).
-4. Use the [progress log](PROGRESS.md) at the end of each session.
-5. After completing the fundamentals, build the
-   [sales Lakehouse POC](pocs/01-sales-lakehouse/README.md).
+## Tech stack
 
-## Repository map
+- [Astro 5](https://astro.build/) with static output.
+- Strict TypeScript.
+- Hand-written CSS with no component framework.
+- Node.js 22 or newer and npm.
+- Cloudflare Pages for deployment.
+- LaTeX/Tectonic only when rebuilding the résumé PDFs.
+
+## Run locally
+
+```bash
+git clone https://github.com/matiasaf/my-portfolio.git
+cd my-portfolio
+npm ci
+npm run dev
+```
+
+Astro prints the local URL, usually `http://localhost:4321`.
+
+Validate a change with:
+
+```bash
+npm run check
+npm run build
+```
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the Astro development server |
+| `npm run check` | Validate types and Astro files |
+| `npm run build` | Validate and generate the static site in `dist/` |
+| `npm run preview` | Serve the generated `dist/` output locally |
+| `npm run cv:pdf` | Rebuild both résumé PDFs from the TypeScript source |
+
+`cv:pdf` requires Tectonic, `latexmk`, XeLaTeX, LuaLaTeX, or pdfLaTeX. The script recommends
+Tectonic.
+
+## Main routes
+
+| Route | Content |
+|---|---|
+| `/` and `/en/` | Spanish and English editorial home pages |
+| `/sobre-mi/` and `/en/about/` | Professional profile |
+| `/cv/` and `/en/cv/` | Web résumé and PDF downloads |
+| `/ai/` | Series about models, transformers, and harnesses |
+| `/system-design/` | Visual architecture guide and articles |
+| `/projects/ai-knowledge-platform/` | Applied AI project build log |
+
+See [Architecture](docs/ARCHITECTURE.md) for the complete route inventory and the relationship
+between pages, components, and structured content.
+
+## Repository structure
 
 ```text
 .
-├── docs/                    # Concepts, roadmap, and glossary
-├── fundamentals/            # Mini-lessons to complete before Fabric
-├── labs/                    # Short, focused exercises
-├── pocs/                    # End-to-end use cases
-│   └── 01-sales-lakehouse/
-│       ├── data/            # Small, version-controlled datasets
-│       ├── notebooks/       # Notebook that can be imported into Fabric
-│       └── sql/             # Validation queries
-├── PROGRESS.md              # Personal learning log
-└── CONTRIBUTING.md          # Repository conventions
+├── src/
+│   ├── pages/          # Astro routes; file paths define public URLs
+│   ├── components/     # Reusable sections and page-level components
+│   ├── content/        # Structured résumé, AI, DDIA, and System Design content
+│   ├── layouts/        # Shared HTML shell, SEO, theme, and metadata
+│   ├── lib/            # Generators and utilities
+│   └── styles/         # Global and module-specific styles
+├── public/             # Favicons, social images, and résumé PDFs
+├── scripts/            # Artifact automation such as résumé PDF generation
+└── docs/               # Architecture and maintenance documentation
 ```
 
-## Study method
+## Deployment
 
-Each module follows this cycle:
+The site builds to static files. The expected Cloudflare Pages configuration is:
 
-> understand → execute → verify → explain → record
+```text
+Build command:    npm run build
+Output directory: dist
+Production URL:   https://builtbymatias.dev
+```
 
-A practice exercise is not complete just because it “worked.” You should also be able to
-explain which data entered the system, which transformation occurred, where the result was
-stored, and how you verified it.
+`astro.config.mjs` defines the canonical domain. The résumé PDFs are generated outside the
+site build and committed under `public/downloads/` because Pages does not compile LaTeX.
 
-## Initial scope
+## Contributing
 
-- OneLake, workspaces, and Fabric capacities.
-- Lakehouse, files, and Delta tables.
-- Ingestion through manual uploads and Data Factory.
-- Transformations with PySpark notebooks and SQL queries.
-- Medallion architecture: Bronze, Silver, and Gold.
-- Semantic models and Power BI reports.
-- Security, governance, cost, and operations basics.
+The source is public so the building process is visible too. Bug reports, broken-link reports,
+and technical corrections are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening
+an issue or pull request. Follow [SECURITY.md](SECURITY.md) for security incidents or accidental
+data exposure.
 
-Data Science, Real-Time Intelligence, operational databases, and advanced automation will
-be added after mastering the basic batch flow.
+## License
 
-## Official references
-
-- [Introduction to Microsoft Fabric](https://learn.microsoft.com/fabric/fundamentals/microsoft-fabric-overview)
-- [End-to-end Lakehouse tutorial](https://learn.microsoft.com/fabric/data-engineering/tutorial-lakehouse-introduction)
-- [Microsoft Fabric learning paths](https://learn.microsoft.com/training/browse/?products=fabric)
-- [Data Engineering documentation in Fabric](https://learn.microsoft.com/fabric/data-engineering/)
-
-> Microsoft Fabric evolves frequently. If a screen differs from a guide, check the official
-> documentation first and record the difference in the progress log.
+A public repository does not automatically grant an open-source license. The code, design,
+writing, and portfolio materials remain fully copyrighted; review [LICENSE](LICENSE) before
+reusing them.

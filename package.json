@@ -1,17 +1,18 @@
 {
-  "name": "fabric-for-software-builders",
+  "name": "matias-fernandez-portfolio",
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22",
+    "npm": ">=9.6.5"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "cv:pdf": "node scripts/build-cv-pdf.mjs",
-    "api:test": "node --test pocs/02-incremental-api/api/test/*.test.js",
-    "api:dev": "npx vercel dev --cwd pocs/02-incremental-api/api",
-    "api:deploy": "npx vercel --prod --yes --cwd pocs/02-incremental-api/api"
+    "cv:pdf": "node scripts/build-cv-pdf.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

@@ -1,7 +1,7 @@
-/* Estudio de DDIA: seccion indice (/system-design/#ddia) y paginas de capitulo.
-   Reutiliza los tokens y primitivas de global.css / system-design.css. */
+/* DDIA study: index section (/system-design/#ddia) and chapter pages. Reuses
+   tokens and primitives from global.css and system-design.css. */
 
-/* ── Seccion indice dentro del modulo ───────────────────────────── */
+/* ── Module index section ──────────────────────────────────────── */
 .ddia-shelf { display: grid; grid-template-columns: 1.05fr .95fr; gap: 34px; align-items: start; }
 
 .ddia-spotlight { padding: 34px; border: 1px solid var(--ink); background: var(--strong-surface); color: var(--strong-text); box-shadow: 9px 9px 0 var(--coral); }
@@ -31,7 +31,7 @@
 .ddia-index-note { margin: 20px 0 0; font-size: 11px; line-height: 1.6; color: rgb(var(--ink-rgb) / 0.88); }
 .ddia-index-note a { border-bottom: 1px solid rgb(var(--ink-rgb) / .4); }
 
-/* ── Pagina de capitulo ─────────────────────────────────────────── */
+/* ── Chapter page ──────────────────────────────────────────────── */
 .ddia-hero { padding-block: 96px 74px; }
 .ddia-breadcrumb { display: flex; align-items: center; gap: 10px; margin: 0 0 30px; font: 500 10px var(--mono); letter-spacing: .1em; color: rgb(var(--ink-rgb) / 0.88); }
 .ddia-breadcrumb a { border-bottom: 1px solid transparent; }
@@ -64,12 +64,11 @@
 .ddia-prose.light p { color: rgba(255,255,255,.72); }
 .ddia-prose.light strong { color: var(--strong-text); }
 .ddia-h3 { margin: 40px 0 16px; font-size: 21px; letter-spacing: -.035em; }
-/* Sin esto la nota al pie de una figura y el parrafo siguiente se leen como
-   un solo bloque continuo. */
+/* Keep a figure caption and the following paragraph from reading as one block. */
 .ddia-figure + .ddia-prose, .ddia-figure + .ddia-callout { margin-top: 40px; }
 .ddia-prose + .ddia-prose { margin-top: 20px; }
 
-/* Figuras */
+/* Figures */
 .ddia-figure { margin: 44px 0 0; }
 .ddia-figure-cap { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; font: 500 9px var(--mono); letter-spacing: .1em; }
 .ddia-figure-cap span { padding: 4px 8px; background: var(--coral); color: var(--ink); }
@@ -80,7 +79,7 @@
 .ddia-figure-note b { color: var(--ink); }
 .ddia-section-dark .ddia-figure-note b { color: var(--strong-text); }
 
-/* Figura A — sistema compuesto */
+/* Figure A — composite system */
 .composite-map { display: grid; justify-items: center; padding: 32px 26px; border: 1px solid var(--ink); background: var(--surface); }
 .composite-client { padding: 11px 26px; border: 1px solid var(--ink); background: var(--surface); font: 500 10px var(--mono); letter-spacing: .09em; }
 .composite-arrow { padding: 9px; color: var(--accent-text); font-size: 17px; }
@@ -95,7 +94,7 @@
 .part-queue { background: var(--surface); }
 .composite-boundary-foot { margin: 18px 0 0; font-size: 12px; line-height: 1.6; text-align: center; color: rgb(var(--ink-rgb) / 0.88); }
 
-/* Triada */
+/* Triad */
 .ddia-triad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
 .triad-card { padding: 26px 24px 30px; border: 1px solid var(--ink); }
 .triad-card span { font: 500 9px var(--mono); letter-spacing: .1em; }
@@ -105,7 +104,7 @@
 .triad-lime { background: var(--lime); }
 .triad-blue { background: var(--blue); }
 
-/* Figura B — fault vs failure */
+/* Figure B — fault vs. failure */
 .fault-diagram { display: grid; gap: 14px; }
 .fault-track { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 20px; border: 1px solid rgba(255,255,255,.25); }
 .fault-track-bad { background: rgba(255,107,74,.09); }
@@ -118,7 +117,7 @@
 .fault-end-bad { background: var(--coral); color: var(--ink); }
 .fault-end-good { background: var(--lime); color: var(--ink); }
 
-/* Clases de fallo */
+/* Failure classes */
 .fault-classes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
 .fault-class { padding: 26px 24px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.04); border-top-width: 4px; }
 .fault-blue { border-top-color: var(--blue); }
@@ -130,13 +129,13 @@
 .fault-body { margin: 0 0 18px; font-size: 12.5px; line-height: 1.65; color: rgba(255,255,255,0.66); }
 .fault-body:last-child { margin-bottom: 0; }
 
-/* Parametros de carga */
+/* Load parameters */
 .load-params { margin-top: 36px; padding: 24px 26px; border: 1px solid var(--ink); background: var(--surface); }
 .load-params-label { margin: 0 0 16px; font: 500 9px var(--mono); letter-spacing: .11em; color: rgb(var(--ink-rgb) / 0.88); }
 .load-params > div { display: flex; flex-wrap: wrap; gap: 9px; }
 .load-params span { padding: 9px 14px; border: 1px solid var(--ink); background: var(--surface); font: 500 10.5px var(--mono); }
 
-/* Figura C — Twitter */
+/* Figure C — Twitter */
 .tw-numbers { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); background: var(--surface); }
 .tw-numbers div { display: grid; gap: 7px; padding: 22px 24px; border-right: 1px solid var(--ink); }
 .tw-numbers div:last-child { border-right: 0; }
@@ -182,7 +181,7 @@
 .ddia-callout-tag { margin: 0 0 12px; font: 500 9px var(--mono); letter-spacing: .11em; color: rgb(var(--ink-rgb) / 0.88); }
 .ddia-callout p:last-child { margin: 0; font-size: 14.5px; line-height: 1.7; }
 
-/* Figura D — percentiles */
+/* Figure D — percentiles */
 .pct-chart { padding: 26px; border: 1px solid var(--ink); background: var(--surface); }
 .pct-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 260px; gap: 16px; align-items: center; margin-bottom: 12px; }
 .pct-name { font: 500 11px var(--mono); letter-spacing: .05em; }
@@ -195,10 +194,10 @@
 .pct-note { font-size: 11.5px; color: rgb(var(--ink-rgb) / 0.88); }
 .pct-axis { display: flex; justify-content: space-between; margin: 18px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font: 500 8px var(--mono); letter-spacing: .09em; color: rgb(var(--ink-rgb) / 0.88); }
 
-/* Figura E — tail amplification */
+/* Figure E — tail amplification */
 .tail-diagram { display: grid; justify-items: center; padding: 30px 26px; border: 1px solid var(--ink); background: var(--surface); }
 .tail-origin { padding: 12px 22px; border: 1px solid var(--ink); background: var(--strong-surface); color: var(--strong-text); font: 500 10px var(--mono); letter-spacing: .09em; }
-/* Misma grilla que .tail-backends para que cada conector caiga sobre su caja. */
+/* Match .tail-backends so each connector aligns with its box. */
 .tail-fan { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; height: 26px; }
 .tail-fan i { justify-self: center; width: 1px; height: 100%; background: var(--line); }
 .tail-backends { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; }
@@ -206,7 +205,7 @@
 .tail-slow { background: var(--coral) !important; }
 .tail-result { margin-top: 22px; padding: 16px 20px; max-width: 62ch; border-left: 3px solid var(--coral); background: rgba(255,107,74,.09); font-size: 13.5px; line-height: 1.65; text-align: center; }
 
-/* Pilares */
+/* Pillars */
 .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .pillar { padding: 28px 26px; border: 1px solid var(--ink); border-left-width: 5px; background: var(--surface); }
 .pillar-coral { border-left-color: var(--accent-text); }
@@ -216,7 +215,7 @@
 .pillar-line { margin: 0 0 16px; font-size: 14px; font-weight: 700; color: var(--ink); }
 .pillar-body { margin: 0; font-size: 13px; line-height: 1.7; color: rgb(var(--ink-rgb) / 0.88); }
 
-/* Vocabulario */
+/* Vocabulary */
 .concept-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 0; }
 .concept { padding: 24px; border: 1px solid var(--ink); background: var(--surface); }
 .concept dt { margin-bottom: 10px; font-size: 17px; font-weight: 800; letter-spacing: -.035em; }
@@ -229,7 +228,7 @@
 .takeaways h3 { margin: 0 0 9px; font-size: 19px; letter-spacing: -.035em; }
 .takeaways p { margin: 0; max-width: 78ch; font-size: 13.5px; line-height: 1.7; color: rgb(var(--ink-rgb) / 0.88); }
 
-/* Atribucion */
+/* Attribution */
 .ddia-source { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 30px; padding: 28px; border: 1px solid var(--ink); background: var(--paper-2); }
 .ddia-source-tag { margin: 0; font: 500 9px var(--mono); letter-spacing: .11em; color: rgb(var(--ink-rgb) / 0.88); }
 .ddia-source p { margin: 0 0 14px; font-size: 13.5px; line-height: 1.7; color: rgb(var(--ink-rgb) / 0.88); }

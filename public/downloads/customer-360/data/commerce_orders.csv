@@ -1,9 +1,0 @@
-order_id,customer_email,order_date,amount,status
-O-001,ana.torres@EXAMPLE.COM,2026-01-10,600.00,Completed
-O-002," ana.torres@example.com ",2026-02-15,500.00,Completed
-O-003,bruno.silva@example.com,2026-01-20,200.00,Completed
-O-004,carla.ruiz@example.com,2026-02-22,900.00,Pending
-O-005,diego.lopez@example.com,2026-03-10,350.00,Completed
-O-006,elena.costa@example.com,2026-03-12,700.00,Completed
-O-007,unknown.buyer@example.com,2026-03-15,120.00,Completed
-O-008,BRUNO.SILVA@example.com,2026-03-18,250.00,Cancelled

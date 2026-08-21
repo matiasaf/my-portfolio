@@ -1,6 +1,6 @@
 /**
- * Indice del estudio de "Designing Data-Intensive Applications" (Martin Kleppmann).
- * Lo comparten la seccion del modulo (/system-design/#ddia) y las paginas de capitulo.
+ * Index for the study of Martin Kleppmann's "Designing Data-Intensive Applications."
+ * Shared by the module section (/system-design/#ddia) and chapter pages.
  */
 
 export const book = {
@@ -45,7 +45,7 @@ export const chapters: Chapter[] = [
   { number: '12', title: 'The Future of Data Systems', part: 'III · Derived Data', status: 'planned' },
 ];
 
-/** Conceptos que el capitulo 1 deja instalados para el resto del libro. */
+/** Concepts established by chapter 1 for the rest of the book. */
 export const chapterOneConcepts = [
   ['Fault ≠ failure', 'A fault is one component deviating from spec. A failure is the system as a whole stopping. Tolerance means containing the first so it never becomes the second.'],
   ['Load parameter', 'The number that describes what actually grows: requests per second, read/write ratio, fan-out, cache hit rate. Choosing the wrong one hides the bottleneck.'],

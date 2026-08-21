@@ -17,8 +17,8 @@ html[data-theme='dark'] {
 .portfolio-main :is(h1, h2, h3) { text-wrap: balance; }
 .portfolio-main p { text-wrap: pretty; }
 
-/* Header sobrio: conserva la navegacion, evita el efecto de landing page y
-   deja que el contenido sea el primer elemento visual. */
+/* Restrained header: preserves navigation while keeping content as the first
+   visual element instead of turning the page into a landing page. */
 .portfolio-header {
   position: fixed;
   z-index: 80;
@@ -122,8 +122,8 @@ html[data-theme='dark'] {
 
 .header-note:hover { border-color: var(--muted); }
 
-/* Hero editorial. La segunda columna es un indice util; reemplaza el diagrama
-   animado para que la portada explique rapidamente que se puede leer. */
+/* Editorial hero. The second column is a useful index that replaces the
+   animated diagram and quickly explains what visitors can read. */
 .portfolio-hero {
   min-height: 690px;
   padding-top: 144px;
@@ -282,7 +282,7 @@ html[data-theme='dark'] {
 .hero-index small { color: var(--muted); font-size: 11px; }
 .hero-index b { grid-column: 3; grid-row: 1 / -1; align-self: center; font-size: 16px; }
 
-/* Secciones de contenido */
+/* Content sections */
 .section-index { margin: 0; padding-top: 8px; color: var(--muted); }
 .about-section,
 .expertise-section,
@@ -587,7 +587,7 @@ html[data-theme='dark'] {
 .stack-groups h3 { margin: 0; font: 500 11px var(--mono); letter-spacing: .06em; }
 .stack-groups ul { padding-top: 0; }
 
-/* La lista de lectura es la superficie principal de la home. */
+/* The reading list is the home page's primary surface. */
 .home-notes { max-width: 980px; padding-top: var(--portfolio-section-space); }
 .notes-title-row { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 34px; }
 .notes-title-row h2 { margin: 16px 0 0; font-size: clamp(36px, 4.2vw, 54px); line-height: 1.08; letter-spacing: -.05em; }
