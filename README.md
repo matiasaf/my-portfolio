@@ -37,8 +37,7 @@ Astro prints the local URL, usually `http://localhost:4321`.
 Validate a change with:
 
 ```bash
-npm run check
-npm run build
+npm run verify
 ```
 
 ## Commands
@@ -48,6 +47,7 @@ npm run build
 | `npm run dev` | Start the Astro development server |
 | `npm run check` | Validate types and Astro files |
 | `npm run build` | Validate and generate the static site in `dist/` |
+| `npm run verify` | Run the complete automated verification gate |
 | `npm run preview` | Serve the generated `dist/` output locally |
 | `npm run cv:pdf` | Rebuild both résumé PDFs from the TypeScript source |
 
@@ -82,7 +82,10 @@ between pages, components, and structured content.
 │   └── styles/         # Global and module-specific styles
 ├── public/             # Favicons, social images, and résumé PDFs
 ├── scripts/            # Artifact automation such as résumé PDF generation
-└── docs/               # Architecture and maintenance documentation
+├── docs/               # Architecture and harness maintenance documentation
+├── AGENTS.md           # Concise operating map for coding agents
+├── CLAUDE.md           # Claude Code adapter that imports AGENTS.md
+└── PROGRESS.md         # Durable state for work spanning sessions
 ```
 
 ## Deployment

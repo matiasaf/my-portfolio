@@ -12,6 +12,7 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "verify": "npm run build",
     "cv:pdf": "node scripts/build-cv-pdf.mjs"
   },
   "dependencies": {

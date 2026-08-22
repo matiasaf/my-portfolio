@@ -135,12 +135,14 @@ Canonical site:   https://builtbymatias.dev
 
 ## Change verification
 
-The minimum automated verification is:
+The complete automated verification gate is:
 
 ```bash
-npm run check
-npm run build
+npm run verify
 ```
+
+Use `npm run check` as the faster diagnostic loop while editing. CI runs the same complete gate
+for every pull request and push to `main`.
 
 Visual or editorial changes should also be reviewed for:
 

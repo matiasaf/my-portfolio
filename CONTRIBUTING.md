@@ -26,8 +26,7 @@ npm run dev
 Before submitting a change:
 
 ```bash
-npm run check
-npm run build
+npm run verify
 ```
 
 Also review affected pages at desktop and mobile widths, in both light and dark themes, and in

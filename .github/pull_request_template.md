@@ -8,8 +8,7 @@
 
 ## Verification
 
-- [ ] `npm run check`
-- [ ] `npm run build`
+- [ ] `npm run verify`
 - [ ] Desktop and mobile review (for UI changes)
 - [ ] Light and dark themes (for UI changes)
 - [ ] Spanish and English variants (when both exist)
