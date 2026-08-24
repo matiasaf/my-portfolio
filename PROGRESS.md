@@ -5,8 +5,8 @@ short and replace stale detail instead of accumulating a diary.
 
 ## In progress
 
-- Portfolio V2 (`docs/PORTFOLIO_V2_PLAN.md`). PRs 1–2 are complete on
-  `feat/professional-home`. PR 3 is next: disclosure-audited professional case studies.
+- Portfolio V2 (`docs/PORTFOLIO_V2_PLAN.md`). PRs 1–3 are complete on
+  `feat/professional-home`. PR 4 is next: About, experience, and résumé alignment.
 
 ## Blocked
 
@@ -14,6 +14,11 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- PR 3 of Portfolio V2 on 2026-08-24: published bilingual, disclosure-audited Enterprise
+  AI Platform and Serverless Platform Modernization case studies; each uses the shared
+  template, a sanitized architecture, exact ownership, decisions, trade-offs, failure modes,
+  ledger-backed evidence, delivery state, and résumé/contact calls to action. Client source,
+  screenshots, data, exact topology, and unsupported outcomes remain explicitly withheld.
 - PR 2 of Portfolio V2 on 2026-08-24: `src/content/work.ts` now owns the selected-work
   model, flagship status, evidence, milestones, decisions, and bilingual copy; Work/Trabajo
   indexes and canonical AI Knowledge Platform case-study routes render shared components;
@@ -25,13 +30,13 @@ short and replace stale detail instead of accumulating a diary.
   Resume everywhere; and the AI Knowledge Platform status is read from one source.
 - Established the five-subsystem project harness on 2026-08-22: agent map, pinned runtime,
   durable state, unified verification command, CI, and maintenance guidance.
-- `npm run verify` passed on 2026-08-24 with 60 files clean and 22 static pages built.
+- `npm run verify` passed on 2026-08-24 with 64 files clean and 26 static pages built.
 
 ## Next action
 
-- Start PR 3 with a disclosure audit for Enterprise AI Platform, then write its sanitized
-  architecture, exact responsibility, decisions, trade-offs, and supported outcomes. Repeat
-  the audit before publishing Serverless Platform Modernization as a full case study.
+- Start PR 4 by refocusing About on profile, leadership behavior, working style, and preferred
+  environment; then condense Experience and connect the relevant roles to their case studies
+  before preparing the two résumé positioning variants.
 
 ## Known follow-ups
 

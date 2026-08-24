@@ -49,10 +49,10 @@ export interface EvidenceEntry {
 }
 
 /**
- * Verified metrics rendered on the professional home, in display order.
- * Adding an entry here is a claim; it needs a source before it ships.
+ * Complete ledger of numeric public claims. Case-study-only targets belong here too,
+ * even when they are intentionally absent from the home proof row.
  */
-export const proofMetrics: EvidenceEntry[] = [
+export const evidenceLedger: EvidenceEntry[] = [
   {
     id: 'years',
     value: '10+',
@@ -100,7 +100,24 @@ export const proofMetrics: EvidenceEntry[] = [
     source: 'Java to Node.js/TypeScript serverless migration at Hexacta / GlobalLogic.',
     publicDisclosure: true,
   },
+  {
+    id: 'ttft-target',
+    value: '<2s',
+    label: {
+      en: 'time-to-first-token design target',
+      es: 'objetivo de diseño de time-to-first-token',
+    },
+    kind: 'target',
+    attribution: 'individual',
+    source: 'Enterprise AI Platform performance requirement, Argeniss / Amplity Health.',
+    publicDisclosure: true,
+  },
 ];
+
+/** Verified metrics rendered on the professional home, in display order. */
+export const proofMetrics: EvidenceEntry[] = ['years', 'documents', 'dashboard', 'infrastructure']
+  .map((id) => evidenceLedger.find((entry) => entry.id === id))
+  .filter((entry): entry is EvidenceEntry => entry !== undefined);
 
 /**
  * Claims that appeared in earlier drafts and are not currently supported.

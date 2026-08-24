@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import '../styles/portfolio.css';
 import '../styles/work.css';
-import { navigation, routes, type Lang } from '../content/profile';
+import { contactLinks, navigation, routes, type Lang } from '../content/profile';
 import type { WorkCaseStudy } from '../content/work';
 
 interface Props { lang: Lang; study: WorkCaseStudy; }
@@ -12,9 +12,9 @@ const route = routes[lang];
 const alternate = study.routes[en ? 'es' : 'en'];
 const nav = navigation(lang);
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
-const stateLabel = (state: 'accepted' | 'implemented' | 'planned') => en
-  ? ({ accepted: 'Accepted', implemented: 'Implemented · acceptance pending', planned: 'Planned' }[state])
-  : ({ accepted: 'Aceptado', implemented: 'Implementado · aceptación pendiente', planned: 'Planeado' }[state]);
+const stateLabel = (state: 'accepted' | 'delivered' | 'implemented' | 'planned') => en
+  ? ({ accepted: 'Accepted', delivered: 'Delivered', implemented: 'Implemented · acceptance pending', planned: 'Planned' }[state])
+  : ({ accepted: 'Aceptado', delivered: 'Entregado', implemented: 'Implementado · aceptación pendiente', planned: 'Planeado' }[state]);
 const kindLabel = (kind: 'measured' | 'implemented' | 'target') => en
   ? ({ measured: 'Measured result', implemented: 'Implemented capability', target: 'Target' }[kind])
   : ({ measured: 'Resultado medido', implemented: 'Capacidad implementada', target: 'Objetivo' }[kind]);
@@ -24,6 +24,8 @@ const attributionLabel = (attribution: 'individual' | 'team') => en
 const linkKindLabel = (kind: 'source' | 'evidence' | 'artifact') => en
   ? ({ source: 'Source', evidence: 'Evidence', artifact: 'Working artifact' }[kind])
   : ({ source: 'Código', evidence: 'Evidencia', artifact: 'Producto ejecutable' }[kind]);
+const resolveHref = (href: string | Record<Lang, string>) => typeof href === 'string' ? href : href[lang];
+const isExternal = (href: string) => href.startsWith('http://') || href.startsWith('https://');
 const t = en ? {
   nav: 'Main navigation', language: 'Choose language', back: 'All work', status: 'Current status',
   glance: 'At a glance', role: 'Role', period: 'Period', team: 'Team', stack: 'Stack', availability: 'Source and demo',
@@ -32,6 +34,9 @@ const t = en ? {
   results: 'Results and evidence', roadmap: 'Delivery state', next: 'What I would improve next', links: 'Related links',
   context: 'Context', choice: 'Decision', consequence: 'Consequence', gained: 'What it enables', cost: 'What it costs',
   evidence: 'Open evidence', footer: 'PUBLIC ENGINEERING CASE STUDY', top: 'Back to top', contents: 'Case study sections',
+  disclosure: 'Disclosure boundary', basis: 'Audit basis', published: 'Published here', withheld: 'Kept private',
+  continue: 'Continue the conversation', continueCopy: 'The résumé provides the complete career context. For client-sensitive details, contact me and I can discuss the work at the appropriate disclosure level.',
+  resume: 'Open résumé', contact: 'Contact me',
 } : {
   nav: 'Navegación principal', language: 'Elegir idioma', back: 'Todo el trabajo', status: 'Estado actual',
   glance: 'De un vistazo', role: 'Rol', period: 'Período', team: 'Equipo', stack: 'Stack', availability: 'Código y demo',
@@ -40,6 +45,9 @@ const t = en ? {
   results: 'Resultados y evidencia', roadmap: 'Estado de entrega', next: 'Qué mejoraría después', links: 'Links relacionados',
   context: 'Contexto', choice: 'Decisión', consequence: 'Consecuencia', gained: 'Qué habilita', cost: 'Qué cuesta',
   evidence: 'Abrir evidencia', footer: 'CASO DE ESTUDIO DE INGENIERÍA PÚBLICO', top: 'Volver arriba', contents: 'Secciones del caso de estudio',
+  disclosure: 'Límite de disclosure', basis: 'Base de la auditoría', published: 'Publicado aquí', withheld: 'Mantenido privado',
+  continue: 'Sigamos la conversación', continueCopy: 'El CV brinda el contexto completo de carrera. Para detalles sensibles de cliente, escribime y puedo conversar sobre el trabajo con el nivel de disclosure apropiado.',
+  resume: 'Abrir CV', contact: 'Escribime',
 };
 const toc = [
   ['overview', t.overview], ['problem', t.problem], ['responsibility', t.responsibility],
@@ -81,6 +89,16 @@ const toc = [
       </dl></div>
     </section>
 
+    {study.disclosure && (
+      <section class="case-disclosure" aria-labelledby="disclosure-title">
+        <div class="portfolio-shell">
+          <header><p class="section-index">{t.disclosure}</p><h2 id="disclosure-title">{t.disclosure}</h2><p><strong>{t.basis}</strong>{study.disclosure.basis[lang]}</p><time datetime={study.disclosure.reviewedAt}>{study.disclosure.reviewedAt}</time></header>
+          <div><h3>{t.published}</h3><ul>{study.disclosure.published.map((item) => <li>{item[lang]}</li>)}</ul></div>
+          <div><h3>{t.withheld}</h3><ul>{study.disclosure.withheld.map((item) => <li>{item[lang]}</li>)}</ul></div>
+        </div>
+      </section>
+    )}
+
     <div class="portfolio-shell case-reading-layout">
       <nav class="case-toc" aria-label={t.contents}><ol>{toc.map(([href, label], index) => <li><a href={`#${href}`}><span>{String(index + 1).padStart(2, '0')}</span>{label}</a></li>)}</ol></nav>
       <div class="case-body">
@@ -98,13 +116,23 @@ const toc = [
 
         <section class="case-section case-failures"><p class="section-index">07 / {t.failure}</p><h2>{t.failure}</h2><ol>{study.failureModes.map((mode) => <li>{mode[lang]}</li>)}</ol></section>
 
-        <section id="results" class="case-section"><p class="section-index">08 / {t.results}</p><h2>{t.results}</h2><div class="case-metrics">{study.metrics.map((metric) => <article><strong>{metric.value}</strong><p>{metric.label[lang]}</p><small>{kindLabel(metric.kind)} · {attributionLabel(metric.attribution)}</small><a href={metric.evidenceHref} target="_blank" rel="noreferrer">{t.evidence} ↗<span class="visually-hidden">{newTab}</span></a></article>)}</div></section>
+        <section id="results" class="case-section"><p class="section-index">08 / {t.results}</p><h2>{t.results}</h2><div class="case-metrics">{study.metrics.map((metric) => {
+          const href = resolveHref(metric.evidenceHref);
+          const external = isExternal(href);
+          return <article><strong>{metric.value}</strong><p>{metric.label[lang]}</p><small>{kindLabel(metric.kind)} · {attributionLabel(metric.attribution)}</small><a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>{t.evidence} ↗{external && <span class="visually-hidden">{newTab}</span>}</a></article>;
+        })}</div></section>
 
         <section class="case-section"><p class="section-index">09 / {t.roadmap}</p><h2>{t.roadmap}</h2><ol class="case-milestones">{study.milestones.map((milestone) => <li class={`is-${milestone.state}`}><span>{milestone.number}</span><div><small>{stateLabel(milestone.state)} · {milestone.deliverable[lang]}</small><h3>{milestone.title[lang]}</h3><p>{milestone.description[lang]}</p></div></li>)}</ol></section>
 
         <section id="next" class="case-section case-next"><p class="section-index">10 / {t.next}</p><h2>{t.next}</h2><ol>{study.next.map((item) => <li>{item[lang]}</li>)}</ol></section>
 
-        <section class="case-section case-links"><p class="section-index">11 / {t.links}</p><h2>{t.links}</h2><div>{study.links.map((link) => <a href={link.href} target="_blank" rel="noreferrer"><small>{linkKindLabel(link.kind).toUpperCase()}</small><strong>{link.label[lang]} ↗</strong><span>{link.description[lang]}</span><span class="visually-hidden">{newTab}</span></a>)}</div></section>
+        <section class="case-section case-links"><p class="section-index">11 / {t.links}</p><h2>{t.links}</h2><div>{study.links.map((link) => {
+          const href = resolveHref(link.href);
+          const external = isExternal(href);
+          return <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}><small>{linkKindLabel(link.kind).toUpperCase()}</small><strong>{link.label[lang]} ↗</strong><span>{link.description[lang]}</span>{external && <span class="visually-hidden">{newTab}</span>}</a>;
+        })}</div></section>
+
+        <section class="case-section case-contact"><p class="section-index">12 / {t.continue}</p><h2>{t.continue}</h2><p>{t.continueCopy}</p><div><a class="primary-action" href={route.resume}>{t.resume} <span aria-hidden="true">↗</span></a><a class="quiet-action" href={contactLinks.email}>{t.contact} <span aria-hidden="true">→</span></a></div></section>
       </div>
     </div>
   </main>

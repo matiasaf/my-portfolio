@@ -34,8 +34,12 @@ articles may contain their page structure directly.
 | `/en/cv/` | `src/pages/en/cv/index.astro` |
 | `/en/work/` | `src/pages/en/work/index.astro` |
 | `/es/trabajo/` | `src/pages/es/trabajo/index.astro` |
+| `/en/work/enterprise-ai-platform/` | `src/pages/en/work/enterprise-ai-platform.astro` |
+| `/es/trabajo/enterprise-ai-platform/` | `src/pages/es/trabajo/enterprise-ai-platform.astro` |
 | `/en/work/ai-knowledge-platform/` | `src/pages/en/work/ai-knowledge-platform.astro` |
 | `/es/trabajo/ai-knowledge-platform/` | `src/pages/es/trabajo/ai-knowledge-platform.astro` |
+| `/en/work/serverless-modernization/` | `src/pages/en/work/serverless-modernization.astro` |
+| `/es/trabajo/serverless-modernization/` | `src/pages/es/trabajo/serverless-modernization.astro` |
 | `/ai/` | `src/pages/ai.astro` |
 | `/ai/transformer-architecture/` | `src/pages/ai/transformer-architecture.astro` |
 | `/system-design/` | `src/pages/system-design.astro` |

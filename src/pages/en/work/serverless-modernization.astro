@@ -1,0 +1,9 @@
+---
+import WorkCaseStudy from '../../../components/WorkCaseStudy.astro';
+import { getWorkCaseStudy } from '../../../content/work';
+
+const study = getWorkCaseStudy('serverless-modernization');
+if (!study) throw new Error('Missing Serverless Platform Modernization case study content.');
+---
+
+<WorkCaseStudy lang="en" study={study} />

@@ -66,7 +66,9 @@ Tectonic.
 | `/ai/` | Series about models, transformers, and harnesses |
 | `/system-design/` | Visual architecture guide and articles |
 | `/en/work/` and `/es/trabajo/` | Selected engineering work |
+| `/en/work/enterprise-ai-platform/` and `/es/trabajo/enterprise-ai-platform/` | Sanitized frontend leadership case study |
 | `/en/work/ai-knowledge-platform/` and `/es/trabajo/ai-knowledge-platform/` | Applied AI engineering case study |
+| `/en/work/serverless-modernization/` and `/es/trabajo/serverless-modernization/` | Sanitized platform modernization case study |
 
 See [Architecture](docs/ARCHITECTURE.md) for the complete route inventory and the relationship
 between pages, components, and structured content.
