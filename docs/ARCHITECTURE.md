@@ -32,6 +32,8 @@ articles may contain their page structure directly.
 | `/en/about/` | `src/pages/en/about.astro` |
 | `/cv/` | `src/pages/cv/index.astro` |
 | `/en/cv/` | `src/pages/en/cv/index.astro` |
+| `/cv/ingeniero-productos-ai/` | `src/pages/cv/ingeniero-productos-ai.astro` |
+| `/en/cv/ai-product-engineer/` | `src/pages/en/cv/ai-product-engineer.astro` |
 | `/en/work/` | `src/pages/en/work/index.astro` |
 | `/es/trabajo/` | `src/pages/es/trabajo/index.astro` |
 | `/en/work/enterprise-ai-platform/` | `src/pages/en/work/enterprise-ai-platform.astro` |
@@ -71,7 +73,9 @@ internationalization dependency or runtime router.
 ### `src/content/`
 
 Stores structured data consumed by multiple views. `resume.ts` is the résumé's single source of
-truth: it feeds both `ResumePage.astro` and the LaTeX generator. `work.ts` owns selected-work cards,
+truth: it feeds both `ResumePage.astro` and the LaTeX generator. It projects shared role highlights
+into Frontend Lead and AI Product Engineer variants; variants change positioning, selected current-
+role highlights, and skill order without duplicating the underlying experience. `work.ts` owns selected-work cards,
 case-study content, public evidence links, and project status so those claims cannot drift between
 the home, Writing, Work index, and case-study routes. `ai.ts`, `ddia.ts`, and `system-design.ts`
 contain indexes and reusable module content.
@@ -120,13 +124,16 @@ pretending a translation exists.
 
 ```text
 src/content/resume.ts
-        ├─> ResumePage.astro ─> /cv/ and /en/cv/
-        └─> resume-tex.ts ─> scripts/build-cv-pdf.mjs ─> public/downloads/*.pdf
+        ├─> shared roles, highlights, and skill groups
+        ├─> Frontend Lead projection ─┬─> ResumePage.astro
+        │                            └─> resume-tex.ts ─> PDF
+        └─> AI Product projection ───┬─> ResumePage.astro
+                                     └─> resume-tex.ts ─> PDF
 ```
 
-`npm run cv:pdf` validates characters that are problematic in LaTeX, compiles both languages,
-and replaces the published PDFs. Because the process requires a LaTeX engine, it runs separately
-and its outputs are version-controlled.
+`npm run cv:pdf` validates characters that are problematic in LaTeX, compiles both positioning
+variants in both languages, and replaces the four published PDFs. Because the process requires a
+LaTeX engine, it runs separately and its outputs are version-controlled.
 
 ## Build and deployment
 

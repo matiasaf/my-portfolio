@@ -250,6 +250,8 @@ export interface ExperienceEntry {
   summary: Localized;
   /** One line of evidence. Team results say so in the sentence itself. */
   proof: Localized;
+  /** Published case studies that substantiate this role's selected claims. */
+  caseStudies?: { label: Localized; href: Record<Lang, string> }[];
   tone: 'coral' | 'blue' | 'lime' | 'violet';
 }
 
@@ -271,6 +273,15 @@ export const condensedExperience: ExperienceEntry[] = [
       en: '1,000+ documents processed · 35% faster BI dashboard',
       es: '1.000+ documentos procesados · dashboard BI 35% más rápido',
     },
+    caseStudies: [
+      {
+        label: { en: 'Enterprise AI Platform case study', es: 'Caso de plataforma empresarial de AI' },
+        href: {
+          en: '/en/work/enterprise-ai-platform/',
+          es: '/es/trabajo/enterprise-ai-platform/',
+        },
+      },
+    ],
     tone: 'coral',
   },
   {
@@ -301,6 +312,15 @@ export const condensedExperience: ExperienceEntry[] = [
       en: 'Team migration reduced infrastructure cost ≈ 30%',
       es: 'La migración del equipo redujo costos de infraestructura ≈ 30%',
     },
+    caseStudies: [
+      {
+        label: { en: 'Serverless modernization case study', es: 'Caso de modernización serverless' },
+        href: {
+          en: '/en/work/serverless-modernization/',
+          es: '/es/trabajo/serverless-modernization/',
+        },
+      },
+    ],
     tone: 'lime',
   },
   {

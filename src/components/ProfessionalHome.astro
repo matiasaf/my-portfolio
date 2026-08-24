@@ -54,6 +54,7 @@ const t = en ? {
   experienceB: 'shipping software.',
   experienceCopy: 'Product teams, technical leadership, modernization, cloud, and applied AI.',
   fullResume: 'Open the complete résumé',
+  caseLabel: 'Related evidence',
   notesIndex: '03 / SELECTED WRITING',
   notesTitle: 'How I think about systems.',
   allNotes: 'All writing',
@@ -98,6 +99,7 @@ const t = en ? {
   experienceB: 'entregando software.',
   experienceCopy: 'Equipos de producto, liderazgo técnico, modernización, cloud y AI aplicada.',
   fullResume: 'Abrir el CV completo',
+  caseLabel: 'Evidencia relacionada',
   notesIndex: '03 / ESCRITURA SELECCIONADA',
   notesTitle: 'Cómo pienso los sistemas.',
   allNotes: 'Todas las publicaciones',
@@ -217,7 +219,7 @@ const t = en ? {
             <div class="experience-rail"><span>{String(index + 1).padStart(2, '0')}</span><i></i></div>
             <div class="experience-period">{item.period[lang]}</div>
             <div class="experience-role"><small>{item.context[lang]}</small><h3>{item.company[lang]}</h3><p>{item.role[lang]}</p></div>
-            <div class="experience-detail"><p>{item.summary[lang]}</p><strong>{item.proof[lang]}</strong></div>
+            <div class="experience-detail"><p>{item.summary[lang]}</p><strong>{item.proof[lang]}</strong>{item.caseStudies && <div class="experience-cases"><small>{t.caseLabel}</small>{item.caseStudies.map((study) => <a href={study.href[lang]}>{study.label[lang]} <span aria-hidden="true">→</span></a>)}</div>}</div>
           </article>
         ))}
       </div>

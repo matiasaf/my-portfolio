@@ -5,8 +5,8 @@ short and replace stale detail instead of accumulating a diary.
 
 ## In progress
 
-- Portfolio V2 (`docs/PORTFOLIO_V2_PLAN.md`). PRs 1–3 are complete on
-  `feat/professional-home`. PR 4 is next: About, experience, and résumé alignment.
+- Portfolio V2 (`docs/PORTFOLIO_V2_PLAN.md`). PRs 1–4 are complete on
+  `feat/professional-home`. PR 5 is next: GitHub professional surface.
 
 ## Blocked
 
@@ -14,6 +14,12 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- PR 4 of Portfolio V2 on 2026-08-24: refocused bilingual About pages on profile,
+  leadership behavior, working style, preferred environment, and a concise shared career path;
+  linked the Argeniss and Hexacta / GlobalLogic roles to disclosure-safe case studies; projected
+  shared résumé experience into Frontend Lead and AI Product Engineer variants with five current-
+  role highlights each; and regenerated four bilingual/variant PDFs. Responsive, theme, keyboard,
+  link, PDF rendering, and ATS text checks passed.
 - PR 3 of Portfolio V2 on 2026-08-24: published bilingual, disclosure-audited Enterprise
   AI Platform and Serverless Platform Modernization case studies; each uses the shared
   template, a sanitized architecture, exact ownership, decisions, trade-offs, failure modes,
@@ -30,13 +36,13 @@ short and replace stale detail instead of accumulating a diary.
   Resume everywhere; and the AI Knowledge Platform status is read from one source.
 - Established the five-subsystem project harness on 2026-08-22: agent map, pinned runtime,
   durable state, unified verification command, CI, and maintenance guidance.
-- `npm run verify` passed on 2026-08-24 with 64 files clean and 26 static pages built.
+- `npm run verify` passed on 2026-08-24 with 66 files clean and 28 static pages built.
 
 ## Next action
 
-- Start PR 4 by refocusing About on profile, leadership behavior, working style, and preferred
-  environment; then condense Experience and connect the relevant roles to their case studies
-  before preparing the two résumé positioning variants.
+- Start PR 5 by reviewing the public GitHub profile and selected repositories, then align the
+  profile README and pinned evidence with the professional positioning. Publishing changes
+  requires explicit GitHub account authorization.
 
 ## Known follow-ups
 

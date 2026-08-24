@@ -51,6 +51,14 @@ export interface Resume {
   languages: { primary: string; secondary: string };
 }
 
+export type ResumeVariantId = 'frontend-lead' | 'ai-product-engineer';
+
+export interface ResumeVariantMeta {
+  label: Record<'es' | 'en', string>;
+  path: Record<'es' | 'en', string>;
+  pdfPath: Record<'es' | 'en', string>;
+}
+
 const contacts: ResumeContact[] = [
   { label: 'builtbymatias.dev', display: 'builtbymatias.dev', href: 'https://builtbymatias.dev' },
   { label: 'LinkedIn', display: 'linkedin.com/in/fernandez-amatias', href: 'https://linkedin.com/in/fernandez-amatias' },
@@ -168,4 +176,120 @@ const es: Resume = {
   languages: { primary: 'Español — Nativo', secondary: 'Inglés — B2, comunicación profesional avanzada' },
 };
 
-export const resume: Record<'es' | 'en', Resume> = { es, en };
+/**
+ * Public routes and downloads for the two positioning variants. The canonical
+ * résumé routes remain the Frontend Lead version; the AI Product Engineer
+ * variant has an explicit route so links and PDFs never depend on query state.
+ */
+export const resumeVariantMeta: Record<ResumeVariantId, ResumeVariantMeta> = {
+  'frontend-lead': {
+    label: { en: 'Frontend Lead', es: 'Frontend Lead' },
+    path: { en: '/en/cv/', es: '/cv/' },
+    pdfPath: {
+      en: '/downloads/matias-fernandez-resume.pdf',
+      es: '/downloads/matias-fernandez-cv.pdf',
+    },
+  },
+  'ai-product-engineer': {
+    label: { en: 'AI Product Engineer', es: 'AI Product Engineer' },
+    path: { en: '/en/cv/ai-product-engineer/', es: '/cv/ingeniero-productos-ai/' },
+    pdfPath: {
+      en: '/downloads/matias-fernandez-ai-product-engineer-resume.pdf',
+      es: '/downloads/matias-fernandez-ingeniero-productos-ai-cv.pdf',
+    },
+  },
+};
+
+interface ResumeVariantDefinition {
+  headline: string;
+  summary: Resume['summary'];
+  /** Indices into the shared current-role highlights above. */
+  currentRoleHighlights: readonly number[];
+  /** Labels from the shared skill groups, in variant-specific display order. */
+  skillOrder: readonly string[];
+}
+
+const variantDefinitions: Record<'es' | 'en', Record<ResumeVariantId, ResumeVariantDefinition>> = {
+  en: {
+    'frontend-lead': {
+      headline: 'FRONTEND LEAD · SENIOR SOFTWARE ENGINEER',
+      summary: {
+        headline: 'I lead frontend systems without losing sight of the product behind them.',
+        body: 'Senior Software Engineer with more than ten years of experience delivering complex web products. Deepest in React, Next.js, TypeScript, and frontend architecture, with hands-on backend and cloud reach across Node.js, Python/FastAPI, .NET, Azure, and AWS. I lead through implementation, explicit trade-offs, code reviews, mentoring, conventions, and architecture documentation.',
+      },
+      currentRoleHighlights: [0, 1, 3, 5, 6],
+      skillOrder: ['Frontend', 'Quality', 'Applied AI', 'Backend & APIs', 'Realtime & data', 'Cloud & delivery'],
+    },
+    'ai-product-engineer': {
+      headline: 'AI PRODUCT ENGINEER · SENIOR SOFTWARE ENGINEER',
+      summary: {
+        headline: 'I turn AI capabilities into reliable, usable product systems.',
+        body: 'Senior Software Engineer with more than ten years of experience and current production work across AI-enabled products, document pipelines, retrieval, streaming, and enterprise workflows. I connect React and Next.js interfaces with Python/FastAPI, .NET, Azure OpenAI, Pinecone, data, and cloud delivery, while making failure states, source attribution, observability, cost, and maintainability part of the product.',
+      },
+      currentRoleHighlights: [0, 3, 4, 1, 6],
+      skillOrder: ['Applied AI', 'Frontend', 'Backend & APIs', 'Realtime & data', 'Cloud & delivery', 'Quality'],
+    },
+  },
+  es: {
+    'frontend-lead': {
+      headline: 'FRONTEND LEAD · SENIOR SOFTWARE ENGINEER',
+      summary: {
+        headline: 'Lidero sistemas frontend sin perder de vista el producto que sostienen.',
+        body: 'Senior Software Engineer con más de diez años entregando productos web complejos. Mi mayor profundidad está en React, Next.js, TypeScript y arquitectura frontend, con alcance hands-on de backend y cloud en Node.js, Python/FastAPI, .NET, Azure y AWS. Lidero desde la implementación, los trade-offs explícitos, code reviews, mentoring, convenciones y documentación de arquitectura.',
+      },
+      currentRoleHighlights: [0, 1, 3, 5, 6],
+      skillOrder: ['Frontend', 'Calidad', 'Applied AI', 'Backend & APIs', 'Tiempo real & datos', 'Cloud & entrega'],
+    },
+    'ai-product-engineer': {
+      headline: 'AI PRODUCT ENGINEER · SENIOR SOFTWARE ENGINEER',
+      summary: {
+        headline: 'Convierto capacidades de AI en sistemas de producto confiables y usables.',
+        body: 'Senior Software Engineer con más de diez años de experiencia y trabajo actual en productos con AI, pipelines documentales, retrieval, streaming y flujos empresariales. Conecto interfaces React y Next.js con Python/FastAPI, .NET, Azure OpenAI, Pinecone, datos y cloud, incorporando estados de falla, atribución de fuentes, observabilidad, costos y mantenibilidad al producto.',
+      },
+      currentRoleHighlights: [0, 3, 4, 1, 6],
+      skillOrder: ['Applied AI', 'Frontend', 'Backend & APIs', 'Tiempo real & datos', 'Cloud & entrega', 'Calidad'],
+    },
+  },
+};
+
+const buildVariant = (lang: 'es' | 'en', variant: ResumeVariantId): Resume => {
+  const base = { es, en }[lang];
+  const definition = variantDefinitions[lang][variant];
+  const currentRole = base.roles[0];
+
+  const roles = base.roles.map((role, index) => index === 0
+    ? {
+        ...currentRole,
+        bullets: definition.currentRoleHighlights.map((highlight) => {
+          const bullet = currentRole.bullets[highlight];
+          if (!bullet) throw new Error(`Missing ${lang} current-role highlight ${highlight}`);
+          return bullet;
+        }),
+      }
+    : role);
+
+  const skills = definition.skillOrder.map((label) => {
+    const group = base.skills.find(([groupLabel]) => groupLabel === label);
+    if (!group) throw new Error(`Missing ${lang} résumé skill group: ${label}`);
+    return group;
+  });
+
+  return { ...base, headline: definition.headline, summary: definition.summary, roles, skills };
+};
+
+export const resumeVariants: Record<'es' | 'en', Record<ResumeVariantId, Resume>> = {
+  en: {
+    'frontend-lead': buildVariant('en', 'frontend-lead'),
+    'ai-product-engineer': buildVariant('en', 'ai-product-engineer'),
+  },
+  es: {
+    'frontend-lead': buildVariant('es', 'frontend-lead'),
+    'ai-product-engineer': buildVariant('es', 'ai-product-engineer'),
+  },
+};
+
+/** Backwards-compatible default used by the canonical résumé route and callers. */
+export const resume: Record<'es' | 'en', Resume> = {
+  en: resumeVariants.en['frontend-lead'],
+  es: resumeVariants.es['frontend-lead'],
+};

@@ -18,7 +18,7 @@ import { mkdirSync, writeFileSync, copyFileSync, rmSync, existsSync } from 'node
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { resume } from '../src/content/resume.ts';
+import { resumeVariantMeta, resumeVariants } from '../src/content/resume.ts';
 import { renderResumeTex } from '../src/lib/resume-tex.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,8 +26,10 @@ const WORK = join(ROOT, 'tmp', 'cv-pdf');
 const OUT = join(ROOT, 'public', 'downloads');
 
 const TARGETS = [
-  { lang: 'es', file: 'matias-fernandez-cv.pdf' },
-  { lang: 'en', file: 'matias-fernandez-resume.pdf' },
+  { lang: 'es', variant: 'frontend-lead' },
+  { lang: 'en', variant: 'frontend-lead' },
+  { lang: 'es', variant: 'ai-product-engineer' },
+  { lang: 'en', variant: 'ai-product-engineer' },
 ];
 
 /**
@@ -78,13 +80,16 @@ function main() {
   mkdirSync(OUT, { recursive: true });
 
   // 1. Render and validate. This always runs, even when no engine is installed.
-  const built = TARGETS.map(({ lang, file }) => {
-    const tex = renderResumeTex(resume[lang]);
-    assertEscaped(tex, lang);
-    const texPath = join(WORK, `cv-${lang}.tex`);
+  const built = TARGETS.map(({ lang, variant }) => {
+    const tex = renderResumeTex(resumeVariants[lang][variant]);
+    assertEscaped(tex, `${lang}/${variant}`);
+    const stem = `cv-${lang}-${variant}`;
+    const file = resumeVariantMeta[variant].pdfPath[lang].split('/').at(-1);
+    if (!file) throw new Error(`Missing PDF filename for ${lang}/${variant}`);
+    const texPath = join(WORK, `${stem}.tex`);
     writeFileSync(texPath, tex, 'utf8');
-    console.log(`  .tex  ${lang}  ${tex.length.toLocaleString()} B  →  ${texPath}`);
-    return { lang, file, texPath };
+    console.log(`  .tex  ${lang}/${variant}  ${tex.length.toLocaleString()} B  →  ${texPath}`);
+    return { lang, variant, stem, file, texPath };
   });
   console.log('  escaping validated: no unescaped % or & characters\n');
 
@@ -98,14 +103,14 @@ function main() {
   }
   console.log(`  engine: ${engine.bin}\n`);
 
-  for (const { lang, file, texPath } of built) {
+  for (const { lang, variant, stem, file, texPath } of built) {
     for (let pass = 0; pass < engine.passes; pass++) {
       execFileSync(engine.bin, engine.args(texPath), { cwd: WORK, stdio: 'inherit' });
     }
-    const pdf = join(WORK, `cv-${lang}.pdf`);
+    const pdf = join(WORK, `${stem}.pdf`);
     if (!existsSync(pdf)) throw new Error(`${engine.bin} did not generate ${pdf}`);
     copyFileSync(pdf, join(OUT, file));
-    console.log(`  PDF   ${lang}  →  public/downloads/${file}`);
+    console.log(`  PDF   ${lang}/${variant}  →  public/downloads/${file}`);
   }
 
   console.log('\nDone. Commit the PDFs: Cloudflare Pages serves them as files and does not compile LaTeX.');
