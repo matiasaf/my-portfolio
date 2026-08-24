@@ -26,3 +26,13 @@ out/
 node_modules/
 dist/
 .astro/
+
+# Local skill assets and generated tooling
+.github/skills/
+.github/agents/
+.github/instructions/
+.github/prompts/
+.github/hooks/
+**/.skill/
+**/skills/
+**/hooks/
