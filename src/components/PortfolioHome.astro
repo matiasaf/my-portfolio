@@ -1,18 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import '../styles/portfolio.css';
+import {
+  condensedExperience,
+  contactLinks,
+  navigation,
+  preferredEnvironment,
+  routes,
+  targetRoles,
+} from '../content/profile';
 
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
-const alternatePath = en ? '/sobre-mi/' : '/en/about/';
-const resumePath = en ? '/en/cv/' : '/cv/';
-const socialLinks = {
-  linkedin: 'https://linkedin.com/in/fernandez-amatias',
-  github: 'https://github.com/matiasaf',
-  email: 'mailto:fernandez.amatias@gmail.com',
-};
+const route = routes[lang];
+const alternatePath = en ? routes.es.about : routes.en.about;
+const resumePath = route.resume;
+const nav = navigation(lang);
+const socialLinks = contactLinks;
+
+/* Career path shared with the professional home so a role cannot be described
+   two different ways on two pages. */
+const experience = condensedExperience;
 
 const capabilities = en ? [
   { number: '01', label: 'PRODUCT FRONTEND', title: 'Interfaces for complex products', copy: 'Frontend architecture and product experiences built with React, Next.js, and TypeScript, with clarity, accessibility, and maintainability as first-class constraints.', tone: 'coral' },
@@ -33,18 +43,6 @@ const stackGroups = [
   { label: en ? 'QUALITY' : 'CALIDAD', items: ['Vitest', 'Playwright', 'React Testing Library', 'Cypress', 'xUnit', 'Web Vitals'] },
 ];
 
-const experience = en ? [
-  { period: '2022 — NOW', company: 'Argeniss Software', role: 'Senior Full-Stack Engineer', context: 'Amplity Health', copy: 'Frontend lead of AI Studio and hands-on contributor across Azure IC Portal, an inherited Website Chatbot, an internal SDLC platform, and Amplity.com.', proof: '1,000+ documents processed · 35% faster BI dashboard', tone: 'coral' },
-  { period: '2021 — 2022', company: 'Endava', role: 'Full-Stack Engineer', context: 'Bloomberg LP · Workpaper', copy: 'React, Redux, TypeScript, Node.js, PostgreSQL, Docker, and AWS during the product’s beta launch, plus Web Vitals and end-to-end coverage.', proof: 'Frontend + backend · mentoring in a 5-person team', tone: 'blue' },
-  { period: '2019 — 2021', company: 'Hexacta / GlobalLogic', role: 'Full-Stack Engineer', context: 'TechInsights · BA147 · SUACI', copy: 'Serverless migration, Angular 7-to-12 modernization, analytics widgets, Terraform infrastructure, Ionic mobile delivery, and Java/Spring Boot services.', proof: 'Team migration reduced infrastructure cost ≈ 30%', tone: 'lime' },
-  { period: '2016 — 2019', company: 'Earlier work', role: 'Software Engineer', context: 'Government of Entre Ríos · Genosha', copy: 'Public-sector platforms with PHP, Oracle, React and Laravel, ETL automation with Node.js, and a video-generation platform on Docker, AWS ECS, and FFmpeg.', proof: 'Regulated systems · auditing · traceability · compliance', tone: 'violet' },
-] : [
-  { period: '2022 — HOY', company: 'Argeniss Software', role: 'Senior Full-Stack Engineer', context: 'Amplity Health', copy: 'Lidero el frontend de AI Studio y contribuyo hands-on en Azure IC Portal, un Website Chatbot heredado, una plataforma interna de SDLC y Amplity.com.', proof: '1.000+ documentos procesados · dashboard BI 35% más rápido', tone: 'coral' },
-  { period: '2021 — 2022', company: 'Endava', role: 'Full-Stack Engineer', context: 'Bloomberg LP · Workpaper', copy: 'React, Redux, TypeScript, Node.js, PostgreSQL, Docker y AWS durante el lanzamiento beta, más Web Vitals y cobertura end-to-end.', proof: 'Frontend + backend · mentoring en un equipo de 5 personas', tone: 'blue' },
-  { period: '2019 — 2021', company: 'Hexacta / GlobalLogic', role: 'Full-Stack Engineer', context: 'TechInsights · BA147 · SUACI', copy: 'Migración serverless, modernización Angular 7–12, widgets de analytics, infraestructura Terraform, entrega mobile con Ionic y servicios Java/Spring Boot.', proof: 'La migración del equipo redujo costos de infraestructura ≈ 30%', tone: 'lime' },
-  { period: '2016 — 2019', company: 'Experiencia inicial', role: 'Software Engineer', context: 'Gobierno de Entre Ríos · Genosha', copy: 'Plataformas públicas con PHP, Oracle, React y Laravel, automatización ETL con Node.js y una plataforma de generación de video sobre Docker, AWS ECS y FFmpeg.', proof: 'Sistemas regulados · auditoría · trazabilidad · cumplimiento', tone: 'violet' },
-];
-
 /* Current products at Amplity Health. `role` is intentionally explicit about
    ownership: leading the AI Studio frontend is different from sharing ownership
    of an inherited product, and the résumé and portable profile reflect that. */
@@ -63,9 +61,9 @@ const work = en ? [
 const t = en ? {
   title: 'About — Matías Fernández',
   description: 'Professional profile, selected experience, current work, and technical toolbox of Matías Fernández, Senior Full-Stack and Applied AI Engineer.',
-  navLabel: 'Main navigation', about: 'About', archive: 'Experience', work: 'Work', projects: 'Writing', talk: 'View résumé',
+  navLabel: 'Main navigation', resumePdfLabel: 'Résumé PDF',
   kicker: 'ABOUT · SENIOR FULL-STACK ENGINEER · APPLIED AI', summary: 'Senior Full-Stack Engineer with 10+ years turning complex frontend, backend, cloud, and AI systems into clear, reliable, maintainable products.',
-  explore: 'View experience', knowMe: 'Back to writing', boardLabel: 'Professional focus map', now: 'HOW I BUILD / 2026', decisions: 'Architecture & scale ↗', boardNote: 'interface + intelligence + infrastructure',
+  explore: 'View experience', knowMe: 'Back to the home page', boardLabel: 'Professional focus map', now: 'HOW I BUILD / 2026', decisions: 'Architecture & scale ↗', boardNote: 'interface + intelligence + infrastructure',
   currentLabel: 'Core expertise', exploring: 'CORE STACK',
   aboutIndex: '01 / PROFILE', aboutHeadingA: 'Frontend depth. ', aboutHeadingEm: 'Full-stack reach.', aboutHeadingB: ' Product ownership.',
   aboutP1: 'I’m a Senior Full-Stack Engineer with more than ten years of experience building web products, enterprise platforms, and internal tools. Frontend architecture is my deepest specialty, but I work comfortably across the systems behind the interface.',
@@ -80,17 +78,15 @@ const t = en ? {
   stackIndex: '06 / TOOLBOX', stackTitle: 'Technologies I use to ship.',
   notesIndex: '07 / FEATURED NOTES', notesTitle: 'Start reading here.', edition: 'EDITION 001',
   writingIndex: '08 / WRITING', writingTitle: 'Ideas worth explaining.', writingCopy: 'Topics where product, architecture, and day-to-day engineering meet.',
-  projectsIndex: '09 / SIDE PROJECTS', soon: 'Built in public.', alive: 'Evidence first.', projectCopy: 'A document knowledge platform built milestone by milestone, with honest states, verifiable progress, and retrieval quality treated as a product surface.',
-  projectStatus: 'MILESTONE 01 · COMPLETE', projectTitle: 'AI Knowledge Platform', projectStage: 'Validated ingestion', projectProgress: '1 / 5 milestones', projectDetail: 'Read the build log', projectRepo: 'View repository',
   contactKicker: 'Based in Argentina · working globally', contactA: 'Let’s build something', contactB: 'worth maintaining.', contactCopy: 'I’m open to conversations about senior and technical-lead roles, applied AI products, and ambitious software projects.', back: 'Back to top', footer: 'Built while learning.', emailLabel: 'Send an email',
-  openRolesLabel: 'BEST-FIT ROLES', openRoles: 'Senior or Lead Frontend Engineer · Staff Frontend in a hands-on role · Senior Full-Stack with a frontend focus · React/TypeScript Tech Lead · Full-Stack AI Product Engineer',
-  openEnvLabel: 'PREFERRED ENVIRONMENT', openEnv: 'Remote from Argentina with overlap with American time zones · B2B SaaS, AI platforms, developer tools, data products, fintech, healthtech, and enterprise software · Product teams with technical autonomy and room to make architectural decisions',
+  openRolesLabel: 'BEST-FIT ROLES',
+  openEnvLabel: 'PREFERRED ENVIRONMENT',
 } : {
   title: 'Sobre mí — Matías Fernández',
   description: 'Perfil profesional, experiencia seleccionada, trabajo actual y herramientas de Matías Fernández, Senior Full-Stack y Applied AI Engineer.',
-  navLabel: 'Navegación principal', about: 'Sobre mí', archive: 'Experiencia', work: 'Proyectos', projects: 'Escritura', talk: 'Ver CV',
+  navLabel: 'Navegación principal', resumePdfLabel: 'CV PDF',
   kicker: 'SOBRE MÍ · SENIOR FULL-STACK ENGINEER · APPLIED AI', summary: 'Senior Full-Stack Engineer con más de 10 años convirtiendo sistemas complejos de frontend, backend, cloud y AI en productos claros, confiables y mantenibles.',
-  explore: 'Ver experiencia', knowMe: 'Volver a publicaciones', boardLabel: 'Mapa de enfoque profesional', now: 'CÓMO CONSTRUYO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'interfaz + inteligencia + infraestructura',
+  explore: 'Ver experiencia', knowMe: 'Volver al inicio', boardLabel: 'Mapa de enfoque profesional', now: 'CÓMO CONSTRUYO / 2026', decisions: 'Arquitectura & escala ↗', boardNote: 'interfaz + inteligencia + infraestructura',
   currentLabel: 'Experiencia principal', exploring: 'STACK PRINCIPAL',
   aboutIndex: '01 / PERFIL', aboutHeadingA: 'Profundidad frontend. ', aboutHeadingEm: 'Alcance full-stack.', aboutHeadingB: ' Criterio de producto.',
   aboutP1: 'Soy Senior Full-Stack Engineer con más de diez años de experiencia construyendo productos web, plataformas empresariales y herramientas internas. La arquitectura frontend es mi especialidad más profunda, pero trabajo cómodamente sobre los sistemas detrás de la interfaz.',
@@ -105,11 +101,9 @@ const t = en ? {
   stackIndex: '06 / HERRAMIENTAS', stackTitle: 'Tecnologías con las que construyo.',
   notesIndex: '07 / NOTAS DESTACADAS', notesTitle: 'Para empezar a leer.', edition: 'EDICIÓN 001',
   writingIndex: '08 / ESCRITURA', writingTitle: 'Ideas que vale la pena explicar.', writingCopy: 'Temas donde se cruzan producto, arquitectura y el trabajo cotidiano de ingeniería.',
-  projectsIndex: '09 / SIDE PROJECTS', soon: 'Construido en público.', alive: 'Evidencia primero.', projectCopy: 'Una plataforma de conocimiento documental construida milestone a milestone, con estados honestos, progreso verificable y la calidad de recuperación como parte del producto.',
-  projectStatus: 'MILESTONE 01 · COMPLETO', projectTitle: 'AI Knowledge Platform', projectStage: 'Ingesta validada', projectProgress: '1 / 5 milestones', projectDetail: 'Ver el paso a paso', projectRepo: 'Abrir repositorio',
   contactKicker: 'Desde Argentina · trabajando globalmente', contactA: 'Construyamos algo', contactB: 'que valga la pena mantener.', contactCopy: 'Estoy abierto a conversar sobre roles senior y de liderazgo técnico, productos de AI aplicada y proyectos de software ambiciosos.', back: 'Volver arriba', footer: 'Construido mientras aprendo.', emailLabel: 'Enviar un email',
-  openRolesLabel: 'ROLES QUE BUSCO', openRoles: 'Senior o Lead Frontend Engineer · Staff Frontend en un rol hands-on · Senior Full-Stack con foco frontend · Tech Lead React/TypeScript · Full-Stack AI Product Engineer',
-  openEnvLabel: 'ENTORNO PREFERIDO', openEnv: 'Remoto desde Argentina con overlap con husos horarios americanos · B2B SaaS, plataformas de AI, developer tools, productos de datos, fintech, healthtech y software empresarial · Equipos de producto con autonomía técnica y espacio para decidir arquitectura',
+  openRolesLabel: 'ROLES QUE BUSCO',
+  openEnvLabel: 'ENTORNO PREFERIDO',
 };
 ---
 
@@ -121,24 +115,23 @@ const t = en ? {
   mainId="inicio"
 >
   <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href={en ? '/en/' : '/es/'} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
+    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
       <span class="brand-monogram" aria-hidden="true">MF</span>
       <span>Matías Fernández</span>
     </a>
 
     <nav aria-label={t.navLabel}>
-      <a href={en ? '/en/' : '/es/'}>{en ? 'Writing' : 'Publicaciones'}</a>
-      <a href="#experience">{t.archive}</a>
-      <a href="#work">{t.work}</a>
-      <a href="#about">{t.about}</a>
+      {nav.map((item) => (
+        <a href={item.href} aria-current={item.href === route.about ? 'page' : undefined}>{item.label}</a>
+      ))}
     </nav>
 
     <div class="portfolio-header-actions">
       <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
-        <a href="/sobre-mi/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-        <a href="/en/about/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+        <a href={routes.es.about} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <a href={routes.en.about} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
       </nav>
-      <a class="header-note" href={resumePath}>{t.talk} <span aria-hidden="true">↗</span></a>
+      <a class="header-note" href={route.resumePdf} download>{t.resumePdfLabel} <span aria-hidden="true">↓</span></a>
     </div>
   </header>
 
@@ -150,7 +143,7 @@ const t = en ? {
         <p class="hero-summary">{t.summary}</p>
         <div class="portfolio-actions">
           <a class="primary-action" href="#experience">{t.explore} <span aria-hidden="true">↓</span></a>
-          <a class="quiet-action" href={en ? '/en/' : '/es/'}>{t.knowMe} <span aria-hidden="true">→</span></a>
+          <a class="quiet-action" href={route.home}>{t.knowMe} <span aria-hidden="true">→</span></a>
         </div>
         <ul class="hero-proof" aria-label={en ? 'Professional summary' : 'Resumen profesional'}>
           <li><strong>10+</strong><span>{en ? 'years shipping software' : 'años entregando software'}</span></li>
@@ -251,9 +244,9 @@ const t = en ? {
         {experience.map((item, index) => (
           <article class={`experience-item experience-${item.tone}`}>
             <div class="experience-rail"><span>{String(index + 1).padStart(2, '0')}</span><i></i></div>
-            <div class="experience-period">{item.period}</div>
-            <div class="experience-role"><small>{item.context}</small><h3>{item.company}</h3><p>{item.role}</p></div>
-            <div class="experience-detail"><p>{item.copy}</p><strong>{item.proof}</strong></div>
+            <div class="experience-period">{item.period[lang]}</div>
+            <div class="experience-role"><small>{item.context[lang]}</small><h3>{item.company[lang]}</h3><p>{item.role[lang]}</p></div>
+            <div class="experience-detail"><p>{item.summary[lang]}</p><strong>{item.proof[lang]}</strong></div>
           </article>
         ))}
       </div>
@@ -305,8 +298,8 @@ const t = en ? {
         <h2>{t.contactA}<br /><em>{t.contactB}</em></h2>
         <p>{t.contactCopy}</p>
         <div class="contact-open">
-          <div><small>{t.openRolesLabel}</small><p>{t.openRoles}</p></div>
-          <div><small>{t.openEnvLabel}</small><p>{t.openEnv}</p></div>
+          <div><small>{t.openRolesLabel}</small><p>{targetRoles[lang]}</p></div>
+          <div><small>{t.openEnvLabel}</small><p>{preferredEnvironment[lang]}</p></div>
         </div>
         <div class="contact-links">
           <a href={socialLinks.email}>{t.emailLabel} <span aria-hidden="true">↗</span></a>
@@ -319,7 +312,7 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer">
-    <a class="portfolio-brand" href={en ? '/en/' : '/es/'}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
     <p>Product · Applied AI · Systems</p>
     <span>{t.footer}</span>
   </footer>

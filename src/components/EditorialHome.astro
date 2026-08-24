@@ -1,37 +1,29 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import '../styles/portfolio.css';
+import { notes as allNotes } from '../content/notes';
+import { aiKnowledgePlatformStatus, contactLinks, navigation, routes } from '../content/profile';
 
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
-const alternatePath = en ? '/es/' : '/en/';
-const aboutPath = en ? '/en/about/' : '/sobre-mi/';
+const route = routes[lang];
+const alternatePath = en ? routes.es.writing : routes.en.writing;
+const aboutPath = route.about;
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
+const nav = navigation(lang);
 
 const socialLinks = {
-  github: 'https://github.com/matiasaf',
-  email: 'mailto:fernandez.amatias@gmail.com',
+  github: contactLinks.github,
+  email: contactLinks.email,
 };
 
-const notes = en ? [
-  { tag: 'DATABASES', meta: 'SYSTEM DESIGN · BILINGUAL', title: 'Choosing a database: design from questions, not logos', href: '/en/system-design/choosing-a-database/' },
-  { tag: 'PYTHON', meta: 'SYSTEM DESIGN · SPANISH', title: 'Concurrency vs. parallelism: how to choose and design the system', href: '/system-design/concurrencia-vs-paralelismo-python/' },
-  { tag: 'AI', meta: 'ARTICLE 01', title: 'Inside a transformer: from a token to the next token', href: '/ai/transformer-architecture/' },
-  { tag: 'SYSTEM DESIGN', meta: 'FOUNDATIONS', title: 'Building means choosing: an introduction to trade-offs', href: '/system-design/#tradeoffs' },
-  { tag: 'DDIA', meta: 'BOOK NOTES', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
-] : [
-  { tag: 'BASES DE DATOS', meta: 'SYSTEM DESIGN · BILINGÜE', title: 'Elegir una base de datos: diseñá desde las preguntas, no desde el logo', href: '/system-design/elegir-base-de-datos/' },
-  { tag: 'PYTHON', meta: 'SYSTEM DESIGN · ARTÍCULO 01', title: 'Concurrencia vs. paralelismo: cómo elegir y diseñar el sistema', href: '/system-design/concurrencia-vs-paralelismo-python/' },
-  { tag: 'AI', meta: 'ARTÍCULO 01', title: 'Inside a transformer: de un token al siguiente token', href: '/ai/transformer-architecture/' },
-  { tag: 'SYSTEM DESIGN', meta: 'FUNDAMENTOS', title: 'Construir es elegir: una introducción a los trade-offs', href: '/system-design/#tradeoffs' },
-  { tag: 'DDIA', meta: 'NOTAS DEL LIBRO', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
-];
+const notes = allNotes[lang];
 
 const projects = en ? [
   {
-    number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: '1 / 5 milestones', tone: 'coral',
-    copy: 'A document knowledge platform built in public, with verifiable ingestion, retrieval evaluation, grounded answers, and observability as product surfaces.',
+    number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: aiKnowledgePlatformStatus.progress.en, tone: 'coral',
+    copy: 'A document knowledge platform built in public, with verifiable ingestion, measured retrieval, grounded answers with citations, and observability as product surfaces.',
     href: '/en/projects/ai-knowledge-platform/', cta: 'Read the build log', stack: ['Python', 'RAG', 'Product'],
   },
   {
@@ -51,8 +43,8 @@ const projects = en ? [
   },
 ] : [
   {
-    number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: '1 / 5 milestones', tone: 'coral',
-    copy: 'Una plataforma de conocimiento documental construida en público, con ingesta verificable, evaluación de retrieval, respuestas con citas y observabilidad como superficies de producto.',
+    number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: aiKnowledgePlatformStatus.progress.es, tone: 'coral',
+    copy: 'Una plataforma de conocimiento documental construida en público, con ingesta verificable, retrieval medido, respuestas fundamentadas con citas y observabilidad como superficies de producto.',
     href: '/projects/ai-knowledge-platform/', cta: 'Ver el paso a paso', stack: ['Python', 'RAG', 'Producto'],
   },
   {
@@ -97,9 +89,9 @@ const series = en ? [
 ];
 
 const t = en ? {
-  title: 'Matías Fernández — Notes and side projects',
+  title: 'Writing — Matías Fernández',
   description: 'Technical notes, visual guides, and side projects about applied AI, system design, data, and building software products.',
-  nav: 'Main navigation', notes: 'Notes', projects: 'Projects', series: 'Series', about: 'About me',
+  nav: 'Main navigation', notes: 'Notes', projects: 'Projects', series: 'Series', about: 'About me', home: 'Back to the home page',
   kicker: 'TECHNICAL NOTES · SIDE PROJECTS · LEARNING IN PUBLIC',
   summary: 'A working notebook about applied AI, system design, data, and product engineering. I publish what I learn and show the artifacts I build along the way.',
   read: 'Start reading', explore: 'See the projects', board: 'Map of published work', boardTop: 'PUBLISHED / IN PROGRESS', boardNote: 'notes + diagrams + working software',
@@ -109,9 +101,9 @@ const t = en ? {
   aboutIndex: '04 / ABOUT ME', aboutA: 'The work is here.', aboutB: 'The résumé is elsewhere.', aboutCopy: 'I’m Matías, a senior full-stack engineer based in Argentina. If you want the professional timeline, current client work, toolbox, and résumé, they live in a separate section.', aboutCta: 'Go to About me',
   contactKicker: 'ARGENTINA · OPEN TO CONVERSATION', contactA: 'Have an idea', contactB: 'worth exploring?', contactCopy: 'Tell me about a system, an article, or a side project that would be interesting to think through together.', email: 'Send an email', footer: 'Published while building.',
 } : {
-  title: 'Matías Fernández — Notas y side projects',
+  title: 'Publicaciones — Matías Fernández',
   description: 'Notas técnicas, guías visuales y side projects sobre AI aplicada, system design, datos y construcción de productos de software.',
-  nav: 'Navegación principal', notes: 'Posteos', projects: 'Proyectos', series: 'Series', about: 'Sobre mí',
+  nav: 'Navegación principal', notes: 'Posteos', projects: 'Proyectos', series: 'Series', about: 'Sobre mí', home: 'Volver al inicio',
   kicker: 'NOTAS TÉCNICAS · SIDE PROJECTS · APRENDER EN PÚBLICO',
   summary: 'Una bitácora de trabajo sobre AI aplicada, system design, datos e ingeniería de producto. Publico lo que aprendo y muestro los artefactos que construyo en el camino.',
   read: 'Empezar a leer', explore: 'Ver los proyectos', board: 'Mapa de trabajo publicado', boardTop: 'PUBLICADO / EN PROCESO', boardNote: 'notas + diagramas + software funcionando',
@@ -125,24 +117,23 @@ const t = en ? {
 
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="inicio">
   <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href="#inicio" aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
+    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
       <span class="brand-monogram" aria-hidden="true">MF</span>
       <span>Matías Fernández</span>
     </a>
 
     <nav aria-label={t.nav}>
-      <a href="#notes">{t.notes}</a>
-      <a href="#projects">{t.projects}</a>
-      <a href="#series">{t.series}</a>
-      <a href={aboutPath}>{t.about}</a>
+      {nav.map((item) => (
+        <a href={item.href} aria-current={item.href === route.writing ? 'page' : undefined}>{item.label}</a>
+      ))}
     </nav>
 
     <div class="portfolio-header-actions">
       <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
-        <a href="/es/" lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-        <a href="/en/" lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+        <a href={routes.es.writing} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <a href={routes.en.writing} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
       </nav>
-      <a class="header-note" href={aboutPath}>{t.about} <span aria-hidden="true">→</span></a>
+      <a class="header-note" href={route.home}>{t.home} <span aria-hidden="true">→</span></a>
     </div>
   </header>
 
@@ -260,7 +251,7 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer">
-    <a class="portfolio-brand" href="#inicio"><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
     <p>Notes · Side projects · Systems</p><span>{t.footer}</span>
   </footer>
 

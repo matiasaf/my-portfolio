@@ -1,61 +1,66 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import '../styles/ai-knowledge-platform.css';
+import { aiKnowledgePlatformStatus, routes } from '../content/profile';
 
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
-const home = en ? '/en/' : '/es/';
+const home = routes[lang].home;
 const alternate = en ? '/projects/ai-knowledge-platform/' : '/en/projects/ai-knowledge-platform/';
-const repo = 'https://github.com/matiasaf/ai-knowledge-platform';
+const repo = aiKnowledgePlatformStatus.repository;
+const status = aiKnowledgePlatformStatus.badge[lang];
 
+/* Milestone states mirror the project repository. `IMPLEMENTED` is deliberately
+   distinct from `DONE`: milestone 4 runs and passes its provider-independent gates,
+   but no model has been selected and no live answer-quality metric is recorded yet. */
 const milestones = en ? [
   { number: '01', state: 'DONE', title: 'Trustworthy ingestion', copy: 'Upload, validate, store, and report the only state the backend can actually guarantee.', deliverable: 'PDF + metadata sidecar' },
-  { number: '02', state: 'NEXT', title: 'Page-level provenance', copy: 'Extract text without losing the document and page every span came from.', deliverable: 'Text + source coordinates' },
-  { number: '03', state: 'PLANNED', title: 'Retrieval before generation', copy: 'Chunk, index, retrieve, and evaluate relevance before adding an LLM answer.', deliverable: 'Measured retrieval' },
-  { number: '04', state: 'PLANNED', title: 'Grounded answers', copy: 'Generate answers that point to verifiable passages and fail honestly when evidence is weak.', deliverable: 'Answer + citations' },
+  { number: '02', state: 'DONE', title: 'Page-level provenance', copy: 'Extract text without losing the document and page every span came from.', deliverable: 'Text + source coordinates' },
+  { number: '03', state: 'DONE', title: 'Retrieval before generation', copy: 'Chunk, index, retrieve, and evaluate relevance before adding an LLM answer.', deliverable: 'Measured retrieval' },
+  { number: '04', state: 'IMPLEMENTED', title: 'Grounded answers', copy: 'Answers point to verifiable passages and fail honestly when evidence is weak. Implemented and tested; selecting a model and recording live answer quality still requires provider credentials.', deliverable: 'Answer + citations' },
   { number: '05', state: 'PLANNED', title: 'Operational visibility', copy: 'Expose latency, tokens, cost, failures, and feedback as part of the product.', deliverable: 'Quality + operations' },
 ] : [
   { number: '01', state: 'HECHO', title: 'Ingesta confiable', copy: 'Subir, validar, almacenar y comunicar únicamente el estado que el backend puede garantizar.', deliverable: 'PDF + metadata sidecar' },
-  { number: '02', state: 'SIGUIENTE', title: 'Provenance por página', copy: 'Extraer texto sin perder el documento y la página de la que salió cada fragmento.', deliverable: 'Texto + coordenadas de origen' },
-  { number: '03', state: 'PLANEADO', title: 'Retrieval antes que generación', copy: 'Dividir, indexar, recuperar y evaluar relevancia antes de sumar una respuesta de un LLM.', deliverable: 'Retrieval medido' },
-  { number: '04', state: 'PLANEADO', title: 'Respuestas fundamentadas', copy: 'Generar respuestas que apunten a pasajes verificables y fallen con honestidad si la evidencia es débil.', deliverable: 'Respuesta + citas' },
+  { number: '02', state: 'HECHO', title: 'Provenance por página', copy: 'Extraer texto sin perder el documento y la página de la que salió cada fragmento.', deliverable: 'Texto + coordenadas de origen' },
+  { number: '03', state: 'HECHO', title: 'Retrieval antes que generación', copy: 'Dividir, indexar, recuperar y evaluar relevancia antes de sumar una respuesta de un LLM.', deliverable: 'Retrieval medido' },
+  { number: '04', state: 'IMPLEMENTADO', title: 'Respuestas fundamentadas', copy: 'Las respuestas apuntan a pasajes verificables y fallan con honestidad si la evidencia es débil. Está implementado y testeado; elegir un modelo y registrar la calidad de respuesta en vivo todavía requiere credenciales del proveedor.', deliverable: 'Respuesta + citas' },
   { number: '05', state: 'PLANEADO', title: 'Visibilidad operativa', copy: 'Exponer latencia, tokens, costo, fallas y feedback como parte del producto.', deliverable: 'Calidad + operación' },
 ];
 
 const shipped = en ? [
-  ['REAL API', 'A focused Next.js upload experience connected to FastAPI.'],
-  ['SAFE STREAMING', '10 MB default limit enforced while reading in 64 KiB chunks.'],
-  ['TWO CHECKS', 'Declared media type and the PDF file signature must both match.'],
-  ['ATOMIC STORAGE', 'Temporary .part files are renamed only after full validation.'],
-  ['HONEST STATES', 'The UI models idle, uploading, stored, and error—nothing invented.'],
-  ['VERIFIED', 'Backend and frontend tests cover success, rejection, state, and focus behavior.'],
+  ['VALIDATED INGESTION', 'The declared media type and the PDF file signature must both match, and a 10 MB limit is enforced while the request streams in 64 KiB chunks.'],
+  ['ATOMIC STORAGE', 'Temporary .part files are renamed only after the whole payload validates, so a failure never leaves a partial document behind.'],
+  ['PAGE PROVENANCE', 'Every page produces a span with a one-based page number. A textless page is retained as an empty string rather than silently dropped.'],
+  ['MEASURED RETRIEVAL', 'Page-bounded chunks in a versioned SQLite database with FTS5/BM25 ranking. Recall@3 and MRR@3 are enforced in CI against a checked-in set.'],
+  ['SERVER-RESOLVED CITATIONS', 'The model may reference only request-local evidence IDs; document, page, chunk, and offsets are built from trusted retrieval matches.'],
+  ['HONEST OUTCOMES', 'Answered, insufficient-evidence, and safety-refused are distinct states, each rendered as itself instead of a confident sentence.'],
 ] : [
-  ['API REAL', 'Una experiencia de carga enfocada en Next.js, conectada con FastAPI.'],
-  ['STREAMING SEGURO', 'Límite de 10 MB aplicado durante la lectura en bloques de 64 KiB.'],
-  ['DOBLE VALIDACIÓN', 'Deben coincidir el media type declarado y la firma real del PDF.'],
-  ['STORAGE ATÓMICO', 'Los archivos .part se renombran solo después de validar todo el contenido.'],
-  ['ESTADOS HONESTOS', 'La UI modela idle, uploading, stored y error: nada inventado.'],
-  ['VERIFICADO', 'Los tests cubren éxito, rechazo, estados y comportamiento del foco.'],
+  ['INGESTA VALIDADA', 'Deben coincidir el media type declarado y la firma real del PDF, y el límite de 10 MB se aplica mientras el request se lee en bloques de 64 KiB.'],
+  ['STORAGE ATÓMICO', 'Los archivos .part se renombran solo después de validar todo el contenido, así una falla nunca deja un documento parcial.'],
+  ['PROVENANCE POR PÁGINA', 'Cada página produce un span con su número de página en base uno. Una página sin texto se conserva vacía en vez de descartarse en silencio.'],
+  ['RETRIEVAL MEDIDO', 'Chunks acotados por página en una base SQLite versionada con ranking FTS5/BM25. Recall@3 y MRR@3 se verifican en CI sobre un set fijo.'],
+  ['CITAS RESUELTAS EN EL SERVIDOR', 'El modelo solo puede referenciar IDs de evidencia locales al request; documento, página, chunk y offsets se arman desde matches de retrieval confiables.'],
+  ['RESULTADOS HONESTOS', 'Respondido, evidencia insuficiente y rechazo por seguridad son estados distintos, cada uno mostrado como tal y no como una frase segura.'],
 ];
 
 const t = en ? {
   title: 'AI Knowledge Platform — Build log', description: 'A milestone-by-milestone build log for a document knowledge platform with grounded answers, verifiable citations, and measurable retrieval.',
-  back: 'Portfolio', module: 'SIDE PROJECT · BUILD LOG', status: 'MILESTONE 01 COMPLETE', eyebrow: 'AI KNOWLEDGE PLATFORM', heroA: 'Trusted knowledge.', heroB: 'Verifiable answers.', lede: 'Ingest trusted documents, ask questions about them, and get grounded answers with citations—while making retrieval quality, latency, failures, and cost visible.', repo: 'View repository', roadmap: 'See the roadmap', current: 'WHAT EXISTS TODAY', currentStrong: 'Validated PDF ingestion.', currentRest: ' Retrieval, answers, and citations are intentionally not built yet.',
+  back: 'Portfolio', module: 'SIDE PROJECT · BUILD LOG', eyebrow: 'AI KNOWLEDGE PLATFORM', heroA: 'Trusted knowledge.', heroB: 'Verifiable answers.', lede: 'Ingest trusted documents, ask questions about them, and get grounded answers with citations—while making retrieval quality, latency, failures, and cost visible.', repo: 'View repository', roadmap: 'See the roadmap', current: 'WHAT EXISTS TODAY', currentStrong: 'Ingestion, page-level extraction, measured retrieval, and grounded answers run locally.', currentRest: ' Live provider acceptance is pending: no model has been selected and no live answer-quality metric has been recorded yet.',
   problemIndex: '01 / THE PROBLEM', problemTitle: 'A fluent answer is not enough.', problemCopy: 'Teams keep real knowledge in policies, contracts, runbooks, and research. An answer only becomes useful when the reader can verify it against the source—and when a retrieval failure stays visible instead of being smoothed over.', principle: 'Evidence before fluency.', principleCopy: 'The project is designed around defensible answers, meaningful states, reproducible evaluation, and observable operation.',
-  shippedIndex: '02 / MILESTONE 01', shippedTitle: 'What is working now.', shippedCopy: 'The first vertical slice is deliberately narrow, end to end, tested, and documented.',
-  architecture: 'CURRENT ARCHITECTURE', browser: 'Browser', web: 'Next.js web', api: 'FastAPI', storage: 'Local files',
-  roadmapIndex: '03 / BUILD PATH', roadmapTitle: 'One trustworthy layer at a time.', roadmapCopy: 'Each milestone creates a working vertical slice. Planned capabilities are visible without being presented as finished.',
-  decisionsIndex: '04 / ENGINEERING DECISIONS', decisionsTitle: 'The constraints are part of the story.', d1: 'States mean something', d1c: 'The API reports stored—not ready—because parsing and indexing do not exist yet.', d2: 'Failure leaves no debris', d2c: 'Rejected or interrupted uploads leave neither partial documents nor misleading metadata.', d3: 'Quality before demo polish', d3c: 'Retrieval will be evaluated reproducibly before generation is introduced.',
+  shippedIndex: '02 / MILESTONES 01–04', shippedTitle: 'What is working now.', shippedCopy: 'Four vertical slices, each narrow, end to end, tested, and documented. Provider-independent gates pass; live answer quality is not accepted yet.',
+  architecture: 'CURRENT ARCHITECTURE', browser: 'Browser', web: 'Next.js web', api: 'FastAPI', index: 'SQLite FTS5 + answers',
+  roadmapIndex: '03 / BUILD PATH', roadmapTitle: 'One trustworthy layer at a time.', roadmapCopy: 'Each milestone creates a working vertical slice. Implemented code and accepted quality are shown as different things.',
+  decisionsIndex: '04 / ENGINEERING DECISIONS', decisionsTitle: 'The constraints are part of the story.', d1: 'States mean something', d1c: 'Stored, extracted, and indexed are separate states, and each failure state names what can be retried.', d2: 'Failure leaves no debris', d2c: 'Rejected or interrupted uploads leave neither partial documents nor misleading metadata.', d3: 'Quality before demo polish', d3c: 'Retrieval was evaluated reproducibly before generation was introduced, and answer quality has its own versioned dataset.',
   close: 'Follow the project as it becomes a system.', closeCopy: 'The repository contains the implementation, tests, architecture decision records, and a progress note for every delivered milestone.', backTop: 'Back to top', footer: 'AI KNOWLEDGE PLATFORM · ACTIVE PROJECT',
 } : {
   title: 'AI Knowledge Platform — Paso a paso', description: 'Bitácora milestone a milestone de una plataforma de conocimiento documental con respuestas fundamentadas, citas verificables y retrieval medible.',
-  back: 'Portfolio', module: 'SIDE PROJECT · BITÁCORA', status: 'MILESTONE 01 COMPLETO', eyebrow: 'AI KNOWLEDGE PLATFORM', heroA: 'Conocimiento confiable.', heroB: 'Respuestas verificables.', lede: 'Ingerir documentos confiables, hacer preguntas sobre ellos y obtener respuestas fundamentadas con citas, haciendo visibles la calidad de retrieval, la latencia, las fallas y el costo.', repo: 'Abrir repositorio', roadmap: 'Ver el recorrido', current: 'LO QUE EXISTE HOY', currentStrong: 'Ingesta de PDFs validada.', currentRest: ' Retrieval, respuestas y citas todavía no están construidos, a propósito.',
+  back: 'Portfolio', module: 'SIDE PROJECT · BITÁCORA', eyebrow: 'AI KNOWLEDGE PLATFORM', heroA: 'Conocimiento confiable.', heroB: 'Respuestas verificables.', lede: 'Ingerir documentos confiables, hacer preguntas sobre ellos y obtener respuestas fundamentadas con citas, haciendo visibles la calidad de retrieval, la latencia, las fallas y el costo.', repo: 'Abrir repositorio', roadmap: 'Ver el recorrido', current: 'LO QUE EXISTE HOY', currentStrong: 'La ingesta, la extracción por página, el retrieval medido y las respuestas fundamentadas funcionan localmente.', currentRest: ' Falta la aceptación con el proveedor en vivo: todavía no se eligió un modelo ni se registraron métricas de calidad de respuesta en vivo.',
   problemIndex: '01 / EL PROBLEMA', problemTitle: 'Una respuesta fluida no alcanza.', problemCopy: 'Los equipos guardan su conocimiento real en políticas, contratos, runbooks e investigación. Una respuesta se vuelve útil cuando el lector puede verificarla contra la fuente y cuando una falla de retrieval se muestra en vez de disimularse.', principle: 'Evidencia antes que fluidez.', principleCopy: 'El proyecto se diseña alrededor de respuestas defendibles, estados con significado, evaluación reproducible y operación observable.',
-  shippedIndex: '02 / MILESTONE 01', shippedTitle: 'Lo que funciona hoy.', shippedCopy: 'El primer vertical slice es deliberadamente acotado, end to end, testeado y documentado.',
-  architecture: 'ARQUITECTURA ACTUAL', browser: 'Navegador', web: 'Web Next.js', api: 'FastAPI', storage: 'Archivos locales',
-  roadmapIndex: '03 / RECORRIDO', roadmapTitle: 'Una capa confiable a la vez.', roadmapCopy: 'Cada milestone crea un vertical slice funcional. Lo planeado es visible sin presentarlo como terminado.',
-  decisionsIndex: '04 / DECISIONES DE INGENIERÍA', decisionsTitle: 'Las restricciones también cuentan la historia.', d1: 'Los estados significan algo', d1c: 'La API informa stored, no ready, porque el parseo y la indexación todavía no existen.', d2: 'Las fallas no dejan residuos', d2c: 'Una carga rechazada o interrumpida no deja documentos parciales ni metadata engañosa.', d3: 'Calidad antes que demo', d3c: 'El retrieval se evaluará de forma reproducible antes de sumar generación.',
+  shippedIndex: '02 / MILESTONES 01–04', shippedTitle: 'Lo que funciona hoy.', shippedCopy: 'Cuatro vertical slices, cada uno acotado, end to end, testeado y documentado. Los gates independientes del proveedor pasan; la calidad de respuesta en vivo todavía no está aceptada.',
+  architecture: 'ARQUITECTURA ACTUAL', browser: 'Navegador', web: 'Web Next.js', api: 'FastAPI', index: 'SQLite FTS5 + respuestas',
+  roadmapIndex: '03 / RECORRIDO', roadmapTitle: 'Una capa confiable a la vez.', roadmapCopy: 'Cada milestone crea un vertical slice funcional. El código implementado y la calidad aceptada se muestran como cosas distintas.',
+  decisionsIndex: '04 / DECISIONES DE INGENIERÍA', decisionsTitle: 'Las restricciones también cuentan la historia.', d1: 'Los estados significan algo', d1c: 'Stored, extracted e indexed son estados separados, y cada estado de falla dice qué se puede reintentar.', d2: 'Las fallas no dejan residuos', d2c: 'Una carga rechazada o interrumpida no deja documentos parciales ni metadata engañosa.', d3: 'Calidad antes que demo', d3c: 'El retrieval se evaluó de forma reproducible antes de sumar generación, y la calidad de respuesta tiene su propio dataset versionado.',
   close: 'Seguí el proyecto mientras se convierte en sistema.', closeCopy: 'El repositorio reúne implementación, tests, decisiones de arquitectura y una nota de progreso por cada milestone entregado.', backTop: 'Volver arriba', footer: 'AI KNOWLEDGE PLATFORM · PROYECTO ACTIVO',
 };
 ---
@@ -76,9 +81,9 @@ const t = en ? {
         <div class="akp-actions"><a class="akp-button" href={repo} target="_blank" rel="noreferrer">{t.repo} <span>↗</span></a><a href="#roadmap">{t.roadmap} ↓</a></div>
       </div>
       <aside class="akp-system-card" aria-label={t.architecture}>
-        <div class="akp-system-head"><span>{t.architecture}</span><strong>V0.1</strong></div>
-        <div class="akp-system-flow"><div><small>01</small><b>{t.browser}</b></div><i>→</i><div><small>02</small><b>{t.web}</b></div><i>→</i><div><small>03</small><b>{t.api}</b></div><i>→</i><div><small>04</small><b>{t.storage}</b></div></div>
-        <p><span></span>{t.status}</p>
+        <div class="akp-system-head"><span>{t.architecture}</span><strong>V0.4</strong></div>
+        <div class="akp-system-flow"><div><small>01</small><b>{t.browser}</b></div><i>→</i><div><small>02</small><b>{t.web}</b></div><i>→</i><div><small>03</small><b>{t.api}</b></div><i>→</i><div><small>04</small><b>{t.index}</b></div></div>
+        <p><span></span>{status}</p>
       </aside>
     </section>
 
@@ -99,7 +104,7 @@ const t = en ? {
 
     <section class="akp-roadmap section-shell" id="roadmap">
       <div class="akp-section-title"><p class="akp-index">{t.roadmapIndex}</p><div><h2>{t.roadmapTitle}</h2><p>{t.roadmapCopy}</p></div></div>
-      <ol class="akp-milestones">{milestones.map((item, index) => <li class:list={{ done: index === 0, next: index === 1 }}><div class="akp-rail"><span>{item.number}</span><i></i></div><article><header><small>{item.state}</small><strong>{item.deliverable}</strong></header><h3>{item.title}</h3><p>{item.copy}</p></article></li>)}</ol>
+      <ol class="akp-milestones">{milestones.map((item, index) => <li class:list={{ done: index < 3, next: index === 3 }}><div class="akp-rail"><span>{item.number}</span><i></i></div><article><header><small>{item.state}</small><strong>{item.deliverable}</strong></header><h3>{item.title}</h3><p>{item.copy}</p></article></li>)}</ol>
     </section>
 
     <section class="akp-decisions">
@@ -109,7 +114,7 @@ const t = en ? {
       </div>
     </section>
 
-    <section class="akp-cta"><div><p>{t.status}</p><h2>{t.close}</h2><p>{t.closeCopy}</p><a class="akp-button" href={repo} target="_blank" rel="noreferrer">GitHub <span>↗</span></a></div></section>
+    <section class="akp-cta"><div><p>{status}</p><h2>{t.close}</h2><p>{t.closeCopy}</p><a class="akp-button" href={repo} target="_blank" rel="noreferrer">GitHub <span>↗</span></a></div></section>
   </main>
   <footer class="akp-footer"><a class="akp-brand" href={home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href="#top">{t.backTop} ↑</a></footer>
 </Layout>

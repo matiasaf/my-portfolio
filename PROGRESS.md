@@ -5,7 +5,8 @@ short and replace stale detail instead of accumulating a diary.
 
 ## In progress
 
-- None.
+- Portfolio V2 (`docs/PORTFOLIO_V2_PLAN.md`). PR 1 is complete on `feat/professional-home`.
+  PR 2 is next: the case study content model and the public AI Knowledge Platform case study.
 
 ## Blocked
 
@@ -13,12 +14,23 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- PR 1 of Portfolio V2 on 2026-08-24: `src/content/profile.ts` now holds positioning, the
+  evidence ledger, contacts, availability, target roles, the shared career path, and selected
+  work; `/en/` and `/es/` render the professional home; the editorial home moved to
+  `/en/writing/` and `/es/publicaciones/`; the primary navigation is Work · Writing · About ·
+  Resume everywhere; and the AI Knowledge Platform status is read from one source.
 - Established the five-subsystem project harness on 2026-08-22: agent map, pinned runtime,
   durable state, unified verification command, CI, and maintenance guidance.
-- Added a `CLAUDE.md` adapter so Claude Code imports the canonical `AGENTS.md` instructions.
-- `npm run verify` passed on 2026-08-22 with 49 files clean and 16 static pages built.
+- `npm run verify` passed on 2026-08-24 with 54 files clean and 18 static pages built.
 
 ## Next action
 
-- Use the harness on the next scoped task; update this file only when active work or a blocker
-  needs to survive a session boundary.
+- Start PR 2: create `src/content/work.ts`, a reusable `WorkCaseStudy.astro`, and the
+  Work/Trabajo index and case study routes. When those routes exist, retarget the two
+  professional cards in `selectedWork` (they currently point at About anchors).
+
+## Known follow-ups
+
+- The Writing page still leads its side-projects section with three queued projects.
+  Plan section 8 says only delivered or actively maintained work should appear prominently;
+  decide whether to cut them when PR 2 reshapes the project surfaces.
