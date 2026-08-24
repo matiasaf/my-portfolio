@@ -14,6 +14,14 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Contrast hardening of the Work surfaces on 2026-08-24: `src/styles/work.css` no longer hardcodes
+  `#101310` on theme-flipping accents. The work-index number badges and the accepted/delivered milestone
+  badges now use `var(--ink)`; `--work-accent` moved from `#5274d4` (which failed against both light and
+  dark ink) to `#3659b2`, the accent `global.css` already uses; a new `--work-accent-ink` colours the solid
+  CTA; and `.work-index-cta`/`.case-glance`, dark in both themes, now take `--inverse-accent`. Measured on
+  the running site in both themes: 19 checks, 0 failures, previously 1.52-2.55:1 at the worst sites.
+  `npm run verify` passed with 28 static pages built.
+
 - PR 4 of Portfolio V2 on 2026-08-24: refocused bilingual About pages on profile,
   leadership behavior, working style, preferred environment, and a concise shared career path;
   linked the Argeniss and Hexacta / GlobalLogic roles to disclosure-safe case studies; projected

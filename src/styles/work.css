@@ -1,7 +1,12 @@
+/* --work-accent doubles as body-copy colour and as a solid fill, so it has to clear 4.5:1
+   both ways. The previous #5274d4 sat in the luminance dead zone and failed against light and
+   dark ink alike; #3659b2 is the accent global.css already uses for --accent-text/--focus-ring.
+   --work-accent-ink is the fill's text colour and runs opposite --ink, because --work-accent is
+   saturated in light and pale in dark (the reverse of --coral/--lime/--blue/--violet). */
 .work-index,
-.case-study { --work-accent: #5274d4; --work-accent-soft: #dce6ff; }
+.case-study { --work-accent: #3659b2; --work-accent-soft: #dce6ff; --work-accent-ink: #fafaf8; }
 
-html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; --work-accent-soft: #253052; }
+html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; --work-accent-soft: #253052; --work-accent-ink: #101310; }
 
 .work-header > .language-switcher { justify-self: end; }
 .work-header > nav[aria-label]:not(.language-switcher) a[aria-current='page'] { text-decoration-color: var(--portfolio-accent); }
@@ -19,7 +24,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .work-index-lime { --card-accent: var(--lime); }
 .work-index-violet { --card-accent: var(--violet); }
 .work-index-card header { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
-.work-index-card header > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--card-accent); color: #101310; font: 600 10px var(--mono); }
+.work-index-card header > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--card-accent); color: var(--ink); font: 600 10px var(--mono); }
 .work-index-card header p,
 .work-index-card header small { margin: 0; color: var(--muted); font: 500 9px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 .work-index-card header small { max-width: 180px; }
@@ -32,10 +37,16 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .work-index-card-detail dd { margin: 0; color: var(--muted-strong); font-size: 12px; line-height: 1.6; }
 .work-index-card-detail > a { display: inline-flex; gap: 18px; padding-bottom: 5px; border-bottom: 1px solid var(--line); color: var(--portfolio-accent-text); font-size: 12px; font-weight: 750; }
 .work-index-card-detail > a:hover { border-color: var(--portfolio-accent); }
+/* .work-index-cta and .case-glance are dark in BOTH themes, so the light-theme accent
+   would land near-black on near-black. On these surfaces the accent has to behave the way it
+   does in dark theme, which is what --inverse-accent already means elsewhere in global.css. */
+.work-index-cta,
+.case-glance { --work-accent: var(--inverse-accent); --work-accent-ink: #101310; }
+
 .work-index-cta { padding: 70px var(--shell-gutter); background: var(--strong-surface); color: var(--strong-text); }
 .work-index-cta > div { width: min(760px, 100%); margin-inline: auto; text-align: center; }
 .work-index-cta p { color: var(--work-accent); font: 500 10px var(--mono); letter-spacing: .1em; }
-.work-index-cta a { display: inline-flex; gap: 30px; margin-top: 18px; padding: 18px 22px; background: var(--work-accent); color: #101310; font-size: 14px; font-weight: 800; }
+.work-index-cta a { display: inline-flex; gap: 30px; margin-top: 18px; padding: 18px 22px; background: var(--work-accent); color: var(--work-accent-ink); font-size: 14px; font-weight: 800; }
 
 .case-hero { min-height: 670px; padding-top: 150px; padding-bottom: 92px; display: grid; grid-template-columns: 1.45fr .55fr; align-items: end; gap: 80px; }
 .case-back { display: inline-flex; margin-bottom: 52px; color: var(--muted); font-size: 11px; font-weight: 700; }
@@ -130,8 +141,8 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .case-milestones { margin: 0; padding: 0; list-style: none; }
 .case-milestones li { display: grid; grid-template-columns: 60px 1fr; gap: 24px; padding: 0 0 42px; }
 .case-milestones li > span { display: grid; place-items: center; width: 45px; height: 45px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font: 600 9px var(--mono); }
-.case-milestones li.is-accepted > span { border-color: var(--lime); background: var(--lime); color: #101310; }
-.case-milestones li.is-delivered > span { border-color: var(--lime); background: var(--lime); color: #101310; }
+.case-milestones li.is-accepted > span { border-color: var(--lime); background: var(--lime); color: var(--ink); }
+.case-milestones li.is-delivered > span { border-color: var(--lime); background: var(--lime); color: var(--ink); }
 .case-milestones li.is-implemented > span { border-color: var(--work-accent); color: var(--portfolio-accent-text); }
 .case-milestones li > div { padding-bottom: 34px; border-bottom: 1px solid var(--line); }
 .case-milestones small { color: var(--muted); font: 500 9px var(--mono); letter-spacing: .07em; text-transform: uppercase; }
