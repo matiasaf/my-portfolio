@@ -1,0 +1,9 @@
+---
+import WorkCaseStudy from '../../../components/WorkCaseStudy.astro';
+import { getWorkCaseStudy } from '../../../content/work';
+
+const study = getWorkCaseStudy('ai-knowledge-platform');
+if (!study) throw new Error('Missing AI Knowledge Platform case study content.');
+---
+
+<WorkCaseStudy lang="es" study={study} />

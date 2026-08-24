@@ -1,18 +1,57 @@
-# Matías Fernández's Portfolio
+# Matías Fernández — Professional Portfolio
 
-Source code for [builtbymatias.dev](https://builtbymatias.dev), a bilingual editorial
-portfolio where I publish technical notes, visual guides, and projects about applied AI,
-system design, data, and product engineering.
+The source for [builtbymatias.dev](https://builtbymatias.dev): a bilingual, hiring-focused
+portfolio for a Senior Software Engineer with frontend leadership depth and hands-on applied AI,
+API, and cloud experience.
 
-## What is included
+**Status:** actively maintained and deployed on Cloudflare Pages. The professional home, selected
+work, case studies, About pages, writing archive, and two résumé positioning variants are live in
+English and Spanish.
 
-- Spanish and English editorial home pages.
-- Professional profile and web/PDF résumé in both languages.
-- A visual series about AI, transformers, and agent harnesses.
-- A System Design guide, long-form articles, and
-  *Designing Data-Intensive Applications* notes.
-- A step-by-step AI Knowledge Platform project log.
-- Light and dark themes, responsive layouts, and social/SEO metadata.
+[Live portfolio](https://builtbymatias.dev/en/) ·
+[Selected work](https://builtbymatias.dev/en/work/) ·
+[About](https://builtbymatias.dev/en/about/) ·
+[Résumé](https://builtbymatias.dev/en/cv/)
+
+![Professional home page showing role, focus, availability, and verified evidence](public/portfolio-home.jpg)
+
+## The problem
+
+A technical portfolio has to do more than collect projects. It should let a recruiter or hiring
+manager understand the engineer's focus, verified evidence, ownership, and next action without
+guessing which claims are current or which work can be discussed publicly.
+
+This site keeps professional positioning, evidence-backed outcomes, selected experience, case
+studies, writing, and résumé outputs aligned across two languages. Client-based work is published
+only through sanitized case studies with explicit ownership and disclosure boundaries.
+
+## Key features
+
+- English and Spanish professional homes with shared positioning and verified proof metrics.
+- A selected-work index and three bilingual engineering case studies with explicit ownership,
+  decisions, trade-offs, failure modes, and evidence.
+- About pages focused on leadership behavior, working style, experience, and preferred environment.
+- Frontend Lead and AI Product Engineer résumé variants generated from one shared experience source,
+  available as accessible web pages and four committed PDFs.
+- A technical writing archive covering applied AI, system design, data, and product engineering.
+- Static output, semantic HTML, keyboard navigation, visible focus, reduced-motion support, responsive
+  layouts, light/dark themes, canonical URLs, Open Graph metadata, and `hreflang` alternates.
+
+## Architecture
+
+```text
+src/content/*.ts ─┐
+                  ├─> Astro components ─> bilingual routes ─> static HTML ─> Cloudflare Pages
+public/* ─────────┘
+
+src/content/resume.ts ─> web résumé variants
+                       └> LaTeX generator ─> four PDF downloads
+```
+
+Structured content is the source of truth for positioning, evidence, experience, work, and résumé
+claims. Shared Astro components render language variants so public wording and project status cannot
+drift between the home, About, Work, and résumé surfaces. See
+[Architecture](docs/ARCHITECTURE.md) for route ownership and build behavior.
 
 ## Tech stack
 
@@ -49,25 +88,40 @@ npm run verify
 | `npm run build` | Validate and generate the static site in `dist/` |
 | `npm run verify` | Run the complete automated verification gate |
 | `npm run preview` | Serve the generated `dist/` output locally |
-| `npm run cv:pdf` | Rebuild both résumé PDFs from the TypeScript source |
+| `npm run cv:pdf` | Rebuild both résumé variants in both languages from the TypeScript source |
 
 `cv:pdf` requires Tectonic, `latexmk`, XeLaTeX, LuaLaTeX, or pdfLaTeX. The script recommends
 Tectonic.
+
+## Demo and visual review
+
+The production site is the demo: [builtbymatias.dev](https://builtbymatias.dev/en/). The screenshot
+above shows the English professional home; equivalent Spanish routes and light/dark themes are part
+of the same static build.
+
+Useful evaluation paths:
+
+- Start at the [professional home](https://builtbymatias.dev/en/) for positioning and evidence.
+- Open [selected work](https://builtbymatias.dev/en/work/) for disclosure-safe engineering cases.
+- Compare the [Frontend Lead résumé](https://builtbymatias.dev/en/cv/) with the
+  [AI Product Engineer variant](https://builtbymatias.dev/en/cv/ai-product-engineer/).
+- Switch to Spanish from any bilingual professional route.
 
 ## Main routes
 
 | Route | Content |
 |---|---|
 | `/` | Redirect to the default English home page |
-| `/en/` and `/es/` | English and Spanish editorial home pages |
+| `/en/` and `/es/` | English and Spanish professional home pages |
+| `/en/writing/` and `/es/publicaciones/` | Editorial archives |
 | `/sobre-mi/` and `/en/about/` | Professional profile |
 | `/cv/` and `/en/cv/` | Web résumé and PDF downloads |
 | `/ai/` | Series about models, transformers, and harnesses |
 | `/system-design/` | Visual architecture guide and articles |
-| `/projects/ai-knowledge-platform/` | Applied AI project build log |
-
-See [Architecture](docs/ARCHITECTURE.md) for the complete route inventory and the relationship
-between pages, components, and structured content.
+| `/en/work/` and `/es/trabajo/` | Selected engineering work |
+| `/en/work/enterprise-ai-platform/` and `/es/trabajo/enterprise-ai-platform/` | Sanitized frontend leadership case study |
+| `/en/work/ai-knowledge-platform/` and `/es/trabajo/ai-knowledge-platform/` | Applied AI engineering case study |
+| `/en/work/serverless-modernization/` and `/es/trabajo/serverless-modernization/` | Sanitized platform modernization case study |
 
 ## Repository structure
 
@@ -101,12 +155,20 @@ Production URL:   https://builtbymatias.dev
 `astro.config.mjs` defines the canonical domain. The résumé PDFs are generated outside the
 site build and committed under `public/downloads/` because Pages does not compile LaTeX.
 
+## Testing and verification
+
+`npm run verify` is the required automated gate. It runs strict Astro/TypeScript diagnostics and a
+production static build. CI runs the same gate on pushes and pull requests.
+
+For visual or editorial changes, the repository guide additionally requires mobile and desktop
+inspection in both themes and languages, plus keyboard, metadata, link, and download checks. There
+is no automated browser suite yet; that limitation is explicit in [the harness guide](docs/HARNESS.md).
+
 ## Contributing
 
-The source is public so the building process is visible too. Bug reports, broken-link reports,
-and technical corrections are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening
-an issue or pull request. Follow [SECURITY.md](SECURITY.md) for security incidents or accidental
-data exposure.
+Bug reports, broken-link reports, and technical corrections are welcome when the repository is
+publicly accessible. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request.
+Follow [SECURITY.md](SECURITY.md) for security incidents or accidental data exposure.
 
 ## License
 

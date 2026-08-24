@@ -32,6 +32,16 @@ articles may contain their page structure directly.
 | `/en/about/` | `src/pages/en/about.astro` |
 | `/cv/` | `src/pages/cv/index.astro` |
 | `/en/cv/` | `src/pages/en/cv/index.astro` |
+| `/cv/ingeniero-productos-ai/` | `src/pages/cv/ingeniero-productos-ai.astro` |
+| `/en/cv/ai-product-engineer/` | `src/pages/en/cv/ai-product-engineer.astro` |
+| `/en/work/` | `src/pages/en/work/index.astro` |
+| `/es/trabajo/` | `src/pages/es/trabajo/index.astro` |
+| `/en/work/enterprise-ai-platform/` | `src/pages/en/work/enterprise-ai-platform.astro` |
+| `/es/trabajo/enterprise-ai-platform/` | `src/pages/es/trabajo/enterprise-ai-platform.astro` |
+| `/en/work/ai-knowledge-platform/` | `src/pages/en/work/ai-knowledge-platform.astro` |
+| `/es/trabajo/ai-knowledge-platform/` | `src/pages/es/trabajo/ai-knowledge-platform.astro` |
+| `/en/work/serverless-modernization/` | `src/pages/en/work/serverless-modernization.astro` |
+| `/es/trabajo/serverless-modernization/` | `src/pages/es/trabajo/serverless-modernization.astro` |
 | `/ai/` | `src/pages/ai.astro` |
 | `/ai/transformer-architecture/` | `src/pages/ai/transformer-architecture.astro` |
 | `/system-design/` | `src/pages/system-design.astro` |
@@ -40,8 +50,8 @@ articles may contain their page structure directly.
 | `/system-design/ddia/chapter-01/` | `src/pages/system-design/ddia/chapter-01.astro` |
 | `/en/system-design/choosing-a-database/` | `src/pages/en/system-design/choosing-a-database.astro` |
 | `/en/system-design/data-structures-big-o/` | `src/pages/en/system-design/data-structures-big-o.astro` |
-| `/projects/ai-knowledge-platform/` | `src/pages/projects/ai-knowledge-platform.astro` |
-| `/en/projects/ai-knowledge-platform/` | `src/pages/en/projects/ai-knowledge-platform.astro` |
+| `/projects/ai-knowledge-platform/` | Permanent redirect to `/es/trabajo/ai-knowledge-platform/` |
+| `/en/projects/ai-knowledge-platform/` | Permanent redirect to `/en/work/ai-knowledge-platform/` |
 
 `npm run build` prints the definitive generated-route inventory and is the final check against
 this table.
@@ -53,7 +63,8 @@ Contains reusable sections and components that represent complete pages:
 - `EditorialHome.astro`: Spanish and English editorial home pages.
 - `PortfolioHome.astro`: professional profile in both languages.
 - `ResumePage.astro`: web résumé representation.
-- `AIKnowledgePlatform.astro`: bilingual project page.
+- `WorkIndex.astro`: bilingual selected-work index.
+- `WorkCaseStudy.astro`: shared, typed bilingual case-study template.
 - `ai/` and `system-design/`: module-specific sections.
 
 Translations that share a layout use a `lang` prop and local dictionaries. There is no external
@@ -62,8 +73,12 @@ internationalization dependency or runtime router.
 ### `src/content/`
 
 Stores structured data consumed by multiple views. `resume.ts` is the résumé's single source of
-truth: it feeds both `ResumePage.astro` and the LaTeX generator. `ai.ts`, `ddia.ts`, and
-`system-design.ts` contain indexes and reusable module content.
+truth: it feeds both `ResumePage.astro` and the LaTeX generator. It projects shared role highlights
+into Frontend Lead and AI Product Engineer variants; variants change positioning, selected current-
+role highlights, and skill order without duplicating the underlying experience. `work.ts` owns selected-work cards,
+case-study content, public evidence links, and project status so those claims cannot drift between
+the home, Writing, Work index, and case-study routes. `ai.ts`, `ddia.ts`, and `system-design.ts`
+contain indexes and reusable module content.
 
 ### `src/layouts/Layout.astro`
 
@@ -95,8 +110,9 @@ manifest, and the generated résumé PDFs.
 The strategy is intentionally explicit and small:
 
 - `/` redirects to `/en/`, making English the default language for new visits.
-- English uses `/en/` and Spanish uses `/es/` for the bilingual editorial home page.
-- Other translated sections retain their established routes, such as `/sobre-mi/` and `/en/about/`.
+- English uses `/en/` and Spanish uses `/es/` for the bilingual professional home page.
+- Other translated sections use explicit paired routes, such as `/sobre-mi/` and `/en/about/`, or
+  `/es/trabajo/` and `/en/work/`.
 - `Layout.astro` receives `lang` and `alternateHref`.
 - A page without a translation does not publish a fabricated `hreflang` alternate.
 
@@ -108,13 +124,16 @@ pretending a translation exists.
 
 ```text
 src/content/resume.ts
-        ├─> ResumePage.astro ─> /cv/ and /en/cv/
-        └─> resume-tex.ts ─> scripts/build-cv-pdf.mjs ─> public/downloads/*.pdf
+        ├─> shared roles, highlights, and skill groups
+        ├─> Frontend Lead projection ─┬─> ResumePage.astro
+        │                            └─> resume-tex.ts ─> PDF
+        └─> AI Product projection ───┬─> ResumePage.astro
+                                     └─> resume-tex.ts ─> PDF
 ```
 
-`npm run cv:pdf` validates characters that are problematic in LaTeX, compiles both languages,
-and replaces the published PDFs. Because the process requires a LaTeX engine, it runs separately
-and its outputs are version-controlled.
+`npm run cv:pdf` validates characters that are problematic in LaTeX, compiles both positioning
+variants in both languages, and replaces the four published PDFs. Because the process requires a
+LaTeX engine, it runs separately and its outputs are version-controlled.
 
 ## Build and deployment
 

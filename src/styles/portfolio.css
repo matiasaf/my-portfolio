@@ -788,3 +788,30 @@ html[data-theme='dark'] {
   .note-list h3,
   .hero-index strong { transition: none; }
 }
+
+/* About V2 keeps this page focused on profile, leadership, working style, and
+   environment. It intentionally reuses the portfolio's editorial system while
+   avoiding the home page's proof and selected-work surfaces. */
+.about-hero-v2 { align-items: end; }
+.about-positioning { padding: 0 24px 24px; }
+.about-positioning > p { margin: 24px 0; font-size: 19px; line-height: 1.55; letter-spacing: -.02em; }
+.about-positioning > strong { display: block; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted-strong); font: 500 10px/1.6 var(--mono); }
+.about-style-grid article > p { margin: 0; color: var(--muted-strong); font-size: 14px; line-height: 1.65; }
+.experience-cases { display: grid; gap: 7px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.experience-cases small { color: var(--muted); font: 500 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.experience-cases a { width: fit-content; color: var(--portfolio-accent-text); font: 600 10px var(--mono); }
+.experience-cases a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.about-environment { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 9vw, 140px); padding-block: 110px; }
+.about-environment h2 { margin: 18px 0 26px; font-size: clamp(42px, 5vw, 70px); line-height: .96; letter-spacing: -.06em; }
+.about-environment h2 em { color: var(--portfolio-accent-text); font-family: Georgia, serif; font-weight: 400; }
+.about-environment > div > p:last-child { max-width: 530px; color: var(--muted-strong); font-size: 15px; line-height: 1.7; }
+.about-environment dl { margin: 0; border-top: 1px solid var(--ink); }
+.about-environment dl div { padding: 24px 2px; border-bottom: 1px solid var(--line); }
+.about-environment dt { margin-bottom: 10px; color: var(--portfolio-accent-text); font: 600 9px var(--mono); letter-spacing: .08em; }
+.about-environment dd { margin: 0; color: var(--muted-strong); font-size: 13px; line-height: 1.75; }
+
+@media (max-width: 700px) {
+  .about-positioning { padding-inline: 18px; }
+  .about-environment { grid-template-columns: 1fr; gap: 38px; padding-block: 76px; }
+  .about-environment h2 { font-size: 38px; }
+}

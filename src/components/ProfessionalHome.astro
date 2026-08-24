@@ -1,0 +1,279 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/portfolio.css';
+import '../styles/professional-home.css';
+import { notes } from '../content/notes';
+import {
+  condensedExperience,
+  contactLinks,
+  navigation,
+  positioning,
+  preferredEnvironment,
+  proofMetrics,
+  routes,
+  targetRoles,
+} from '../content/profile';
+import { selectedWork } from '../content/work';
+
+interface Props { lang: 'es' | 'en'; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const route = routes[lang];
+const alternatePath = en ? routes.es.home : routes.en.home;
+const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
+const nav = navigation(lang);
+const selectedNotes = notes[lang].slice(0, 4);
+
+const t = en ? {
+  title: 'Matías Fernández — Senior Software Engineer · Frontend Lead · Applied AI',
+  description: 'Senior Software Engineer building reliable product experiences across frontend architecture, AI systems, APIs, and cloud delivery. Selected work, experience, and résumé.',
+  navLabel: 'Main navigation',
+  langLabel: 'Choose language',
+  kicker: 'OPEN TO SENIOR AND LEAD ENGINEERING ROLES',
+  viewWork: 'View selected work',
+  downloadResume: 'Download résumé',
+  contact: 'Contact me',
+  snapshotLabel: 'Professional snapshot',
+  snapshotTitle: 'AT A GLANCE',
+  snapshotNote: 'role · focus · availability',
+  nowLabel: 'Currently',
+  nowValue: 'Senior Full-Stack Engineer at Argeniss Software, frontend lead of an enterprise Azure OpenAI product',
+  focusLabel: 'Focus',
+  focusValue: 'Frontend architecture · Applied AI · APIs and cloud delivery',
+  placeLabel: 'Based in',
+  placeValue: 'Paraná, Argentina · UTC−3',
+  openLabel: 'Open to',
+  proofLabel: 'Verified results',
+  proofNote: 'Individual results unless the sentence says otherwise. Targets are labelled as targets.',
+  workIndex: '01 / SELECTED WORK',
+  workA: 'Three pieces of work.',
+  workB: 'Ownership stated exactly.',
+  workCopy: 'A large enterprise AI platform, a fully public project with its own tests and evaluation, and a modernization whose result belongs to a team.',
+  experienceIndex: '02 / EXPERIENCE',
+  experienceA: 'A decade of',
+  experienceB: 'shipping software.',
+  experienceCopy: 'Product teams, technical leadership, modernization, cloud, and applied AI.',
+  fullResume: 'Open the complete résumé',
+  caseLabel: 'Related evidence',
+  notesIndex: '03 / SELECTED WRITING',
+  notesTitle: 'How I think about systems.',
+  allNotes: 'All writing',
+  contactKicker: 'AVAILABLE FOR NEW WORK · REMOTE FROM ARGENTINA',
+  contactA: 'Looking for someone',
+  contactB: 'who can own the frontend.',
+  contactCopy: 'I’m open to conversations about senior and lead engineering roles, applied AI products, and teams that need frontend depth without losing the systems behind it.',
+  openRolesLabel: 'BEST-FIT ROLES',
+  openEnvLabel: 'PREFERRED ENVIRONMENT',
+  emailLabel: 'Send an email',
+  resumeLabel: 'Résumé',
+  resumePdfLabel: 'Résumé PDF',
+  footer: 'Product · Applied AI · Systems',
+  footerNote: 'Updated as the work changes.',
+} : {
+  title: 'Matías Fernández — Senior Software Engineer · Frontend Lead · Applied AI',
+  description: 'Senior Software Engineer que construye experiencias de producto confiables sobre arquitectura frontend, sistemas de AI, APIs y entrega en la nube. Trabajo seleccionado, experiencia y CV.',
+  navLabel: 'Navegación principal',
+  langLabel: 'Elegir idioma',
+  kicker: 'ABIERTO A ROLES SENIOR Y DE LIDERAZGO TÉCNICO',
+  viewWork: 'Ver el trabajo seleccionado',
+  downloadResume: 'Descargar CV',
+  contact: 'Escribime',
+  snapshotLabel: 'Resumen profesional',
+  snapshotTitle: 'DE UN VISTAZO',
+  snapshotNote: 'rol · foco · disponibilidad',
+  nowLabel: 'Hoy',
+  nowValue: 'Senior Full-Stack Engineer en Argeniss Software, liderando el frontend de un producto enterprise sobre Azure OpenAI',
+  focusLabel: 'Foco',
+  focusValue: 'Arquitectura frontend · AI aplicada · APIs y entrega en la nube',
+  placeLabel: 'Desde',
+  placeValue: 'Paraná, Argentina · UTC−3',
+  openLabel: 'Busco',
+  proofLabel: 'Resultados verificados',
+  proofNote: 'Resultados individuales salvo que la frase indique lo contrario. Los objetivos se nombran como objetivos.',
+  workIndex: '01 / TRABAJO SELECCIONADO',
+  workA: 'Tres trabajos.',
+  workB: 'Ownership dicho con exactitud.',
+  workCopy: 'Una plataforma de AI enterprise, un proyecto totalmente público con sus propios tests y evaluación, y una modernización cuyo resultado es del equipo.',
+  experienceIndex: '02 / EXPERIENCIA',
+  experienceA: 'Una década',
+  experienceB: 'entregando software.',
+  experienceCopy: 'Equipos de producto, liderazgo técnico, modernización, cloud y AI aplicada.',
+  fullResume: 'Abrir el CV completo',
+  caseLabel: 'Evidencia relacionada',
+  notesIndex: '03 / ESCRITURA SELECCIONADA',
+  notesTitle: 'Cómo pienso los sistemas.',
+  allNotes: 'Todas las publicaciones',
+  contactKicker: 'DISPONIBLE PARA NUEVOS PROYECTOS · REMOTO DESDE ARGENTINA',
+  contactA: '¿Buscás a alguien',
+  contactB: 'que se haga cargo del frontend?',
+  contactCopy: 'Estoy abierto a conversar sobre roles senior y de liderazgo técnico, productos de AI aplicada y equipos que necesitan profundidad de frontend sin perder de vista los sistemas que hay detrás.',
+  openRolesLabel: 'ROLES QUE BUSCO',
+  openEnvLabel: 'ENTORNO PREFERIDO',
+  emailLabel: 'Enviar un email',
+  resumeLabel: 'CV',
+  resumePdfLabel: 'CV PDF',
+  footer: 'Producto · AI aplicada · Sistemas',
+  footerNote: 'Actualizado a medida que cambia el trabajo.',
+};
+---
+
+<Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="top">
+  <header class="portfolio-header pro-header" data-portfolio-header>
+    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
+      <span class="brand-monogram" aria-hidden="true">MF</span>
+      <span>Matías Fernández</span>
+    </a>
+
+    <nav aria-label={t.navLabel}>
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+
+    <div class="portfolio-header-actions">
+      <nav class="language-switcher" aria-label={t.langLabel}>
+        <a href={routes.es.home} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+        <a href={routes.en.home} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+      </nav>
+      <a class="header-note" href={route.resumePdf} download>{t.resumePdfLabel} <span aria-hidden="true">↓</span></a>
+    </div>
+  </header>
+
+  <main id="top" tabindex="-1" class="portfolio-main professional-home">
+    <section class="portfolio-hero portfolio-shell pro-hero">
+      <div class="hero-intro">
+        <p class="portfolio-kicker"><span></span> {t.kicker}</p>
+        <h1>{positioning.name}</h1>
+        <p class="pro-role">
+          {positioning.role[lang]}<br />
+          <em>{positioning.specialization[lang]}</em>
+        </p>
+        <p class="hero-summary">{positioning.statement[lang]}</p>
+        <p class="pro-availability">{positioning.availability[lang]}</p>
+
+        <div class="portfolio-actions pro-actions">
+          <a class="primary-action" href="#work">{t.viewWork} <span aria-hidden="true">↓</span></a>
+          <a class="quiet-action" href={route.resumePdf} download>{t.downloadResume} <span aria-hidden="true">↓</span></a>
+          <a class="quiet-action" href={contactLinks.email}>{t.contact} <span aria-hidden="true">→</span></a>
+        </div>
+
+        <ul class="hero-proof pro-metrics" aria-label={t.proofLabel}>
+          {proofMetrics.map((metric) => (
+            <li><strong>{metric.value}</strong><span>{metric.label[lang]}</span></li>
+          ))}
+        </ul>
+        <p class="pro-proof-note">{t.proofNote}</p>
+      </div>
+
+      <aside class="hero-index pro-snapshot" aria-label={t.snapshotLabel}>
+        <header>
+          <span>{t.snapshotTitle}</span>
+          <p>{t.snapshotNote}</p>
+        </header>
+        <dl>
+          <div><dt>{t.nowLabel}</dt><dd>{t.nowValue}</dd></div>
+          <div><dt>{t.focusLabel}</dt><dd>{t.focusValue}</dd></div>
+          <div><dt>{t.placeLabel}</dt><dd>{t.placeValue}</dd></div>
+          <div><dt>{t.openLabel}</dt><dd>{targetRoles[lang]}</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="work-section" id="work" aria-labelledby="work-title">
+      <div class="portfolio-shell">
+        <div class="experience-heading">
+          <div>
+            <p class="section-index">{t.workIndex}</p>
+            <h2 id="work-title">{t.workA}<br /><em>{t.workB}</em></h2>
+          </div>
+          <div><p>{t.workCopy}</p></div>
+        </div>
+        <div class="work-grid pro-work-grid">
+          {selectedWork.map((item, index) => (
+            <article class={`work-card work-${item.tone}`}>
+              <div class="work-top"><span>{String(index + 1).padStart(2, '0')}</span><small>{item.period[lang]}</small></div>
+              <h3>{item.title[lang]}</h3>
+              <p class="work-role">{item.role[lang]}</p>
+              <p class="work-copy">{item.summary[lang]}</p>
+              <strong class="work-proof">{item.proof[lang]}</strong>
+              <ul class="work-stack">{item.stack.map((tech) => <li>{tech}</li>)}</ul>
+              <a class="pro-card-link" href={item.href[lang]}>{item.cta[lang]} <span aria-hidden="true">→</span></a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="experience-section portfolio-shell" id="experience" aria-labelledby="experience-title">
+      <div class="experience-heading">
+        <div>
+          <p class="section-index">{t.experienceIndex}</p>
+          <h2 id="experience-title">{t.experienceA}<br /><em>{t.experienceB}</em></h2>
+        </div>
+        <div>
+          <p>{t.experienceCopy}</p>
+          <a href={route.resume}>{t.fullResume} <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="experience-list">
+        {condensedExperience.map((item, index) => (
+          <article class={`experience-item experience-${item.tone}`}>
+            <div class="experience-rail"><span>{String(index + 1).padStart(2, '0')}</span><i></i></div>
+            <div class="experience-period">{item.period[lang]}</div>
+            <div class="experience-role"><small>{item.context[lang]}</small><h3>{item.company[lang]}</h3><p>{item.role[lang]}</p></div>
+            <div class="experience-detail"><p>{item.summary[lang]}</p><strong>{item.proof[lang]}</strong>{item.caseStudies && <div class="experience-cases"><small>{t.caseLabel}</small>{item.caseStudies.map((study) => <a href={study.href[lang]}>{study.label[lang]} <span aria-hidden="true">→</span></a>)}</div>}</div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="notes-section portfolio-shell" id="writing" aria-labelledby="writing-title">
+      <div class="notes-title-row">
+        <div>
+          <p class="section-index">{t.notesIndex}</p>
+          <h2 id="writing-title">{t.notesTitle}</h2>
+        </div>
+        <a class="pro-all-notes" href={route.writing}>{t.allNotes} <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="note-list">
+        {selectedNotes.map((note, index) => (
+          <a href={note.href}>
+            <span class="note-number">0{index + 1}</span>
+            <div><small>{note.tag} · {note.meta}</small><h3>{note.title}</h3></div>
+            <span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact" aria-labelledby="contact-title">
+      <div class="contact-rings" aria-hidden="true"></div>
+      <div class="contact-content">
+        <p class="portfolio-kicker"><span></span> {t.contactKicker}</p>
+        <h2 id="contact-title">{t.contactA}<br /><em>{t.contactB}</em></h2>
+        <p>{t.contactCopy}</p>
+        <div class="contact-open">
+          <div><small>{t.openRolesLabel}</small><p>{targetRoles[lang]}</p></div>
+          <div><small>{t.openEnvLabel}</small><p>{preferredEnvironment[lang]}</p></div>
+        </div>
+        <div class="contact-links">
+          <a href={contactLinks.email}>{t.emailLabel} <span aria-hidden="true">↗</span></a>
+          <a href={route.resume}>{t.resumeLabel} <span aria-hidden="true">↗</span></a>
+          <a href={contactLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
+          <a href={contactLinks.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="portfolio-footer">
+    <a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <p>{t.footer}</p>
+    <span>{t.footerNote}</span>
+  </footer>
+
+  <script>
+    const header = document.querySelector('[data-portfolio-header]');
+    const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</Layout>

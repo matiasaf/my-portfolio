@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/portfolio.css';
+import '../styles/work.css';
+import { contactLinks, navigation, routes, type Lang } from '../content/profile';
+import { selectedWork } from '../content/work';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const route = routes[lang];
+const alternate = en ? routes.es.work : routes.en.work;
+const nav = navigation(lang);
+const t = en ? {
+  title: 'Selected engineering work — Matías Fernández',
+  description: 'Selected product engineering work across frontend architecture, applied AI, APIs, and cloud delivery, with precise ownership and verified evidence.',
+  nav: 'Main navigation', language: 'Choose language', eyebrow: 'SELECTED ENGINEERING WORK',
+  heroA: 'Systems I have', heroB: 'helped make real.',
+  intro: 'Three projects chosen for the decisions, responsibility, and evidence behind them. Public work links to source and tests; client work uses sanitized diagrams and explicit disclosure boundaries.',
+  published: 'Published case study', review: 'Verified summary · disclosure review pending',
+  evidence: 'Evidence', stack: 'Selected stack', contact: 'Discuss a role', footer: 'Work · Product · Applied AI · Systems',
+} : {
+  title: 'Trabajo de ingeniería seleccionado — Matías Fernández',
+  description: 'Trabajo de ingeniería de producto seleccionado sobre arquitectura frontend, AI aplicada, APIs y cloud, con ownership preciso y evidencia verificada.',
+  nav: 'Navegación principal', language: 'Elegir idioma', eyebrow: 'TRABAJO DE INGENIERÍA SELECCIONADO',
+  heroA: 'Sistemas que ayudé', heroB: 'a hacer realidad.',
+  intro: 'Tres proyectos elegidos por sus decisiones, responsabilidad y evidencia. El trabajo público enlaza código y tests; el trabajo para clientes usa diagramas sanitizados y límites explícitos de disclosure.',
+  published: 'Caso de estudio publicado', review: 'Resumen verificado · auditoría de disclosure pendiente',
+  evidence: 'Evidencia', stack: 'Stack seleccionado', contact: 'Conversemos sobre un rol', footer: 'Trabajo · Producto · AI aplicada · Sistemas',
+};
+---
+
+<Layout title={t.title} description={t.description} lang={lang} alternateHref={alternate} mainId="work-main">
+  <header class="portfolio-header work-header" data-portfolio-header>
+    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
+      <span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span>
+    </a>
+    <nav aria-label={t.nav}>{nav.map((item) => <a href={item.href} aria-current={item.href === route.work ? 'page' : undefined}>{item.label}</a>)}</nav>
+    <nav class="language-switcher" aria-label={t.language}>
+      <a href={routes.es.work} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+      <a href={routes.en.work} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+    </nav>
+  </header>
+
+  <main id="work-main" tabindex="-1" class="work-index">
+    <section class="portfolio-shell work-index-hero">
+      <p class="portfolio-kicker"><span></span>{t.eyebrow}</p>
+      <h1>{t.heroA}<br /><em>{t.heroB}</em></h1>
+      <p>{t.intro}</p>
+    </section>
+
+    <section class="portfolio-shell work-index-list" aria-label={t.eyebrow}>
+      {selectedWork.map((item, index) => (
+        <article id={item.id} class={`work-index-card work-index-${item.tone}`}>
+          <header>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <p>{item.period[lang]}</p>
+            <small>{item.caseStudyState === 'published' ? t.published : t.review}</small>
+          </header>
+          <div class="work-index-card-title">
+            <h2>{item.title[lang]}</h2>
+            <p>{item.role[lang]}</p>
+          </div>
+          <div class="work-index-card-detail">
+            <p>{item.summary[lang]}</p>
+            <dl>
+              <div><dt>{t.evidence}</dt><dd>{item.proof[lang]}</dd></div>
+              <div><dt>{t.stack}</dt><dd>{item.stack.join(' · ')}</dd></div>
+            </dl>
+            <a href={item.href[lang]}>{item.cta[lang]} <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="work-index-cta">
+      <div><p>{en ? 'OPEN TO SENIOR AND LEAD ENGINEERING ROLES' : 'ABIERTO A ROLES SENIOR Y DE LIDERAZGO TÉCNICO'}</p><a href={contactLinks.email}>{t.contact} <span aria-hidden="true">↗</span></a></div>
+    </section>
+  </main>
+
+  <footer class="portfolio-footer work-footer"><a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href={route.resume}>{en ? 'Résumé' : 'CV'} ↗</a></footer>
+
+  <script>
+    const header = document.querySelector('[data-portfolio-header]');
+    const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</Layout>
