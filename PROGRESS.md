@@ -14,6 +14,15 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Priority-issue remediation from the 2026-08-24 professional-journey critique: contact is now
+  the primary action in the home hero, final contact block, and case-study close; the public email
+  is selectable and paired with a response-time expectation; secondary contact controls use a
+  theme-safe strong boundary; Work and case-study navigation remains visible below 980px; and
+  load-bearing proof, role, evidence, and résumé text no longer sits in the 8–11px tier. Manrope
+  now loads as the requested variable range and DM Mono stays within its real 400/500 weights.
+  Mobile/tablet/desktop checks covered both languages and themes with no overflow; `npm run verify`
+  passed with 66 files clean and 28 static pages built.
+
 - Contrast hardening of the Work surfaces on 2026-08-24: `src/styles/work.css` no longer hardcodes
   `#101310` on theme-flipping accents. The work-index number badges and the accepted/delivered milestone
   badges now use `var(--ink)`; `--work-accent` moved from `#5274d4` (which failed against both light and

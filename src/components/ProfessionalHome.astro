@@ -5,6 +5,7 @@ import '../styles/professional-home.css';
 import { notes } from '../content/notes';
 import {
   condensedExperience,
+  contactEmail,
   contactLinks,
   navigation,
   positioning,
@@ -65,6 +66,7 @@ const t = en ? {
   openRolesLabel: 'BEST-FIT ROLES',
   openEnvLabel: 'PREFERRED ENVIRONMENT',
   emailLabel: 'Send an email',
+  responseTime: 'I usually reply within two business days.',
   resumeLabel: 'Résumé',
   resumePdfLabel: 'Résumé PDF',
   footer: 'Product · Applied AI · Systems',
@@ -110,6 +112,7 @@ const t = en ? {
   openRolesLabel: 'ROLES QUE BUSCO',
   openEnvLabel: 'ENTORNO PREFERIDO',
   emailLabel: 'Enviar un email',
+  responseTime: 'Suelo responder dentro de dos días hábiles.',
   resumeLabel: 'CV',
   resumePdfLabel: 'CV PDF',
   footer: 'Producto · AI aplicada · Sistemas',
@@ -150,9 +153,9 @@ const t = en ? {
         <p class="pro-availability">{positioning.availability[lang]}</p>
 
         <div class="portfolio-actions pro-actions">
-          <a class="primary-action" href="#work">{t.viewWork} <span aria-hidden="true">↓</span></a>
+          <a class="primary-action" href={contactLinks.email}>{t.contact} <span aria-hidden="true">→</span></a>
+          <a class="quiet-action" href="#work">{t.viewWork} <span aria-hidden="true">↓</span></a>
           <a class="quiet-action" href={route.resumePdf} download>{t.downloadResume} <span aria-hidden="true">↓</span></a>
-          <a class="quiet-action" href={contactLinks.email}>{t.contact} <span aria-hidden="true">→</span></a>
         </div>
 
         <ul class="hero-proof pro-metrics" aria-label={t.proofLabel}>
@@ -255,11 +258,15 @@ const t = en ? {
           <div><small>{t.openEnvLabel}</small><p>{preferredEnvironment[lang]}</p></div>
         </div>
         <div class="contact-links">
-          <a href={contactLinks.email}>{t.emailLabel} <span aria-hidden="true">↗</span></a>
+          <a class="primary-action" href={contactLinks.email}>{t.emailLabel} <span aria-hidden="true">→</span></a>
           <a href={route.resume}>{t.resumeLabel} <span aria-hidden="true">↗</span></a>
           <a href={contactLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
           <a href={contactLinks.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a>
         </div>
+        <p class="contact-email-meta">
+          <a href={contactLinks.email}>{contactEmail}</a>
+          <span>{t.responseTime}</span>
+        </p>
       </div>
     </section>
   </main>

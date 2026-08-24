@@ -188,8 +188,10 @@ export const preferredEnvironment: Localized = {
   es: 'Remoto desde Argentina con overlap con los husos horarios americanos · B2B SaaS, plataformas de AI, developer tools, productos de datos, fintech, healthtech y software empresarial · Equipos de producto con autonomía técnica y espacio para decidir arquitectura',
 };
 
+export const contactEmail = 'fernandez.amatias@gmail.com';
+
 export const contactLinks = {
-  email: 'mailto:fernandez.amatias@gmail.com',
+  email: `mailto:${contactEmail}`,
   github: 'https://github.com/matiasaf',
   linkedin: 'https://linkedin.com/in/fernandez-amatias',
 } as const;

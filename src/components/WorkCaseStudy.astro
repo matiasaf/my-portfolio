@@ -132,7 +132,7 @@ const toc = [
           return <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}><small>{linkKindLabel(link.kind).toUpperCase()}</small><strong>{link.label[lang]} ↗</strong><span>{link.description[lang]}</span>{external && <span class="visually-hidden">{newTab}</span>}</a>;
         })}</div></section>
 
-        <section class="case-section case-contact"><p class="section-index">12 / {t.continue}</p><h2>{t.continue}</h2><p>{t.continueCopy}</p><div><a class="primary-action" href={route.resume}>{t.resume} <span aria-hidden="true">↗</span></a><a class="quiet-action" href={contactLinks.email}>{t.contact} <span aria-hidden="true">→</span></a></div></section>
+        <section class="case-section case-contact"><p class="section-index">12 / {t.continue}</p><h2>{t.continue}</h2><p>{t.continueCopy}</p><div><a class="primary-action" href={contactLinks.email}>{t.contact} <span aria-hidden="true">→</span></a><a class="quiet-action" href={route.resume}>{t.resume} <span aria-hidden="true">↗</span></a></div></section>
       </div>
     </div>
   </main>

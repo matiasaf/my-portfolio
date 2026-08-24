@@ -14,7 +14,7 @@
 
 .ds-definition-grid { display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--ink); }
 .ds-definition-grid article { min-height: 390px; padding: 31px; border-right: 1px solid var(--ink); background: var(--paper-2); }.ds-definition-grid article:last-child { border: 0; background: rgba(216,255,88,.24); }
-.ds-definition-grid span { font: 500 9px var(--mono); letter-spacing: .1em; }.ds-definition-grid h3 { margin: 72px 0 34px; color: var(--accent-text); font: 700 clamp(48px,5vw,70px) var(--mono); letter-spacing: -.08em; }.ds-definition-grid p { margin: 0; color: rgb(var(--ink-rgb) / .73); font-size: 13px; line-height: 1.72; }
+.ds-definition-grid span { font: 500 9px var(--mono); letter-spacing: .1em; }.ds-definition-grid h3 { margin: 72px 0 34px; color: var(--accent-text); font: 500 clamp(48px,5vw,70px) var(--mono); letter-spacing: -.08em; }.ds-definition-grid p { margin: 0; color: rgb(var(--ink-rgb) / .73); font-size: 13px; line-height: 1.72; }
 .ds-complexity-table code { white-space: nowrap; }.ds-complexity-table td:last-child { min-width: 220px; }
 .ds-structure-grid { display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--ink); }
 .ds-structure-grid .cp-tool-card { min-height: 465px; }.ds-structure-grid .cp-tool-card:nth-child(2n) { border-right: 1px solid var(--ink); }.ds-structure-grid .cp-tool-card:nth-child(3n) { border-right: 0; }.ds-structure-grid .cp-tool-card:nth-last-child(-n+3) { border-bottom: 0; }
