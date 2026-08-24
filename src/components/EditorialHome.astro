@@ -2,7 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import '../styles/portfolio.css';
 import { notes as allNotes } from '../content/notes';
-import { aiKnowledgePlatformStatus, contactLinks, navigation, routes } from '../content/profile';
+import { contactLinks, navigation, routes } from '../content/profile';
+import { aiKnowledgePlatformStatus } from '../content/work';
 
 interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
@@ -24,7 +25,7 @@ const projects = en ? [
   {
     number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: aiKnowledgePlatformStatus.progress.en, tone: 'coral',
     copy: 'A document knowledge platform built in public, with verifiable ingestion, measured retrieval, grounded answers with citations, and observability as product surfaces.',
-    href: '/en/projects/ai-knowledge-platform/', cta: 'Read the build log', stack: ['Python', 'RAG', 'Product'],
+    href: '/en/work/ai-knowledge-platform/', cta: 'Read the case study', stack: ['Python', 'RAG', 'Product'],
   },
   {
     number: '02', title: 'Agent Harness Lab', label: 'AGENTS · ORCHESTRATION', status: 'Queued', tone: 'blue',
@@ -45,7 +46,7 @@ const projects = en ? [
   {
     number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: aiKnowledgePlatformStatus.progress.es, tone: 'coral',
     copy: 'Una plataforma de conocimiento documental construida en público, con ingesta verificable, retrieval medido, respuestas fundamentadas con citas y observabilidad como superficies de producto.',
-    href: '/projects/ai-knowledge-platform/', cta: 'Ver el paso a paso', stack: ['Python', 'RAG', 'Producto'],
+    href: '/es/trabajo/ai-knowledge-platform/', cta: 'Leer el caso de estudio', stack: ['Python', 'RAG', 'Producto'],
   },
   {
     number: '02', title: 'Agent Harness Lab', label: 'AGENTES · ORQUESTACIÓN', status: 'En cola', tone: 'blue',

@@ -59,12 +59,14 @@ Tectonic.
 | Route | Content |
 |---|---|
 | `/` | Redirect to the default English home page |
-| `/en/` and `/es/` | English and Spanish editorial home pages |
+| `/en/` and `/es/` | English and Spanish professional home pages |
+| `/en/writing/` and `/es/publicaciones/` | Editorial archives |
 | `/sobre-mi/` and `/en/about/` | Professional profile |
 | `/cv/` and `/en/cv/` | Web résumé and PDF downloads |
 | `/ai/` | Series about models, transformers, and harnesses |
 | `/system-design/` | Visual architecture guide and articles |
-| `/projects/ai-knowledge-platform/` | Applied AI project build log |
+| `/en/work/` and `/es/trabajo/` | Selected engineering work |
+| `/en/work/ai-knowledge-platform/` and `/es/trabajo/ai-knowledge-platform/` | Applied AI engineering case study |
 
 See [Architecture](docs/ARCHITECTURE.md) for the complete route inventory and the relationship
 between pages, components, and structured content.

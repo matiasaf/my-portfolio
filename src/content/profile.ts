@@ -187,7 +187,6 @@ export const routes: Record<Lang, {
   about: string;
   resume: string;
   resumePdf: string;
-  /** Selected work lives on the home page until the dedicated index exists. */
   work: string;
 }> = {
   en: {
@@ -196,7 +195,7 @@ export const routes: Record<Lang, {
     about: '/en/about/',
     resume: '/en/cv/',
     resumePdf: '/downloads/matias-fernandez-resume.pdf',
-    work: '/en/#work',
+    work: '/en/work/',
   },
   es: {
     home: '/es/',
@@ -204,7 +203,7 @@ export const routes: Record<Lang, {
     about: '/sobre-mi/',
     resume: '/cv/',
     resumePdf: '/downloads/matias-fernandez-cv.pdf',
-    work: '/es/#work',
+    work: '/es/trabajo/',
   },
 };
 
@@ -225,33 +224,6 @@ export const navigation = (lang: Lang) => {
         { label: 'CV', href: r.resume },
       ];
 };
-
-/**
- * Status of the AI Knowledge Platform, mirrored from the project repository's
- * PROGRESS.md on 2026-08-21. Every surface that mentions the project reads this,
- * so the site cannot show two different milestone states.
- *
- * `completed` counts accepted milestones only. Milestone 4 is implemented and its
- * provider-independent gates pass, but selecting a model and recording live answer
- * quality still requires provider credentials, so it is not counted as accepted.
- */
-export const aiKnowledgePlatformStatus = {
-  completed: 3,
-  total: 5,
-  /** Short badge, e.g. for a card header. */
-  progress: { en: '3 / 5 milestones', es: '3 / 5 milestones' } satisfies Localized,
-  /** Sentence-length status used wherever the distinction matters. */
-  headline: {
-    en: 'Milestones 1–3 accepted · milestone 4 implemented, live provider acceptance pending',
-    es: 'Milestones 1–3 aceptados · milestone 4 implementado, con la aceptación del proveedor en vivo pendiente',
-  } satisfies Localized,
-  /** Uppercase eyebrow variant used by the project page. */
-  badge: {
-    en: 'MILESTONES 1–3 ACCEPTED · MILESTONE 4 IMPLEMENTED',
-    es: 'MILESTONES 1–3 ACEPTADOS · MILESTONE 4 IMPLEMENTADO',
-  } satisfies Localized,
-  repository: 'https://github.com/matiasaf/ai-knowledge-platform',
-} as const;
 
 export interface ExperienceEntry {
   period: Localized;
@@ -328,99 +300,5 @@ export const condensedExperience: ExperienceEntry[] = [
       es: 'Sistemas regulados · auditoría · trazabilidad · cumplimiento',
     },
     tone: 'violet',
-  },
-];
-
-export interface SelectedWork {
-  id: string;
-  period: Localized;
-  title: Localized;
-  /** Exact ownership. Leading a frontend is not the same as owning a system. */
-  role: Localized;
-  summary: Localized;
-  proof: Localized;
-  stack: string[];
-  /** Where the card currently points. PR 2 and PR 3 replace these with case studies. */
-  href: Record<Lang, string>;
-  cta: Localized;
-  /** True when the destination is a full case study rather than a supporting page. */
-  external?: boolean;
-  tone: 'coral' | 'blue' | 'lime' | 'violet';
-}
-
-/**
- * Selected engineering work. Three entries by design: a large professional platform,
- * the fully public project, and a modernization with a team-owned result.
- * Queued or unstarted projects do not belong here.
- */
-export const selectedWork: SelectedWork[] = [
-  {
-    id: 'enterprise-ai-platform',
-    period: { en: '2024 — NOW', es: '2024 — HOY' },
-    title: { en: 'Enterprise AI Platform', es: 'Enterprise AI Platform' },
-    role: {
-      en: 'Frontend lead · hands-on across the stack',
-      es: 'Liderazgo de frontend · hands-on en todo el stack',
-    },
-    summary: {
-      en: 'An Azure OpenAI product for an enterprise healthcare client. I lead its React and Next.js frontend, and contribute where the product needs it: Python document processing, Pinecone retrieval, SignalR streaming, and targeted .NET and Azure Functions work.',
-      es: 'Un producto sobre Azure OpenAI para un cliente enterprise de salud. Lidero su frontend en React y Next.js, y contribuyo donde el producto lo necesita: procesamiento documental con Python, recuperación con Pinecone, streaming con SignalR y trabajo puntual en .NET y Azure Functions.',
-    },
-    proof: {
-      en: '1,000+ documents through the pipeline · sub-2s time-to-first-token target',
-      es: '1.000+ documentos en el pipeline · objetivo de time-to-first-token < 2s',
-    },
-    stack: ['React', 'Next.js', 'Azure OpenAI', 'Pinecone', 'SignalR', '.NET'],
-    href: { en: '/en/about/#work', es: '/sobre-mi/#work' },
-    cta: { en: 'See the current work', es: 'Ver el trabajo actual' },
-    tone: 'coral',
-  },
-  {
-    id: 'ai-knowledge-platform',
-    period: { en: 'PUBLIC REPOSITORY', es: 'REPOSITORIO PÚBLICO' },
-    title: { en: 'AI Knowledge Platform', es: 'AI Knowledge Platform' },
-    role: {
-      en: 'Sole author · built in public',
-      es: 'Autor único · construido en público',
-    },
-    summary: {
-      en: 'A document knowledge platform where retrieval quality, honest failure states, and verifiable citations are product surfaces rather than afterthoughts. Ingestion, page-level extraction, and measured lexical retrieval are accepted; grounded answers are implemented and awaiting live provider acceptance.',
-      es: 'Una plataforma de conocimiento documental donde la calidad de retrieval, los estados de falla honestos y las citas verificables son parte del producto. La ingesta, la extracción por página y el retrieval léxico medido están aceptados; las respuestas fundamentadas están implementadas y esperan la aceptación del proveedor en vivo.',
-    },
-    proof: {
-      en: 'Recall@3 and MRR@3 enforced in CI · 13-case answer dataset',
-      es: 'Recall@3 y MRR@3 verificados en CI · dataset de 13 casos de respuesta',
-    },
-    stack: ['Python', 'FastAPI', 'Next.js', 'SQLite FTS5', 'OpenAI Responses API'],
-    href: {
-      en: '/en/projects/ai-knowledge-platform/',
-      es: '/projects/ai-knowledge-platform/',
-    },
-    cta: { en: 'Read the build log', es: 'Ver el paso a paso' },
-    tone: 'blue',
-  },
-  {
-    id: 'serverless-modernization',
-    period: { en: '2019 — 2021', es: '2019 — 2021' },
-    title: {
-      en: 'Serverless Platform Modernization',
-      es: 'Modernización de plataforma serverless',
-    },
-    role: {
-      en: 'Full-Stack Engineer · shared technical coordination',
-      es: 'Full-Stack Engineer · coordinación técnica compartida',
-    },
-    summary: {
-      en: 'Modernizing an analytics platform: an Angular 7-to-12 migration and a move from Java services to Node.js and TypeScript serverless services on AWS, with Terraform-managed infrastructure and blue-green deployments. I shared coordination of the UI work with two other developers.',
-      es: 'Modernización de una plataforma de analytics: migración de Angular 7 a 12 y pasaje de servicios Java a servicios serverless en Node.js y TypeScript sobre AWS, con infraestructura gestionada con Terraform y despliegues blue-green. Compartí la coordinación del trabajo de UI con otros dos desarrolladores.',
-    },
-    proof: {
-      en: 'Team migration reduced infrastructure cost by ≈ 30%',
-      es: 'La migración del equipo redujo el costo de infraestructura ≈ 30%',
-    },
-    stack: ['Angular', 'Node.js', 'TypeScript', 'AWS Lambda', 'DynamoDB', 'Terraform'],
-    href: { en: '/en/about/#experience', es: '/sobre-mi/#experience' },
-    cta: { en: 'See the experience', es: 'Ver la experiencia' },
-    tone: 'lime',
   },
 ];
