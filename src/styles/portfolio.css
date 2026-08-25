@@ -609,12 +609,12 @@ html[data-theme='dark'] {
 .note-arrow { color: var(--portfolio-accent-text); font-size: 21px; }
 
 .side-project-card { min-height: 340px; }
+.side-project-grid.is-single { grid-template-columns: minmax(0, 1fr); }
+.side-project-grid.is-single .side-project-copy { max-width: 78ch; }
 .side-project-label { margin: 36px 0 9px; color: var(--portfolio-accent-text); }
 .side-project-card h3 { margin: 0; }
 .side-project-copy { margin-top: 16px; }
 .side-project-card ul { margin-top: auto; border-top: 0; }
-.planned-label { color: var(--muted); }
-
 .home-about {
   display: grid;
   grid-template-columns: .35fr 1.45fr .55fr;

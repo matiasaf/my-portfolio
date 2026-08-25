@@ -27,41 +27,11 @@ const projects = en ? [
     copy: 'A document knowledge platform built in public, with verifiable ingestion, measured retrieval, grounded answers with citations, and observability as product surfaces.',
     href: '/en/work/ai-knowledge-platform/', cta: 'Read the case study', stack: ['Python', 'RAG', 'Product'],
   },
-  {
-    number: '02', title: 'Agent Harness Lab', label: 'AGENTS · ORCHESTRATION', status: 'Queued', tone: 'blue',
-    copy: 'A minimal harness for running an agent with explicit state, tool permissions, retries, budgets, traces, and human checkpoints.',
-    cta: 'Roadmap coming soon', stack: ['Python', 'Agents', 'Tracing'],
-  },
-  {
-    number: '03', title: 'RAG Evaluation Workbench', label: 'EVALS · RETRIEVAL', status: 'Queued', tone: 'lime',
-    copy: 'A small evaluation workbench for comparing chunking, retrieval, reranking, groundedness, citations, latency, and cost against a fixed dataset.',
-    cta: 'Roadmap coming soon', stack: ['Evals', 'RAG', 'Observability'],
-  },
-  {
-    number: '04', title: 'Tool-Calling Sandbox', label: 'TOOLS · MCP · SAFETY', status: 'Queued', tone: 'violet',
-    copy: 'A controlled environment for testing tool schemas, approval boundaries, failure recovery, and the difference between a model response and a reliable action.',
-    cta: 'Roadmap coming soon', stack: ['MCP', 'Tool use', 'Guardrails'],
-  },
 ] : [
   {
     number: '01', title: 'AI Knowledge Platform', label: 'APPLIED AI · RAG', status: aiKnowledgePlatformStatus.progress.es, tone: 'coral',
     copy: 'Una plataforma de conocimiento documental construida en público, con ingesta verificable, retrieval medido, respuestas fundamentadas con citas y observabilidad como superficies de producto.',
     href: '/es/trabajo/ai-knowledge-platform/', cta: 'Leer el caso de estudio', stack: ['Python', 'RAG', 'Producto'],
-  },
-  {
-    number: '02', title: 'Agent Harness Lab', label: 'AGENTES · ORQUESTACIÓN', status: 'En cola', tone: 'blue',
-    copy: 'Un harness mínimo para ejecutar un agente con estado explícito, permisos de herramientas, reintentos, presupuestos, trazas y checkpoints humanos.',
-    cta: 'Roadmap próximamente', stack: ['Python', 'Agentes', 'Tracing'],
-  },
-  {
-    number: '03', title: 'RAG Evaluation Workbench', label: 'EVALS · RETRIEVAL', status: 'En cola', tone: 'lime',
-    copy: 'Un banco de evaluación para comparar chunking, retrieval, reranking, groundedness, citas, latencia y costo sobre un dataset fijo.',
-    cta: 'Roadmap próximamente', stack: ['Evals', 'RAG', 'Observabilidad'],
-  },
-  {
-    number: '04', title: 'Tool-Calling Sandbox', label: 'TOOLS · MCP · SEGURIDAD', status: 'En cola', tone: 'violet',
-    copy: 'Un entorno controlado para probar schemas de herramientas, límites de aprobación, recuperación de fallos y la distancia entre responder y ejecutar una acción confiable.',
-    cta: 'Roadmap próximamente', stack: ['MCP', 'Tool use', 'Guardrails'],
   },
 ];
 
@@ -91,25 +61,25 @@ const series = en ? [
 
 const t = en ? {
   title: 'Writing — Matías Fernández',
-  description: 'Technical notes, visual guides, and side projects about applied AI, system design, data, and building software products.',
+  description: 'Technical notes, visual guides, and an active side project about applied AI, system design, data, and building software products.',
   nav: 'Main navigation', notes: 'Notes', projects: 'Projects', series: 'Series', about: 'About me', home: 'Back to the home page',
-  kicker: 'TECHNICAL NOTES · SIDE PROJECTS · LEARNING IN PUBLIC',
+  kicker: 'TECHNICAL NOTES · ACTIVE PROJECT · LEARNING IN PUBLIC',
   summary: 'A working notebook about applied AI, system design, data, and product engineering. I publish what I learn and show the artifacts I build along the way.',
-  read: 'Start reading', explore: 'See the projects', board: 'Map of published work', boardTop: 'PUBLISHED / IN PROGRESS', boardNote: 'notes + diagrams + working software',
+  read: 'Start reading', explore: 'See the project', board: 'Map of published work', boardTop: 'PUBLISHED / IN PROGRESS', boardNote: 'notes + diagrams + working software',
   strip: 'CURRENT THREADS', notesIndex: '01 / LATEST NOTES', notesTitle: 'Start with an idea.', edition: 'READING LIST 001',
-  projectsIndex: '02 / SIDE PROJECTS', projectsA: 'One active build.', projectsB: 'Three experiments queued.', projectsCopy: 'A public backlog focused on AI products and agent harnesses. The first project is underway; the next three make the questions we will explore next explicit.',
+  projectsIndex: '02 / ACTIVE PROJECT', projectsA: 'One active build.', projectsB: 'Evidence you can inspect.', projectsCopy: 'AI Knowledge Platform is the only side project featured here: an active public build with source, tests, retrieval evaluation, and an explicit delivery state.',
   seriesIndex: '03 / SERIES & GUIDES', seriesA: 'Ideas that need', seriesB: 'more than one post.', seriesCopy: 'Longer learning paths that connect concepts, decisions, and implementation.',
   aboutIndex: '04 / ABOUT ME', aboutA: 'The work is here.', aboutB: 'The résumé is elsewhere.', aboutCopy: 'I’m Matías, a senior full-stack engineer based in Argentina. If you want the professional timeline, current client work, toolbox, and résumé, they live in a separate section.', aboutCta: 'Go to About me',
   contactKicker: 'ARGENTINA · OPEN TO CONVERSATION', contactA: 'Have an idea', contactB: 'worth exploring?', contactCopy: 'Tell me about a system, an article, or a side project that would be interesting to think through together.', email: 'Send an email', footer: 'Published while building.',
 } : {
   title: 'Publicaciones — Matías Fernández',
-  description: 'Notas técnicas, guías visuales y side projects sobre AI aplicada, system design, datos y construcción de productos de software.',
+  description: 'Notas técnicas, guías visuales y un side project activo sobre AI aplicada, system design, datos y construcción de productos de software.',
   nav: 'Navegación principal', notes: 'Posteos', projects: 'Proyectos', series: 'Series', about: 'Sobre mí', home: 'Volver al inicio',
-  kicker: 'NOTAS TÉCNICAS · SIDE PROJECTS · APRENDER EN PÚBLICO',
+  kicker: 'NOTAS TÉCNICAS · PROYECTO ACTIVO · APRENDER EN PÚBLICO',
   summary: 'Una bitácora de trabajo sobre AI aplicada, system design, datos e ingeniería de producto. Publico lo que aprendo y muestro los artefactos que construyo en el camino.',
-  read: 'Empezar a leer', explore: 'Ver los proyectos', board: 'Mapa de trabajo publicado', boardTop: 'PUBLICADO / EN PROCESO', boardNote: 'notas + diagramas + software funcionando',
+  read: 'Empezar a leer', explore: 'Ver el proyecto', board: 'Mapa de trabajo publicado', boardTop: 'PUBLICADO / EN PROCESO', boardNote: 'notas + diagramas + software funcionando',
   strip: 'HILOS ABIERTOS', notesIndex: '01 / ÚLTIMOS POSTEOS', notesTitle: 'Empezá por una idea.', edition: 'LISTA DE LECTURA 001',
-  projectsIndex: '02 / SIDE PROJECTS', projectsA: 'Uno en marcha.', projectsB: 'Tres experimentos en cola.', projectsCopy: 'Un backlog público enfocado en productos de AI y agent harnesses. El primer proyecto está en desarrollo; los otros tres hacen explícitas las preguntas que vamos a explorar después.',
+  projectsIndex: '02 / PROYECTO ACTIVO', projectsA: 'Uno en marcha.', projectsB: 'Evidencia que podés revisar.', projectsCopy: 'AI Knowledge Platform es el único side project destacado acá: un producto público activo con código, tests, evaluación de retrieval y estado de entrega explícito.',
   seriesIndex: '03 / SERIES & GUÍAS', seriesA: 'Ideas que necesitan', seriesB: 'más de un posteo.', seriesCopy: 'Recorridos de aprendizaje largos que conectan conceptos, decisiones e implementación.',
   aboutIndex: '04 / SOBRE MÍ', aboutA: 'El trabajo está acá.', aboutB: 'El CV, en otro lado.', aboutCopy: 'Soy Matías, senior full-stack engineer desde Argentina. Si buscás la cronología profesional, el trabajo actual, las herramientas y el CV, viven en una sección separada.', aboutCta: 'Ir a Sobre mí',
   contactKicker: 'ARGENTINA · ABIERTO A CONVERSAR', contactA: '¿Tenés una idea', contactB: 'que valga la pena explorar?', contactCopy: 'Contame sobre un sistema, un posteo o un side project que estaría bueno pensar juntos.', email: 'Enviar un email', footer: 'Publicado mientras construyo.',
@@ -152,7 +122,7 @@ const t = en ? {
         </div>
         <ul class="hero-proof" aria-label={en ? 'Published work summary' : 'Resumen de trabajo publicado'}>
           <li><strong>05</strong><span>{en ? 'notes to read now' : 'posteos para leer ahora'}</span></li>
-          <li><strong>1+3</strong><span>{en ? 'active + queued projects' : 'proyecto activo + tres en cola'}</span></li>
+          <li><strong>01</strong><span>{en ? 'active public project' : 'proyecto público activo'}</span></li>
           <li><strong>02</strong><span>{en ? 'growing visual series' : 'series visuales creciendo'}</span></li>
         </ul>
       </div>
@@ -165,7 +135,7 @@ const t = en ? {
         <nav aria-label={en ? 'Browse by topic' : 'Explorar por tema'}>
           <a href="/ai/"><span>01</span><strong>AI & Harnesses</strong><small>Models · Tools · Evals</small><b aria-hidden="true">→</b></a>
           <a href="/system-design/"><span>02</span><strong>System Design</strong><small>Trade-offs · Data · Scale</small><b aria-hidden="true">→</b></a>
-          <a href="#projects"><span>03</span><strong>{en ? 'Side projects' : 'Side projects'}</strong><small>Code · Evidence · Notes</small><b aria-hidden="true">↓</b></a>
+          <a href="#projects"><span>03</span><strong>{en ? 'Active project' : 'Proyecto activo'}</strong><small>Code · Evidence · Notes</small><b aria-hidden="true">↓</b></a>
         </nav>
       </aside>
     </section>
@@ -192,17 +162,15 @@ const t = en ? {
           <div><p class="section-index">{t.projectsIndex}</p><h2>{t.projectsA}<br /><em>{t.projectsB}</em></h2></div>
           <p>{t.projectsCopy}</p>
         </div>
-        <div class="side-project-grid">
+        <div class="side-project-grid is-single">
           {projects.map((project) => (
-            <article class={`side-project-card side-project-${project.tone} ${project.href ? 'is-active' : 'is-planned'}`}>
+            <article class={`side-project-card side-project-${project.tone} is-active`}>
               <div class="side-project-top"><span>{project.number}</span><small>{project.status}</small></div>
               <p class="side-project-label">{project.label}</p>
               <h3>{project.title}</h3>
               <p class="side-project-copy">{project.copy}</p>
               <ul>{project.stack.map((item) => <li>{item}</li>)}</ul>
-              {project.href
-                ? <a class="side-project-link" href={project.href}>{project.cta} <span aria-hidden="true">↗</span></a>
-                : <p class="side-project-link planned-label">{project.cta} <span aria-hidden="true">○</span></p>}
+              <a class="side-project-link" href={project.href}>{project.cta} <span aria-hidden="true">↗</span></a>
             </article>
           ))}
         </div>
@@ -253,7 +221,7 @@ const t = en ? {
 
   <footer class="portfolio-footer">
     <a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
-    <p>Notes · Side projects · Systems</p><span>{t.footer}</span>
+    <p>{en ? 'Notes · Active project · Systems' : 'Posteos · Proyecto activo · Sistemas'}</p><span>{t.footer}</span>
   </footer>
 
   <script>

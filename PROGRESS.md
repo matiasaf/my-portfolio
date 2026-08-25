@@ -14,6 +14,12 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- The bilingual Writing/Publicaciones side-project surface now features only the active AI
+  Knowledge Platform. Three queued concepts and all backlog language were removed; hero metrics,
+  navigation copy, section framing, metadata, and footer copy now describe one active public
+  project. The single-card layout was checked at 390px and 1440px without overflow, and
+  `npm run verify` passed with 66 files clean and 28 static pages built.
+
 - Priority-issue remediation from the 2026-08-24 professional-journey critique: contact is now
   the primary action in the home hero, final contact block, and case-study close; the public email
   is selectable and paired with a response-time expectation; secondary contact controls use a
@@ -63,6 +69,4 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Known follow-ups
 
-- The Writing page still leads its side-projects section with three queued projects.
-  Plan section 8 says only delivered or actively maintained work should appear prominently;
-  decide whether to cut them when PR 2 reshapes the project surfaces.
+- None.
