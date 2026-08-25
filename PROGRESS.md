@@ -14,6 +14,13 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Published “What a production RAG system actually needs” as a bilingual AI & Harnesses article.
+  The piece draws on disclosed document-AI production work and the public AI Knowledge Platform to
+  cover ingestion identity, provenance, retrieval evals, server-resolved citations, authorization,
+  prompt-injection boundaries, failure design, observability, and release gates. It is linked from
+  the AI module and both Writing/Publicaciones indexes; responsive and theme review covered the
+  English and Spanish routes at 390px and 1280px with no horizontal overflow.
+
 - The bilingual Writing/Publicaciones side-project surface now features only the active AI
   Knowledge Platform. Three queued concepts and all backlog language were removed; hero metrics,
   navigation copy, section framing, metadata, and footer copy now describe one active public

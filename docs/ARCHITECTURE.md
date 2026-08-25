@@ -44,6 +44,8 @@ articles may contain their page structure directly.
 | `/es/trabajo/serverless-modernization/` | `src/pages/es/trabajo/serverless-modernization.astro` |
 | `/ai/` | `src/pages/ai.astro` |
 | `/ai/transformer-architecture/` | `src/pages/ai/transformer-architecture.astro` |
+| `/ai/production-rag/` | `src/pages/ai/production-rag.astro` |
+| `/es/ai/rag-en-produccion/` | `src/pages/es/ai/rag-en-produccion.astro` |
 | `/system-design/` | `src/pages/system-design.astro` |
 | `/system-design/elegir-base-de-datos/` | `src/pages/system-design/elegir-base-de-datos.astro` |
 | `/system-design/concurrencia-vs-paralelismo-python/` | `src/pages/system-design/concurrencia-vs-paralelismo-python.astro` |

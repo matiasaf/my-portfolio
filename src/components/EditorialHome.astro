@@ -121,7 +121,7 @@ const t = en ? {
           <a class="quiet-action" href="#projects">{t.explore} <span aria-hidden="true">→</span></a>
         </div>
         <ul class="hero-proof" aria-label={en ? 'Published work summary' : 'Resumen de trabajo publicado'}>
-          <li><strong>05</strong><span>{en ? 'notes to read now' : 'posteos para leer ahora'}</span></li>
+          <li><strong>{String(notes.length).padStart(2, '0')}</strong><span>{en ? 'notes to read now' : 'posteos para leer ahora'}</span></li>
           <li><strong>01</strong><span>{en ? 'active public project' : 'proyecto público activo'}</span></li>
           <li><strong>02</strong><span>{en ? 'growing visual series' : 'series visuales creciendo'}</span></li>
         </ul>

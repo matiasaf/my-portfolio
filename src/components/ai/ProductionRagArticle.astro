@@ -1,0 +1,311 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ModuleHeader from './ModuleHeader.astro';
+import ModuleFooter from './ModuleFooter.astro';
+import '../../styles/ai.css';
+import '../../styles/production-rag-article.css';
+
+interface Props { lang: 'es' | 'en' }
+const { lang } = Astro.props;
+const es = lang === 'es';
+
+const alternatePath = es ? '/ai/production-rag/' : '/es/ai/rag-en-produccion/';
+
+const t = es ? {
+  title: 'Qué necesita realmente un sistema RAG en producción',
+  description: 'Una mirada personal y práctica a la arquitectura, evaluación, seguridad, provenance, observabilidad y operación que convierten una demo de RAG en un producto confiable.',
+  header: 'ARTÍCULO 07 · HARNESS', back: 'Volver a AI & Harnesses', switchLabel: 'Read in English', switchShort: 'EN',
+  breadcrumb: ['AI & Harnesses', 'The harness', 'Artículo 07'],
+  kicker: 'RAG · PRODUCCIÓN · CONFIANZA', heroA: 'La demo responde.', heroB: 'El sistema explica por qué.',
+  lede: 'Después de trabajar en productos documentales con AI y de construir uno en público, dejé de pensar RAG como “buscar chunks y llamar a un modelo”. En producción, el trabajo difícil es preservar una cadena de evidencia mientras cambian los documentos, los permisos, los modelos y las condiciones de falla.',
+  meta: [['PUBLICADO', '25 AGO 2026'], ['LECTURA', '~16 min'], ['IDIOMA', 'ES · EN'], ['PERSPECTIVA', 'Producción real']],
+  thesisLabel: 'MI DEFINICIÓN OPERATIVA', thesis: 'Un RAG de producción es un sistema de evidencia con una interfaz generativa. Si no podés inspeccionar la evidencia, solo tenés una demo convincente.',
+  s1: ['01 / LA DISTANCIA A PRODUCCIÓN', 'El happy path ocupa', 'una sola flecha.'],
+  s1Intro: 'Subir un PDF, partirlo, generar embeddings y obtener una respuesta es una prueba de integración. No prueba que el producto pueda sostener confianza.',
+  s1p: [
+    'La primera versión de casi todos los diagramas de RAG cabe en una línea: documento → chunks → índice → prompt → respuesta. La primera versión de casi todos los incidentes vive en lo que ese diagrama omite: un PDF escaneado sin texto, un reintento que duplica contenido, permisos que cambiaron, una nueva versión del embedding, un proveedor lento o una respuesta fluida construida sobre evidencia mediocre.',
+    'En mi experiencia, el modelo rara vez es la parte que más diseño necesita. El producto se vuelve serio cuando cada etapa tiene un contrato, un estado visible y una forma de fallar sin mentir. Eso cambia la conversación de “¿qué vector database usamos?” a “¿qué afirmación podemos defender?”.',
+  ],
+  pipelineCaption: 'DOS RECORRIDOS, UN SOLO PRODUCTO', pipelineTop: 'DATA PLANE · ASÍ SE VUELVE BUSCABLE', pipelineBottom: 'QUERY PLANE · ASÍ SE VUELVE RESPUESTA',
+  pipelineA: ['FUENTE', 'VALIDAR', 'EXTRAER', 'CHUNKEAR', 'INDEXAR'], pipelineB: ['IDENTIDAD', 'BUSCAR', 'RANKEAR', 'GENERAR', 'VERIFICAR'],
+  pipelineNote: 'La UI no debería ocultar esta máquina. Debería traducirla: procesando, listo, evidencia insuficiente, acceso denegado, proveedor no disponible y reintento seguro son estados de producto, no detalles internos.',
+  s2: ['02 / INGESTA', 'La calidad de respuesta', 'empieza antes del índice.'],
+  s2Intro: 'Retrieval no puede recuperar estructura que la ingesta destruyó. El pipeline documental es parte del modelo de calidad.',
+  ingestion: [
+    ['01', 'Identidad estable', 'Hash del archivo, versión de la fuente y versión del pipeline. Un retry debe continuar o reemplazar de forma deliberada, nunca crear una segunda verdad por accidente.'],
+    ['02', 'Extracción verificable', 'Texto, página, título, sección, tablas y offsets deben conservar suficiente provenance para volver al original. OCR y parsing fallan de maneras distintas; “terminó” no significa “extrajo bien”.'],
+    ['03', 'Estados explícitos', 'stored, extracting, extracted, indexing, indexed y failed dicen qué trabajo ocurrió y qué se puede reintentar. Un booleano ready borra información justo cuando más hace falta.'],
+    ['04', 'Reindexado reproducible', 'El índice es una proyección reconstruible. Guardá qué parser, reglas de chunking y embedding produjeron cada entrada, y hacé posible un rebuild sin perder el documento fuente.'],
+  ],
+  personalLabel: 'ALGO QUE CAMBIÓ MI FORMA DE DISEÑARLO',
+  personal: 'Antes pensaba el chunk como la unidad principal. Hoy pienso primero en la evidencia que una persona necesita abrir: documento, versión, página, sección y pasaje. El chunk es una optimización de retrieval; no debería convertirse en la identidad del conocimiento.',
+  s3: ['03 / RETRIEVAL', 'Medí el buscador', 'antes de culpar al modelo.'],
+  s3Intro: 'Una respuesta final mala mezcla, como mínimo, errores de búsqueda y errores de síntesis. Si solo puntuás el texto final, no sabés qué sistema corregir.',
+  retrievalCards: [
+    ['RECALL@K', '¿La evidencia correcta apareció?', 'Es el primer gate. Si el pasaje útil no llega al contexto, ningún prompt lo puede recuperar.'],
+    ['MRR / NDCG', '¿Apareció suficientemente arriba?', 'El orden importa cuando el presupuesto de contexto es chico y el modelo presta atención de forma desigual.'],
+    ['PRECISIÓN', '¿Cuánto ruido enviamos?', 'Más chunks pueden subir recall y, al mismo tiempo, diluir evidencia, aumentar tokens y empeorar la respuesta.'],
+    ['COBERTURA DE ABSTENCIÓN', '¿Detectamos cuando no alcanza?', 'El sistema también necesita casos sin respuesta. Recuperar algo no significa haber recuperado evidencia suficiente.'],
+  ],
+  baselineTitle: 'Mi orden de implementación',
+  baseline: [
+    ['1', 'Set de preguntas versionado', 'Preguntas reales, documento esperado, pasaje relevante y casos que deberían abstenerse.'],
+    ['2', 'Baseline lexical', 'BM25 o full-text search: barato, explicable y excelente para nombres, códigos, fechas y términos exactos.'],
+    ['3', 'Análisis de errores', 'Separar sinónimos, mala extracción, chunks rotos, filtros incorrectos y contenido ausente.'],
+    ['4', 'Semántica o híbrido', 'Agregar vectores, expansión de query o reranking solo donde el set demuestra una brecha.'],
+  ],
+  baselineNote: 'En mi proyecto público empecé con FTS5/BM25 y thresholds de Recall@3 y MRR@3 en CI. No porque lexical sea universalmente superior, sino porque una base simple y medible convierte “necesitamos embeddings” en una hipótesis comprobable.',
+  s4: ['04 / GENERACIÓN Y CITAS', 'El modelo redacta.', 'El servidor responde.'],
+  s4Intro: 'Grounding no es pegar fuentes debajo de un texto. Es limitar qué puede afirmar el sistema y hacer que cada referencia resuelva a evidencia que realmente estuvo en ese request.',
+  trustRows: [
+    ['EVIDENCIA LOCAL AL REQUEST', 'Asigná IDs opacos a los pasajes recuperados. El modelo puede citar esos IDs, no inventar nombres de archivo, páginas o URLs.'],
+    ['OUTPUT ESTRUCTURADO', 'Validá respuesta, citas y estado de abstención contra un schema. Un parse exitoso no prueba verdad, pero elimina estados ambiguos.'],
+    ['CITAS RESUELTAS POR SERVIDOR', 'Convertí cada ID válido en documento, versión, página, offsets y enlace. Rechazá IDs desconocidos en vez de mostrarlos.'],
+    ['ABSTENCIÓN COMO ÉXITO', 'Si la evidencia no cubre la pregunta, “no encontré respaldo suficiente” es un resultado correcto. Forzar texto es una falla de producto.'],
+  ],
+  boundary: 'La distinción que más me sirve es simple: el modelo propone una composición; la aplicación decide qué evidencia existe, qué usuario puede verla y qué estructura acepta.',
+  s5: ['05 / SEGURIDAD', 'El índice también es', 'una frontera de autorización.'],
+  s5Intro: 'RAG puede filtrar información a usuarios que jamás podrían abrir la fuente. El prompt no es un control de acceso.',
+  security: [
+    ['Autorizá antes de rankear', 'Aplicá tenant, ACL, clasificación y vigencia dentro de la consulta. Recuperar todo y filtrar después ya expuso datos al pipeline y deforma el ranking.'],
+    ['Sincronizá permisos', 'La autorización del índice es una réplica de la fuente. Medí su lag, procesá revocaciones y definí qué pasa mientras una ACL está desactualizada.'],
+    ['Tratá el contenido como no confiable', 'Un documento puede contener instrucciones para el modelo. Delimitá datos e instrucciones, reducí capacidades y nunca permitas que contexto recuperado otorgue permisos o habilite herramientas.'],
+    ['Minimizá telemetry sensible', 'Queries, chunks, prompts y respuestas pueden contener PII o secretos. Logs útiles no implican almacenar el contenido completo; preferí IDs, hashes, conteos y muestreo controlado.'],
+  ],
+  securityNote: 'Prompt injection no se resuelve con otra frase en el system prompt. Se contiene con arquitectura: mínimo privilegio, separación entre instrucciones y datos, validación de salida y ninguna acción sensible sin una autorización determinística fuera del modelo.',
+  s6: ['06 / OPERACIÓN', 'Diseñá para el día', 'en que una etapa falle.'],
+  s6Intro: 'Un request RAG cruza storage, búsqueda y un proveedor probabilístico. Latencia, costo y disponibilidad se componen; los retries ciegos también.',
+  failures: [
+    ['UPLOAD INTERRUMPIDO', 'Escritura temporal + commit atómico', 'Un archivo parcial nunca aparece como fuente válida.'],
+    ['EXTRACCIÓN FALLIDA', 'Estado durable + retry puntual', 'Se preserva el archivo; no se reinicia todo el flujo.'],
+    ['ÍNDICE ATRASADO', 'Versiones y freshness visibles', 'La respuesta puede declarar su corte de conocimiento.'],
+    ['RETRIEVAL DÉBIL', 'Threshold + abstención', 'No se llama al modelo para fabricar confianza.'],
+    ['PROVEEDOR LENTO', 'Timeout, cancelación y presupuesto', 'El usuario recibe un estado honesto y el trabajo no queda huérfano.'],
+    ['OUTPUT INVÁLIDO', 'Schema + retry acotado', 'Nunca se envía una forma inesperada al cliente.'],
+  ],
+  asyncLabel: 'CUÁNDO SACARLO DEL REQUEST',
+  asyncCopy: 'Ingesta, OCR, embeddings masivos y reindexado pertenecen a jobs durables cuando superan el presupuesto HTTP. Eso exige idempotencia, backpressure, dead-letter handling y progreso persistido. Hacerlo async no elimina estados: los vuelve inevitables.',
+  s7: ['07 / OBSERVABILIDAD', 'Una latencia total', 'no explica nada.'],
+  s7Intro: 'Instrumentá la cadena como etapas conectadas y separá salud operativa de calidad. Un sistema puede estar rápido y contestar mal.',
+  signals: [
+    ['INGESTA', 'documentos por estado · bytes · páginas · tiempo de extracción · errores por parser'],
+    ['RETRIEVAL', 'latencia · top-k · filtros · scores · cero resultados · versión de índice'],
+    ['GENERACIÓN', 'modelo snapshot · tokens · TTFT · latencia · finish reason · costo estimado'],
+    ['PRODUCTO', 'citas abiertas · abstenciones · feedback · reformulaciones · tarea completada'],
+  ],
+  trace: ['request_id', 'corpus_version', 'retriever_version', 'prompt_version', 'model_snapshot', 'evidence_ids', 'outcome'],
+  traceNote: 'No hace falta loguear el contenido para poder reconstruir una decisión. Hace falta correlación y versionado. El contenido sensible se captura solo bajo una política explícita de retención y acceso.',
+  s8: ['08 / RELEASE GATE', 'Lo que reviso', 'antes de llamarlo producción.'],
+  s8Intro: 'La checklist no garantiza calidad; evita confundir una integración funcional con un sistema operable.',
+  checklist: [
+    '¿Cada documento tiene identidad, versión, checksum y estado de procesamiento?',
+    '¿Puedo reconstruir el índice desde la fuente sin perder provenance?',
+    '¿Existe un set de evaluación con positivos, negativos y preguntas sin respuesta?',
+    '¿Retrieval y generación tienen métricas y gates separados?',
+    '¿Las citas se resuelven desde evidencia server-side del mismo request?',
+    '¿La autorización se aplica durante retrieval y refleja revocaciones?',
+    '¿Cada etapa tiene timeout, retry acotado, idempotencia y estado de falla visible?',
+    '¿Puedo atribuir latencia, tokens y costo por request y por tenant?',
+    '¿Modelo, prompt, parser, chunking, embeddings e índice están versionados?',
+    '¿El producto sabe abstenerse sin tratarlo como un error técnico?',
+  ],
+  conclusionKicker: 'LA IDEA EN UNA LÍNEA', conclusionA: 'No construyas un chatbot', conclusionB: 'sobre documentos.',
+  conclusionCopy: 'Construí una cadena de evidencia que pueda ingerir, autorizar, recuperar, medir y explicar documentos. Después dejá que un modelo redacte sobre esa cadena. Ese orden produce menos magia en la demo y mucha más confianza cuando el sistema importa.',
+  sourcesTitle: ['Fuentes y', 'trabajo verificable.'], sourcesNumber: '09 / PARA PROFUNDIZAR',
+  sourceNotes: ['Paper original de RAG · Lewis et al.', 'Pipeline, chunking, retrieval híbrido y citas · Microsoft', 'Tests estructurados para sistemas variables · OpenAI', 'Autorización por documento durante retrieval · Microsoft', 'Riesgos de prompt injection · OWASP', 'Código, ADRs, evals y decisiones mencionadas en este artículo'],
+  project: 'Ver el caso de estudio del AI Knowledge Platform', top: 'VOLVER ARRIBA ↑', footer: 'ARTÍCULO 07 · PRODUCTION RAG',
+} : {
+  title: 'What a production RAG system actually needs',
+  description: 'A personal, practical look at the architecture, evaluation, security, provenance, observability, and operations that turn a RAG demo into a trustworthy product.',
+  header: 'ARTICLE 07 · HARNESS', back: 'Back to AI & Harnesses', switchLabel: 'Leer en español', switchShort: 'ES',
+  breadcrumb: ['AI & Harnesses', 'The harness', 'Article 07'],
+  kicker: 'RAG · PRODUCTION · TRUST', heroA: 'The demo answers.', heroB: 'The system explains why.',
+  lede: 'After working on document AI products and building one in public, I stopped thinking about RAG as “retrieve chunks and call a model.” In production, the difficult work is preserving a chain of evidence while documents, permissions, models, and failure conditions keep changing.',
+  meta: [['PUBLISHED', 'AUG 25 2026'], ['READING', '~16 min'], ['LANGUAGE', 'EN · ES'], ['PERSPECTIVE', 'Production work']],
+  thesisLabel: 'MY WORKING DEFINITION', thesis: 'A production RAG system is an evidence system with a generative interface. If you cannot inspect the evidence, you only have a convincing demo.',
+  s1: ['01 / THE PRODUCTION GAP', 'The happy path fits', 'in one arrow.'],
+  s1Intro: 'Uploading a PDF, splitting it, creating embeddings, and getting an answer is an integration test. It does not prove the product can sustain trust.',
+  s1p: [
+    'The first version of almost every RAG diagram fits on one line: document → chunks → index → prompt → answer. The first version of almost every incident lives in what that diagram leaves out: a scanned PDF with no text, a retry that duplicates content, changed permissions, a new embedding version, a slow provider, or a fluent answer built on mediocre evidence.',
+    'In my experience, the model is rarely the part that needs the most design. The product becomes serious when every stage has a contract, a visible state, and a way to fail without lying. That moves the conversation from “which vector database?” to “which claim can we defend?”',
+  ],
+  pipelineCaption: 'TWO PATHS, ONE PRODUCT', pipelineTop: 'DATA PLANE · HOW CONTENT BECOMES SEARCHABLE', pipelineBottom: 'QUERY PLANE · HOW EVIDENCE BECOMES AN ANSWER',
+  pipelineA: ['SOURCE', 'VALIDATE', 'EXTRACT', 'CHUNK', 'INDEX'], pipelineB: ['IDENTITY', 'RETRIEVE', 'RANK', 'GENERATE', 'VERIFY'],
+  pipelineNote: 'The UI should not hide this machine. It should translate it: processing, ready, insufficient evidence, access denied, provider unavailable, and safe to retry are product states, not implementation details.',
+  s2: ['02 / INGESTION', 'Answer quality starts', 'before the index.'],
+  s2Intro: 'Retrieval cannot recover structure that ingestion destroyed. The document pipeline is part of the quality model.',
+  ingestion: [
+    ['01', 'Stable identity', 'File checksum, source version, and pipeline version. A retry should deliberately resume or replace work, never create a second truth by accident.'],
+    ['02', 'Verifiable extraction', 'Text, page, title, section, tables, and offsets should preserve enough provenance to return to the original. OCR and parsing fail differently; “completed” does not mean “extracted well.”'],
+    ['03', 'Explicit states', 'stored, extracting, extracted, indexing, indexed, and failed say what happened and what can be retried. A ready boolean deletes information exactly when you need it.'],
+    ['04', 'Reproducible reindexing', 'The index is a rebuildable projection. Record which parser, chunking rules, and embedding produced every entry, and make rebuilds possible without losing the source.'],
+  ],
+  personalLabel: 'WHAT CHANGED MY OWN DESIGN',
+  personal: 'I used to think of the chunk as the primary unit. Now I start with the evidence a person needs to open: document, version, page, section, and passage. A chunk is a retrieval optimization; it should not become the identity of the knowledge.',
+  s3: ['03 / RETRIEVAL', 'Measure the search engine', 'before blaming the model.'],
+  s3Intro: 'A bad final answer combines, at minimum, retrieval errors and synthesis errors. If you only score the prose, you do not know which system to fix.',
+  retrievalCards: [
+    ['RECALL@K', 'Did the right evidence appear?', 'This is the first gate. If the useful passage never reaches context, no prompt can recover it.'],
+    ['MRR / NDCG', 'Did it appear high enough?', 'Order matters when the context budget is small and the model uses the supplied evidence unevenly.'],
+    ['PRECISION', 'How much noise did we send?', 'More chunks can raise recall while diluting evidence, increasing tokens, and making the answer worse.'],
+    ['ABSTENTION COVERAGE', 'Do we detect when evidence is weak?', 'The suite needs unanswerable cases too. Retrieving something is not the same as retrieving enough.'],
+  ],
+  baselineTitle: 'My implementation order',
+  baseline: [
+    ['1', 'Versioned question set', 'Real questions, expected document, relevant passage, and cases that should abstain.'],
+    ['2', 'Lexical baseline', 'BM25 or full-text search: cheap, explainable, and strong for names, codes, dates, and exact terms.'],
+    ['3', 'Error analysis', 'Separate synonyms, bad extraction, broken chunks, incorrect filters, and missing content.'],
+    ['4', 'Semantic or hybrid', 'Add vectors, query expansion, or reranking only where the set demonstrates a gap.'],
+  ],
+  baselineNote: 'In my public project I started with FTS5/BM25 and Recall@3 and MRR@3 thresholds in CI. Not because lexical search always wins, but because a simple measured baseline turns “we need embeddings” into a testable hypothesis.',
+  s4: ['04 / GENERATION & CITATIONS', 'The model writes.', 'The server answers.'],
+  s4Intro: 'Grounding is not attaching sources below some prose. It is constraining what the system can claim and making every reference resolve to evidence that was present in that request.',
+  trustRows: [
+    ['REQUEST-LOCAL EVIDENCE', 'Give retrieved passages opaque IDs. The model may cite those IDs; it may not invent filenames, page numbers, or URLs.'],
+    ['STRUCTURED OUTPUT', 'Validate answer, citations, and abstention state against a schema. A valid parse does not prove truth, but it removes ambiguous states.'],
+    ['SERVER-RESOLVED CITATIONS', 'Turn every valid ID into document, version, page, offsets, and link. Reject unknown IDs instead of rendering them.'],
+    ['ABSTENTION AS SUCCESS', 'If evidence does not cover the question, “I could not find sufficient support” is correct. Forcing prose is a product failure.'],
+  ],
+  boundary: 'The distinction I find most useful is simple: the model proposes a composition; the application decides which evidence exists, which user may see it, and which structure is accepted.',
+  s5: ['05 / SECURITY', 'The index is also', 'an authorization boundary.'],
+  s5Intro: 'RAG can leak information to people who could never open the source. A prompt is not an access control.',
+  security: [
+    ['Authorize before ranking', 'Apply tenant, ACL, classification, and validity filters inside the query. Retrieving everything and filtering later already exposed data to the pipeline and distorted ranking.'],
+    ['Synchronize permissions', 'Index authorization is a replica of the source. Measure its lag, process revocations, and define behavior while an ACL is stale.'],
+    ['Treat content as untrusted', 'A document can contain instructions for the model. Delimit data from instructions, reduce capabilities, and never let retrieved context grant permissions or enable tools.'],
+    ['Minimize sensitive telemetry', 'Queries, chunks, prompts, and responses may hold PII or secrets. Useful logs need not store full content; prefer IDs, hashes, counts, and controlled sampling.'],
+  ],
+  securityNote: 'Prompt injection is not solved by another sentence in the system prompt. It is contained by architecture: least privilege, separation of instructions and data, output validation, and no sensitive action without deterministic authorization outside the model.',
+  s6: ['06 / OPERATIONS', 'Design for the day', 'one stage fails.'],
+  s6Intro: 'A RAG request crosses storage, search, and a probabilistic provider. Latency, cost, and availability compose; blind retries do too.',
+  failures: [
+    ['INTERRUPTED UPLOAD', 'Temporary write + atomic commit', 'A partial file never appears as a valid source.'],
+    ['FAILED EXTRACTION', 'Durable state + targeted retry', 'The file remains; the whole flow does not restart.'],
+    ['STALE INDEX', 'Visible versions and freshness', 'The answer can declare its knowledge boundary.'],
+    ['WEAK RETRIEVAL', 'Threshold + abstention', 'The model is not called to manufacture confidence.'],
+    ['SLOW PROVIDER', 'Timeout, cancellation, and budget', 'The user gets an honest state and no work is orphaned.'],
+    ['INVALID OUTPUT', 'Schema + bounded retry', 'An unexpected shape never reaches the client.'],
+  ],
+  asyncLabel: 'WHEN TO LEAVE THE REQUEST PATH',
+  asyncCopy: 'Ingestion, OCR, bulk embeddings, and reindexing belong in durable jobs once they exceed an HTTP budget. That introduces idempotency, backpressure, dead-letter handling, and persisted progress. Making work asynchronous does not remove state; it makes state unavoidable.',
+  s7: ['07 / OBSERVABILITY', 'One total latency', 'explains nothing.'],
+  s7Intro: 'Instrument the chain as connected stages and separate operational health from quality. A system can be fast and wrong.',
+  signals: [
+    ['INGESTION', 'documents by state · bytes · pages · extraction time · failures by parser'],
+    ['RETRIEVAL', 'latency · top-k · filters · scores · zero results · index version'],
+    ['GENERATION', 'model snapshot · tokens · TTFT · latency · finish reason · estimated cost'],
+    ['PRODUCT', 'citations opened · abstentions · feedback · reformulations · task completed'],
+  ],
+  trace: ['request_id', 'corpus_version', 'retriever_version', 'prompt_version', 'model_snapshot', 'evidence_ids', 'outcome'],
+  traceNote: 'You do not need to log content to reconstruct a decision. You need correlation and versioning. Sensitive content is captured only under an explicit retention and access policy.',
+  s8: ['08 / RELEASE GATE', 'What I review', 'before calling it production.'],
+  s8Intro: 'A checklist cannot guarantee quality. It can stop an integration that works from being mistaken for a system that operates.',
+  checklist: [
+    'Does every document have identity, version, checksum, and processing state?',
+    'Can I rebuild the index from source without losing provenance?',
+    'Is there an evaluation set with positive, negative, and unanswerable questions?',
+    'Do retrieval and generation have separate metrics and gates?',
+    'Are citations resolved from server-side evidence in the same request?',
+    'Is authorization enforced during retrieval and are revocations reflected?',
+    'Does each stage have a timeout, bounded retry, idempotency, and visible failure state?',
+    'Can I attribute latency, tokens, and cost per request and tenant?',
+    'Are model, prompt, parser, chunking, embeddings, and index versioned?',
+    'Can the product abstain without treating it as a technical error?',
+  ],
+  conclusionKicker: 'THE IDEA IN ONE LINE', conclusionA: 'Do not build a chatbot', conclusionB: 'over documents.',
+  conclusionCopy: 'Build a chain of evidence that can ingest, authorize, retrieve, measure, and explain documents. Then let a model write over that chain. That order produces less magic in the demo and much more trust when the system matters.',
+  sourcesTitle: ['Sources and', 'verifiable work.'], sourcesNumber: '09 / GO DEEPER',
+  sourceNotes: ['The original RAG paper · Lewis et al.', 'Pipeline, chunking, hybrid retrieval, and citations · Microsoft', 'Structured tests for variable systems · OpenAI', 'Document-level authorization during retrieval · Microsoft', 'Prompt injection risks · OWASP', 'Source, ADRs, evals, and the decisions discussed here'],
+  project: 'Read the AI Knowledge Platform case study', top: 'BACK TO TOP ↑', footer: 'ARTICLE 07 · PRODUCTION RAG',
+};
+
+const sources = [
+  ['Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks', 'https://arxiv.org/abs/2005.11401'],
+  ['RAG in Azure AI Search', 'https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview'],
+  ['Evaluation best practices', 'https://developers.openai.com/api/docs/guides/evaluation-best-practices'],
+  ['Document-level access control', 'https://learn.microsoft.com/en-us/azure/search/search-document-level-access-overview'],
+  ['LLM01: Prompt Injection', 'https://genai.owasp.org/llmrisk/llm01-prompt-injection/'],
+  ['AI Knowledge Platform', es ? '/es/trabajo/ai-knowledge-platform/' : '/en/work/ai-knowledge-platform/'],
+] as const;
+---
+
+<Layout mainId="top" lang={lang} title={t.title} description={t.description} alternateHref={alternatePath} ogType="article" publishedTime="2026-08-25">
+  <ModuleHeader label={t.header} />
+  <main id="top" tabindex="-1" class="ai-page rag-page">
+    <article>
+      <header class="ai-post-hero section-shell rag-hero">
+        <div class="rag-breadcrumb-row">
+          <p class="ai-breadcrumb"><a href="/ai/">{t.breadcrumb[0]}</a><span aria-hidden="true">/</span><a href="/ai/#writing">{t.breadcrumb[1]}</a><span aria-hidden="true">/</span><b>{t.breadcrumb[2]}</b></p>
+          <a class="rag-language-link" href={alternatePath} hreflang={es ? 'en' : 'es'} aria-label={t.switchLabel}>{t.switchShort} ↗</a>
+        </div>
+        <p class="eyebrow"><span></span> {t.kicker}</p>
+        <h1>{t.heroA}<br /><strong>{t.heroB}</strong></h1>
+        <p class="ai-post-lede">{t.lede}</p>
+        <div class="ai-post-meta">{t.meta.map(([label, value]) => <div><span>{label}</span><b>{value}</b></div>)}</div>
+      </header>
+
+      <aside class="rag-thesis"><div class="section-shell"><span>{t.thesisLabel}</span><p>{t.thesis}</p></div></aside>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">{t.s1[0]}</p><div><h2>{t.s1[1]}<br /><em>{t.s1[2]}</em></h2><p>{t.s1Intro}</p></div></div>
+        <div class="ai-prose rag-prose-two">{t.s1p.map((p) => <p>{p}</p>)}</div>
+        <figure class="ai-figure rag-pipeline">
+          <figcaption class="ai-figure-cap"><span>FIGURE A</span><b>{t.pipelineCaption}</b></figcaption>
+          <div class="ai-frame">
+            <div class="rag-flow-row"><p>{t.pipelineTop}</p><ol>{t.pipelineA.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><b>{item}</b></li>)}</ol></div>
+            <div class="rag-flow-row"><p>{t.pipelineBottom}</p><ol>{t.pipelineB.map((item, index) => <li><span>{String(index + 6).padStart(2, '0')}</span><b>{item}</b></li>)}</ol></div>
+          </div>
+          <p class="ai-figure-note">{t.pipelineNote}</p>
+        </figure>
+      </section>
+
+      <section class="ai-section ai-section-tint"><div class="section-shell">
+        <div class="ai-section-head"><p class="section-number">{t.s2[0]}</p><div><h2>{t.s2[1]}<br /><em>{t.s2[2]}</em></h2><p>{t.s2Intro}</p></div></div>
+        <div class="rag-principle-grid">{t.ingestion.map(([n, title, copy]) => <article><span>{n}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
+        <blockquote class="rag-personal"><span>{t.personalLabel}</span><p>{t.personal}</p></blockquote>
+      </div></section>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">{t.s3[0]}</p><div><h2>{t.s3[1]}<br /><em>{t.s3[2]}</em></h2><p>{t.s3Intro}</p></div></div>
+        <div class="rag-metric-grid">{t.retrievalCards.map(([name, question, copy]) => <article><span>{name}</span><h3>{question}</h3><p>{copy}</p></article>)}</div>
+        <div class="rag-baseline"><div><span>01 → 04</span><h3>{t.baselineTitle}</h3></div><ol>{t.baseline.map(([n, title, copy]) => <li><span>{n}</span><div><b>{title}</b><p>{copy}</p></div></li>)}</ol></div>
+        <p class="rag-note">{t.baselineNote}</p>
+      </section>
+
+      <section class="ai-section ai-dark"><div class="section-shell">
+        <div class="ai-section-head light"><p class="section-number">{t.s4[0]}</p><div><h2>{t.s4[1]}<br /><em>{t.s4[2]}</em></h2><p>{t.s4Intro}</p></div></div>
+        <ol class="rag-trust-list">{t.trustRows.map(([title, copy], index) => <li><span>{String(index + 1).padStart(2, '0')}</span><h3>{title}</h3><p>{copy}</p></li>)}</ol>
+        <blockquote class="rag-boundary">{t.boundary}</blockquote>
+      </div></section>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">{t.s5[0]}</p><div><h2>{t.s5[1]}<br /><em>{t.s5[2]}</em></h2><p>{t.s5Intro}</p></div></div>
+        <div class="rag-security-grid">{t.security.map(([title, copy], index) => <article><span>0{index + 1}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
+        <div class="rag-warning"><span>SECURITY BOUNDARY</span><p>{t.securityNote}</p></div>
+      </section>
+
+      <section class="ai-section ai-section-tint"><div class="section-shell">
+        <div class="ai-section-head"><p class="section-number">{t.s6[0]}</p><div><h2>{t.s6[1]}<br /><em>{t.s6[2]}</em></h2><p>{t.s6Intro}</p></div></div>
+        <div class="rag-failure-table" role="table">{t.failures.map(([failure, design, result]) => <div role="row"><b role="cell">{failure}</b><span role="cell">{design}</span><p role="cell">{result}</p></div>)}</div>
+        <div class="rag-async"><span>{t.asyncLabel}</span><p>{t.asyncCopy}</p></div>
+      </div></section>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">{t.s7[0]}</p><div><h2>{t.s7[1]}<br /><em>{t.s7[2]}</em></h2><p>{t.s7Intro}</p></div></div>
+        <div class="rag-signal-grid">{t.signals.map(([name, values]) => <article><span>{name}</span><p>{values}</p></article>)}</div>
+        <figure class="ai-figure"><figcaption class="ai-figure-cap"><span>TRACE</span><b>ONE CORRELATION CHAIN</b></figcaption><div class="rag-trace">{t.trace.map((item) => <code>{item}</code>)}</div><p class="ai-figure-note">{t.traceNote}</p></figure>
+      </section>
+
+      <section class="ai-section ai-dark"><div class="section-shell">
+        <div class="ai-section-head light"><p class="section-number">{t.s8[0]}</p><div><h2>{t.s8[1]}<br /><em>{t.s8[2]}</em></h2><p>{t.s8Intro}</p></div></div>
+        <ol class="rag-checklist">{t.checklist.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><p>{item}</p></li>)}</ol>
+      </div></section>
+
+      <section class="rag-conclusion"><div class="section-shell"><p class="eyebrow"><span></span> {t.conclusionKicker}</p><h2>{t.conclusionA}<br /><strong>{t.conclusionB}</strong></h2><p>{t.conclusionCopy}</p></div></section>
+
+      <section class="rag-sources section-shell"><div><p>{t.sourcesNumber}</p><h2>{t.sourcesTitle[0]}<br /><em>{t.sourcesTitle[1]}</em></h2></div><ol>{sources.map(([title, href], index) => <li><span>{String(index + 1).padStart(2, '0')}</span><a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}><strong>{title}</strong><small>{t.sourceNotes[index]} {href.startsWith('http') ? '↗' : '→'}</small></a></li>)}</ol></section>
+      <nav class="rag-project-link section-shell" aria-label={t.project}><a href={es ? '/es/trabajo/ai-knowledge-platform/' : '/en/work/ai-knowledge-platform/'}>{t.project} <span>→</span></a></nav>
+    </article>
+  </main>
+  <ModuleFooter label={t.footer} />
+</Layout>

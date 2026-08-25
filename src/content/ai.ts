@@ -92,10 +92,12 @@ export const posts: Post[] = [
   },
   {
     number: '07',
-    title: 'RAG, five years in',
-    track: 'Signal',
-    status: 'planned',
-    hook: 'What long context changed, what it did not, and where retrieval is still the cheaper answer.',
+    title: 'What a production RAG system actually needs',
+    track: 'Harness',
+    status: 'published',
+    href: '/ai/production-rag/',
+    reading: '~16 min',
+    hook: 'The evidence chain, evaluation boundaries, authorization, failure states, and observability that the five-box diagram leaves out.',
   },
 ];
 
