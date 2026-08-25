@@ -46,6 +46,8 @@ articles may contain their page structure directly.
 | `/ai/transformer-architecture/` | `src/pages/ai/transformer-architecture.astro` |
 | `/ai/production-rag/` | `src/pages/ai/production-rag.astro` |
 | `/es/ai/rag-en-produccion/` | `src/pages/es/ai/rag-en-produccion.astro` |
+| `/es/ai/incidente-openai-hugging-face/` | `src/pages/es/ai/incidente-openai-hugging-face.astro` |
+| `/en/ai/openai-hugging-face-incident/` | `src/pages/en/ai/openai-hugging-face-incident.astro` |
 | `/system-design/` | `src/pages/system-design.astro` |
 | `/system-design/elegir-base-de-datos/` | `src/pages/system-design/elegir-base-de-datos.astro` |
 | `/system-design/concurrencia-vs-paralelismo-python/` | `src/pages/system-design/concurrencia-vs-paralelismo-python.astro` |

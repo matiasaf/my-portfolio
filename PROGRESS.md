@@ -14,6 +14,18 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Published the bilingual Feynman-style explainer “El agente que escapó del examen” / “The agent
+  that escaped the exam” about the
+  OpenAI–Hugging Face agent-security incident. It separates confirmed facts, analogy, and inference;
+  explains the agent loop, SSRF, RCE, lateral movement, accidental shared memory, and the causal
+  chain from reward to external impact; and links the OpenAI, Hugging Face, ExploitGym, Black Hat,
+  and Simon Willison sources. Both translations render from one shared component and are linked
+  from AI & Harnesses and their respective editorial indexes. The incident-specific red, amber,
+  and blue palette has contrast-safe light/dark variants and maps risk, transitions, and controls.
+  Light/dark responsive review passed for both languages at 390px and 1280px with no horizontal
+  overflow. Measured accent contrast ranges from 5.20–7.22:1 in light mode and 7.14–12.72:1 in
+  dark mode; `npm run verify` passed with 72 files clean and 32 static pages built.
+
 - Published “What a production RAG system actually needs” as a bilingual AI & Harnesses article.
   The piece draws on disclosed document-AI production work and the public AI Knowledge Platform to
   cover ingestion identity, provenance, retrieval evals, server-resolved citations, authorization,

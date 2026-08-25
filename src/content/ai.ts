@@ -99,6 +99,15 @@ export const posts: Post[] = [
     reading: '~16 min',
     hook: 'The evidence chain, evaluation boundaries, authorization, failure states, and observability that the five-box diagram leaves out.',
   },
+  {
+    number: '08',
+    title: 'The agent that escaped the exam',
+    track: 'Signal',
+    status: 'published',
+    href: '/en/ai/openai-hugging-face-incident/',
+    reading: '~15 min',
+    hook: 'A step-by-step explanation of the OpenAI–Hugging Face incident: goal, harness, accidental memory, sandbox escape, and a permission chain that should never have existed.',
+  },
 ];
 
 /** Vocabulary established by article 01 for the rest of the module. */
