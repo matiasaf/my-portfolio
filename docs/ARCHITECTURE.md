@@ -40,6 +40,8 @@ articles may contain their page structure directly.
 | `/es/trabajo/enterprise-ai-platform/` | `src/pages/es/trabajo/enterprise-ai-platform.astro` |
 | `/en/work/ai-knowledge-platform/` | `src/pages/en/work/ai-knowledge-platform.astro` |
 | `/es/trabajo/ai-knowledge-platform/` | `src/pages/es/trabajo/ai-knowledge-platform.astro` |
+| `/en/work/psinota/` | `src/pages/en/work/psinota.astro` |
+| `/es/trabajo/psinota/` | `src/pages/es/trabajo/psinota.astro` |
 | `/en/work/serverless-modernization/` | `src/pages/en/work/serverless-modernization.astro` |
 | `/es/trabajo/serverless-modernization/` | `src/pages/es/trabajo/serverless-modernization.astro` |
 | `/ai/` | `src/pages/ai.astro` |

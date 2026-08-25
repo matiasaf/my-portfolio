@@ -122,7 +122,7 @@ const toc = [
           return <article><strong>{metric.value}</strong><p>{metric.label[lang]}</p><small>{kindLabel(metric.kind)} · {attributionLabel(metric.attribution)}</small><a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>{t.evidence} ↗{external && <span class="visually-hidden">{newTab}</span>}</a></article>;
         })}</div></section>
 
-        <section class="case-section"><p class="section-index">09 / {t.roadmap}</p><h2>{t.roadmap}</h2><ol class="case-milestones">{study.milestones.map((milestone) => <li class={`is-${milestone.state}`}><span>{milestone.number}</span><div><small>{stateLabel(milestone.state)} · {milestone.deliverable[lang]}</small><h3>{milestone.title[lang]}</h3><p>{milestone.description[lang]}</p></div></li>)}</ol></section>
+        <section id="delivery" class="case-section"><p class="section-index">09 / {t.roadmap}</p><h2>{t.roadmap}</h2><ol class="case-milestones">{study.milestones.map((milestone) => <li class={`is-${milestone.state}`}><span>{milestone.number}</span><div><small>{stateLabel(milestone.state)} · {milestone.deliverable[lang]}</small><h3>{milestone.title[lang]}</h3><p>{milestone.description[lang]}</p></div></li>)}</ol></section>
 
         <section id="next" class="case-section case-next"><p class="section-index">10 / {t.next}</p><h2>{t.next}</h2><ol>{study.next.map((item) => <li>{item[lang]}</li>)}</ol></section>
 

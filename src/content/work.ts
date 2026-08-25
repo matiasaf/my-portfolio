@@ -304,6 +304,174 @@ const aiKnowledgePlatform: WorkCaseStudy = {
   ],
 };
 
+const psiNota: WorkCaseStudy = {
+  slug: 'psinota',
+  routes: {
+    en: '/en/work/psinota/',
+    es: '/es/trabajo/psinota/',
+  },
+  title: { en: 'PsiNota', es: 'PsiNota' },
+  seoTitle: {
+    en: 'PsiNota — Full-stack AI product case study',
+    es: 'PsiNota — Caso de estudio de producto AI full stack',
+  },
+  description: {
+    en: 'How I built a mobile-first, offline-first product that turns mental-health consultation audio into an editable, versioned, and auditable clinical-note draft.',
+    es: 'Cómo construí un producto mobile-first y offline-first que transforma audio de consultas de salud mental en un borrador de nota clínica editable, versionado y auditable.',
+  },
+  eyebrow: { en: 'SIDE PROJECT · FUNCTIONAL MVP', es: 'SIDE PROJECT · MVP FUNCIONAL' },
+  period: { en: '2026 · PRIVATE REPOSITORY', es: '2026 · REPOSITORIO PRIVADO' },
+  role: {
+    en: 'Sole author · product design, architecture, and full-stack engineering',
+    es: 'Autor único · diseño de producto, arquitectura e ingeniería full stack',
+  },
+  team: { en: 'Independent project · one engineer', es: 'Proyecto independiente · un ingeniero' },
+  stack: ['React 19', 'TypeScript', 'Express', 'PostgreSQL', 'TypeORM', 'OpenAI', 'PWA', 'Docker'],
+  availability: {
+    en: 'Private source repository and no public demo. This case study publishes the verified architecture, behavior, and quality gate without exposing clinical data.',
+    es: 'Repositorio privado y sin demo pública. Este caso publica arquitectura, comportamiento y gates de calidad verificados sin exponer datos clínicos.',
+  },
+  status: {
+    progress: { en: 'Functional MVP · end-to-end flow verified', es: 'MVP funcional · flujo end-to-end verificado' },
+    headline: {
+      en: 'Audio capture, asynchronous AI processing, human review, versioning, audit history, and offline recovery are implemented. Closed beta and production hardening remain next.',
+      es: 'Captura de audio, procesamiento asíncrono con AI, revisión humana, versionado, auditoría y recuperación offline están implementados. La beta cerrada y el endurecimiento para producción son los próximos pasos.',
+    },
+    badge: { en: 'FUNCTIONAL MVP · BETA PENDING', es: 'MVP FUNCIONAL · BETA PENDIENTE' },
+    updatedAt: '2026-08-25',
+  },
+  disclosure: {
+    reviewedAt: '2026-08-25',
+    basis: {
+      en: 'Reviewed against the private repository, its automated checks, and the project technical brief. The product is presented as an engineering MVP, not certified medical software or commercially validated adoption.',
+      es: 'Revisado contra el repositorio privado, sus controles automatizados y el brief técnico del proyecto. El producto se presenta como un MVP de ingeniería, no como software médico certificado ni como adopción comercial validada.',
+    },
+    published: [
+      { en: 'Product flow, system boundaries, stack, engineering decisions, and failure handling.', es: 'Flujo de producto, límites del sistema, stack, decisiones de ingeniería y manejo de fallas.' },
+      { en: 'Verified lint, typecheck, test, and production-build status as of the review date.', es: 'Estado verificado de lint, typecheck, tests y builds de producción a la fecha de revisión.' },
+      { en: 'Explicit limits around human review, privacy, beta readiness, and regulatory work.', es: 'Límites explícitos sobre revisión humana, privacidad, preparación para beta y trabajo regulatorio.' },
+    ],
+    withheld: [
+      { en: 'Private source code, credentials, deployment details, and any real or representative clinical records.', es: 'Código fuente privado, credenciales, detalles de despliegue y cualquier registro clínico real o representativo.' },
+      { en: 'A public demo until security, privacy, consent, retention, and market-specific requirements are reviewed.', es: 'Una demo pública hasta revisar seguridad, privacidad, consentimiento, retención y requisitos del mercado objetivo.' },
+    ],
+  },
+  overview: {
+    en: 'PsiNota explores a complete product problem rather than an isolated model call: preserve a consultation recording, process it reliably, produce a structured draft, and keep the professional in control of the final clinical note.',
+    es: 'PsiNota explora un problema de producto completo, no una llamada aislada a un modelo: preservar la grabación de una consulta, procesarla de forma confiable, producir un borrador estructurado y mantener al profesional en control de la nota clínica final.',
+  },
+  problem: {
+    en: 'A transcript does not remove the documentation burden by itself. Relevant information still has to be structured, reviewed, corrected, finalized, and traced without losing the original recording when connectivity is unreliable.',
+    es: 'Una transcripción no elimina por sí sola la carga de documentación. La información relevante todavía debe estructurarse, revisarse, corregirse, finalizarse y trazarse sin perder la grabación original cuando la conectividad es inestable.',
+  },
+  responsibility: [
+    {
+      en: 'Designed the product states and implemented authentication, consultation tracking, browser recording, resumable uploads, asynchronous processing, review, versioning, finalization, and audit history.',
+      es: 'Diseñé los estados del producto e implementé autenticación, seguimiento de consultas, grabación en el navegador, cargas reanudables, procesamiento asíncrono, revisión, versionado, finalización e historial de auditoría.',
+    },
+    {
+      en: 'Built the React PWA and Express API, modeled the PostgreSQL domain, integrated transcription and structured extraction, and packaged the system for a pragmatic Docker Compose deployment.',
+      es: 'Construí la PWA en React y la API Express, modelé el dominio en PostgreSQL, integré transcripción y extracción estructurada y empaqueté el sistema para un despliegue pragmático con Docker Compose.',
+    },
+    {
+      en: 'Defined backend invariants for user isolation, sequential note versions, immutable finalized notes, persisted jobs, retries, and auditable state changes.',
+      es: 'Definí invariantes de backend para aislamiento por usuario, versiones secuenciales, notas finalizadas inmutables, jobs persistidos, retries y cambios de estado auditables.',
+    },
+  ],
+  constraints: [
+    {
+      en: 'AI output had to remain an editable draft and require explicit professional approval; it could not become a clinical decision.',
+      es: 'El output de AI debía seguir siendo un borrador editable y requerir aprobación explícita del profesional; no podía convertirse en una decisión clínica.',
+    },
+    {
+      en: 'The recording is the hardest input to reproduce, so intermittent connectivity could not be allowed to discard it.',
+      es: 'La grabación es el input más difícil de repetir, por lo que una conexión intermitente no podía descartarla.',
+    },
+    {
+      en: 'The MVP needed low-cost deployment and recoverable processing without introducing distributed infrastructure before product validation.',
+      es: 'El MVP necesitaba un despliegue de bajo costo y procesamiento recuperable sin introducir infraestructura distribuida antes de validar el producto.',
+    },
+  ],
+  architecture: {
+    label: { en: 'Consultation-to-note path', es: 'Recorrido de consulta a nota' },
+    description: {
+      en: 'The PWA protects capture locally and uploads directly or in chunks. The API validates identity and ownership, creates a persisted job, and streams progress. A transactional worker transcribes, extracts, renders, versions, and audits the draft in PostgreSQL.',
+      es: 'La PWA protege la captura localmente y carga de forma directa o por chunks. La API valida identidad y ownership, crea un job persistido y transmite progreso. Un worker transaccional transcribe, extrae, renderiza, versiona y audita el borrador en PostgreSQL.',
+    },
+    stages: [
+      { label: { en: 'Capture PWA', es: 'PWA de captura' }, detail: { en: 'React · IndexedDB · offline queue', es: 'React · IndexedDB · cola offline' } },
+      { label: { en: 'Application API', es: 'API de aplicación' }, detail: { en: 'Express · JWT · Zod · chunk uploads', es: 'Express · JWT · Zod · carga por chunks' } },
+      { label: { en: 'Persistent jobs', es: 'Jobs persistidos' }, detail: { en: 'PostgreSQL · transactional claim · heartbeat', es: 'PostgreSQL · claim transaccional · heartbeat' } },
+      { label: { en: 'Clinical draft', es: 'Borrador clínico' }, detail: { en: 'OpenAI · versions · audit · human approval', es: 'OpenAI · versiones · auditoría · aprobación humana' } },
+    ],
+  },
+  decisions: [
+    {
+      title: { en: 'Persist work instead of holding requests open', es: 'Persistir el trabajo en vez de mantener requests abiertos' },
+      context: { en: 'Transcription and extraction can outlive HTTP timeouts and fail after partial progress.', es: 'La transcripción y la extracción pueden superar timeouts HTTP y fallar después de un progreso parcial.' },
+      choice: { en: 'Return 202 Accepted, persist processing jobs, and let workers claim them with FOR UPDATE SKIP LOCKED, heartbeat, stale-job recovery, and retries.', es: 'Responder 202 Accepted, persistir processing jobs y permitir que workers los reclamen con FOR UPDATE SKIP LOCKED, heartbeat, recuperación de jobs estancados y retries.' },
+      consequence: { en: 'The UI receives progress through SSE with REST fallback, while interrupted work remains observable and recoverable.', es: 'La UI recibe progreso por SSE con fallback REST, mientras el trabajo interrumpido permanece observable y recuperable.' },
+    },
+    {
+      title: { en: 'Make human review a domain state', es: 'Hacer de la revisión humana un estado de dominio' },
+      context: { en: 'A fluent model output is not a final clinical document and must not silently replace professional judgment.', es: 'Un output fluido del modelo no es un documento clínico final y no debe reemplazar silenciosamente el criterio profesional.' },
+      choice: { en: 'Create an AI-render version, record every edit as a new version, and require explicit finalization that locks later changes.', es: 'Crear una versión ai-render, registrar cada edición como una nueva versión y exigir una finalización explícita que bloquee cambios posteriores.' },
+      consequence: { en: 'The product distinguishes generated, reviewed, and finalized states and can reconstruct how the note changed.', es: 'El producto distingue estados generados, revisados y finalizados y puede reconstruir cómo cambió la nota.' },
+    },
+    {
+      title: { en: 'Protect capture before optimizing processing', es: 'Proteger la captura antes de optimizar el procesamiento' },
+      context: { en: 'A failed upload after a consultation risks losing work that may be impossible to repeat.', es: 'Una carga fallida después de una consulta arriesga perder trabajo que puede ser imposible de repetir.' },
+      choice: { en: 'Store pending audio in IndexedDB, queue it locally, resume via Background Sync, and support chunked uploads on unstable networks.', es: 'Guardar audio pendiente en IndexedDB, encolarlo localmente, reanudar con Background Sync y soportar cargas por chunks en redes inestables.' },
+      consequence: { en: 'Connectivity becomes a recoverable product state instead of a reason to restart capture.', es: 'La conectividad se convierte en un estado recuperable del producto en vez de una razón para repetir la captura.' },
+    },
+  ],
+  tradeoffs: [
+    {
+      choice: { en: 'PostgreSQL-backed jobs before a separate queue', es: 'Jobs en PostgreSQL antes que una cola separada' },
+      gained: { en: 'Transactional state, fewer moving parts, low operating cost, and recovery suited to MVP volume.', es: 'Estado transaccional, menos piezas, bajo costo operativo y recuperación adecuada al volumen de un MVP.' },
+      cost: { en: 'API and worker share a database coordination boundary that will need reconsideration if throughput or isolation requirements grow.', es: 'API y worker comparten un límite de coordinación en base de datos que deberá revisarse si crecen el throughput o los requisitos de aislamiento.' },
+    },
+    {
+      choice: { en: 'Local volume storage for the MVP', es: 'Storage en volumen local para el MVP' },
+      gained: { en: 'A deployable vertical product on one inexpensive VPS with simple backup and restore mechanics.', es: 'Un producto vertical desplegable en una VPS económica con mecanismos simples de backup y restore.' },
+      cost: { en: 'Production use needs encrypted object storage, signed access, verified deletion, and market-specific retention controls.', es: 'El uso productivo necesita object storage cifrado, acceso firmado, borrado verificable y controles de retención específicos del mercado.' },
+    },
+    {
+      choice: { en: 'SSE with REST fallback', es: 'SSE con fallback REST' },
+      gained: { en: 'Simple server-to-client progress updates with a recovery path when streaming is interrupted.', es: 'Actualizaciones simples de progreso del servidor al cliente con una vía de recuperación cuando se interrumpe el streaming.' },
+      cost: { en: 'It is one-way communication and requires careful reconnection and authorization behavior at proxy boundaries.', es: 'Es comunicación unidireccional y requiere reconexión y autorización cuidadosas en los límites de proxies.' },
+    },
+  ],
+  failureModes: [
+    { en: 'Pending audio remains in IndexedDB and the local queue until connectivity returns instead of disappearing after a failed request.', es: 'El audio pendiente permanece en IndexedDB y en la cola local hasta que vuelve la conectividad en vez de desaparecer después de un request fallido.' },
+    { en: 'Workers heartbeat during long work; stale jobs can be detected and retried instead of remaining permanently in progress.', es: 'Los workers emiten heartbeat durante tareas largas; los jobs estancados se pueden detectar y reintentar en vez de quedar permanentemente en progreso.' },
+    { en: 'Every clinical query is scoped by the userId from the verified JWT; the API never trusts a client-supplied owner identifier.', es: 'Cada consulta clínica se filtra por el userId del JWT verificado; la API nunca confía en un identificador de owner enviado por el cliente.' },
+    { en: 'Finalized notes reject later edits, while prior versions and audit events preserve the sequence that produced the final document.', es: 'Las notas finalizadas rechazan ediciones posteriores, mientras versiones previas y eventos de auditoría preservan la secuencia que produjo el documento final.' },
+  ],
+  metrics: [
+    { value: '7 / 7', label: { en: 'automated tests passing at the verified gate', es: 'tests automatizados aprobados en el gate verificado' }, kind: 'measured', attribution: 'individual', evidenceHref: { en: '/en/work/psinota/#delivery', es: '/es/trabajo/psinota/#delivery' } },
+    { value: '3', label: { en: 'production builds verified: API, web app, and service worker', es: 'builds de producción verificados: API, app web y service worker' }, kind: 'measured', attribution: 'individual', evidenceHref: { en: '/en/work/psinota/#delivery', es: '/es/trabajo/psinota/#delivery' } },
+    { value: '202', label: { en: 'Accepted response contract for asynchronous processing', es: 'contrato de respuesta Accepted para procesamiento asíncrono' }, kind: 'implemented', attribution: 'individual', evidenceHref: { en: '/en/work/psinota/#architecture', es: '/es/trabajo/psinota/#architecture' } },
+    { value: 'OFFLINE', label: { en: 'local audio recovery path implemented before upload', es: 'recuperación local del audio implementada antes de la carga' }, kind: 'implemented', attribution: 'individual', evidenceHref: { en: '/en/work/psinota/#decisions', es: '/es/trabajo/psinota/#decisions' } },
+  ],
+  milestones: [
+    { number: '01', state: 'delivered', title: { en: 'End-to-end functional MVP', es: 'MVP funcional end-to-end' }, deliverable: { en: 'Capture → reviewed note', es: 'Captura → nota revisada' }, description: { en: 'Authentication, consultation states, audio or text input, asynchronous processing, editing, versioning, finalization, and audit history.', es: 'Autenticación, estados de consulta, entrada de audio o texto, procesamiento asíncrono, edición, versionado, finalización e historial de auditoría.' } },
+    { number: '02', state: 'delivered', title: { en: 'Resilient mobile workflow', es: 'Flujo mobile resiliente' }, deliverable: { en: 'PWA · offline queue · resumable upload', es: 'PWA · cola offline · carga reanudable' }, description: { en: 'IndexedDB, Background Sync, direct and chunked uploads, SSE progress, retries, and stale-job recovery.', es: 'IndexedDB, Background Sync, cargas directas y por chunks, progreso SSE, retries y recuperación de jobs estancados.' } },
+    { number: '03', state: 'delivered', title: { en: 'Verified engineering gate', es: 'Gate de ingeniería verificado' }, deliverable: { en: 'Lint · types · tests · builds', es: 'Lint · tipos · tests · builds' }, description: { en: 'API and web typechecks, seven automated tests, and production builds for API, web app, and service worker passed on 2026-08-25.', es: 'Typechecks de API y web, siete tests automatizados y builds de producción de API, app web y service worker aprobados el 2026-08-25.' } },
+    { number: '04', state: 'planned', title: { en: 'Closed beta and production hardening', es: 'Beta cerrada y endurecimiento para producción' }, deliverable: { en: 'Security · E2E · observability · product evidence', es: 'Seguridad · E2E · observabilidad · evidencia de producto' }, description: { en: 'Threat modeling, encrypted audio storage, verified deletion, restore drills, Playwright coverage, operational metrics, and validation with consented fictitious or de-identified data.', es: 'Threat modeling, storage cifrado de audio, borrado verificable, pruebas de restore, cobertura Playwright, métricas operativas y validación consentida con datos ficticios o desidentificados.' } },
+  ],
+  next: [
+    { en: 'Cover the critical create, capture, process, edit, and finalize journey with Playwright and ephemeral PostgreSQL integration tests.', es: 'Cubrir el recorrido crítico de crear, capturar, procesar, editar y finalizar con Playwright y tests de integración sobre PostgreSQL efímero.' },
+    { en: 'Complete a threat model, encrypt audio at rest, verify retention-driven deletion, and rehearse backup restore before any real-data beta.', es: 'Completar un threat model, cifrar audio en reposo, verificar el borrado por retención y ensayar el restore de backups antes de cualquier beta con datos reales.' },
+    { en: 'Run a small consented beta and measure processing success, median draft latency, editing rate, time saved, return use, and unit cost without promoting targets into outcomes.', es: 'Realizar una beta pequeña y consentida y medir éxito de procesamiento, latencia mediana del borrador, tasa de edición, tiempo ahorrado, recurrencia y costo unitario sin presentar objetivos como resultados.' },
+  ],
+  links: [
+    { kind: 'artifact', label: { en: 'Architecture walkthrough', es: 'Recorrido de arquitectura' }, description: { en: 'The published system path from offline capture to reviewed and audited note.', es: 'El recorrido publicado desde la captura offline hasta la nota revisada y auditada.' }, href: { en: '/en/work/psinota/#architecture', es: '/es/trabajo/psinota/#architecture' } },
+    { kind: 'evidence', label: { en: 'Verified delivery state', es: 'Estado de entrega verificado' }, description: { en: 'Implemented scope, automated gate, and the boundary before closed beta.', es: 'Alcance implementado, gate automatizado y el límite previo a la beta cerrada.' }, href: { en: '/en/work/psinota/#delivery', es: '/es/trabajo/psinota/#delivery' } },
+    { kind: 'evidence', label: { en: 'Disclosure and safety boundary', es: 'Límite de disclosure y seguridad' }, description: { en: 'What is public, what remains private, and why this is not presented as certified medical software.', es: 'Qué es público, qué permanece privado y por qué no se presenta como software médico certificado.' }, href: { en: '/en/work/psinota/#disclosure-title', es: '/es/trabajo/psinota/#disclosure-title' } },
+  ],
+};
+
 const enterpriseAiPlatform: WorkCaseStudy = {
   slug: 'enterprise-ai-platform',
   routes: {
@@ -827,6 +995,7 @@ const serverlessModernization: WorkCaseStudy = {
 export const workCaseStudies: WorkCaseStudy[] = [
   enterpriseAiPlatform,
   aiKnowledgePlatform,
+  psiNota,
   serverlessModernization,
 ];
 
@@ -855,6 +1024,17 @@ export const selectedWork: SelectedWork[] = [
     href: aiKnowledgePlatform.routes,
     cta: { en: 'Read the case study', es: 'Leer el caso de estudio' },
     caseStudyState: 'published', tone: 'blue',
+  },
+  {
+    id: 'psinota', period: { en: '2026 · FUNCTIONAL MVP', es: '2026 · MVP FUNCIONAL' },
+    title: psiNota.title,
+    role: psiNota.role,
+    summary: { en: 'A mobile-first, offline-first product that turns mental-health consultation audio into an editable clinical-note draft. It combines resilient capture, asynchronous AI processing, human review, versioning, and audit history.', es: 'Un producto mobile-first y offline-first que transforma audio de consultas de salud mental en un borrador de nota clínica editable. Combina captura resiliente, procesamiento asíncrono con AI, revisión humana, versionado e historial de auditoría.' },
+    proof: { en: '7 / 7 tests passing · API, web, and service-worker production builds verified', es: '7 / 7 tests aprobados · builds de producción de API, web y service worker verificados' },
+    stack: psiNota.stack,
+    href: psiNota.routes,
+    cta: { en: 'Read the case study', es: 'Leer el caso de estudio' },
+    caseStudyState: 'published', tone: 'violet',
   },
   {
     id: 'serverless-modernization', period: { en: '2019 — 2021', es: '2019 — 2021' },

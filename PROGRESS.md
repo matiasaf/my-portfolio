@@ -14,6 +14,15 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Published PsiNota as a bilingual selected-work case study and added it to the professional home
+  and Work/Trabajo indexes. The case presents the private-repository side project as a functional
+  mobile-first, offline-first MVP with explicit sole ownership, the consultation-to-note
+  architecture, persisted job processing, human review, versioning, audit history, verified 7/7
+  tests and three production builds, plus a clear boundary before closed beta or use with real
+  clinical data. English and Spanish routes, metadata, local evidence links, light/dark themes,
+  and 390px/1280px layouts were checked with no horizontal overflow; `npm run verify` passed with
+  74 files clean and 34 static pages built.
+
 - Published the bilingual Feynman-style explainer “El agente que escapó del examen” / “The agent
   that escaped the exam” about the
   OpenAI–Hugging Face agent-security incident. It separates confirmed facts, analogy, and inference;
