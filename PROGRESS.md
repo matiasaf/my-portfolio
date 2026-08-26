@@ -14,6 +14,12 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Removed the blank navigation flash from AI & Harnesses and System Design module chrome by
+  linking portfolio header/footer brands directly to `/en/` or `/es/` instead of routing through
+  the redirect-only `/`. English, Spanish, and System Design click-throughs were verified against
+  the production build with the destination home visible after one navigation; `npm run verify`
+  passed with 74 files clean and 34 static pages built.
+
 - Published PsiNota as a bilingual selected-work case study and added it to the professional home
   and Work/Trabajo indexes. The case presents the private-repository side project as a functional
   mobile-first, offline-first MVP with explicit sole ownership, the consultation-to-note

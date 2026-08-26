@@ -230,7 +230,7 @@ const sources = [
 ---
 
 <Layout mainId="top" lang={lang} title={t.title} description={t.description} alternateHref={alternatePath} ogType="article" publishedTime="2026-08-25">
-  <ModuleHeader label={t.header} />
+  <ModuleHeader label={t.header} lang={lang} />
   <main id="top" tabindex="-1" class="ai-page rag-page">
     <article>
       <header class="ai-post-hero section-shell rag-hero">
@@ -307,5 +307,5 @@ const sources = [
       <nav class="rag-project-link section-shell" aria-label={t.project}><a href={es ? '/es/trabajo/ai-knowledge-platform/' : '/en/work/ai-knowledge-platform/'}>{t.project} <span>→</span></a></nav>
     </article>
   </main>
-  <ModuleFooter label={t.footer} />
+  <ModuleFooter label={t.footer} lang={lang} />
 </Layout>
