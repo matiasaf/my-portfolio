@@ -14,6 +14,18 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Published the bilingual System Design field note “Postgres por dentro” / “Postgres from the
+  inside”, sourced from the Hussein Nasser whiteboard video and the PostgreSQL 18 docs. It walks
+  the file → 8 KB page → line pointer → tuple chain, the page anatomy and `ctid`, what a B-tree
+  leaf actually stores and why the heap fetch happens, MVCC with `xmin`/`xmax`, snapshot
+  visibility across isolation levels, the HOT exception the short version of this topic usually
+  omits, and dead tuples, the vacuum horizon, bloat, and the operational checklist. Both routes
+  render from `src/components/system-design/PostgresArticle.astro`; the note is linked from the
+  System Design field notes and both Writing/Publicaciones indexes via `src/content/notes.ts`.
+  Dark panels use fixed light accents because the theme tokens flip to dark shades there.
+  Reviewed in light and dark at 1280px and 390px in both languages with no horizontal overflow;
+  `npm run verify` passed with 77 files clean and 36 static pages built.
+
 - Removed the blank navigation flash from AI & Harnesses and System Design module chrome by
   linking portfolio header/footer brands directly to `/en/` or `/es/` instead of routing through
   the redirect-only `/`. English, Spanish, and System Design click-throughs were verified against

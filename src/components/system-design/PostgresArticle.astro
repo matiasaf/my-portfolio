@@ -1,0 +1,649 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/system-design.css';
+import '../../styles/database-article.css';
+import '../../styles/postgres-article.css';
+
+interface Props { lang: 'es' | 'en' }
+const { lang } = Astro.props;
+const es = lang === 'es';
+
+const alternatePath = es
+  ? '/en/system-design/how-postgres-works/'
+  : '/system-design/postgres-por-dentro/';
+
+const t = es ? {
+  title: 'Postgres por dentro — Páginas, tuplas y MVCC',
+  description: 'Cómo Postgres guarda una tabla en páginas de 8 KB, qué son realmente una tupla y un ctid, qué guardan los índices y por qué MVCC produce tuplas muertas, bloat y vacuum.',
+  back: 'Volver al módulo de System Design', headerLabel: 'POSTGRES · FIELD NOTE 03',
+  breadcrumb: ['System Design', 'Field Notes', 'Postgres por dentro'], switchLabel: 'Read in English', switchShort: 'EN',
+  kicker: 'ALMACENAMIENTO · MVCC · VACUUM',
+  heroA: 'Postgres no', heroEm: 'sobrescribe filas.',
+  lede: 'Una tabla es un archivo, ese archivo es un arreglo de páginas de 8 KB, y la fila que devuelve un SELECT es en realidad una versión guardada dentro de una de esas páginas. Entender esa cadena explica de una sola vez el ctid, qué guarda un índice, por qué dos conexiones pueden ver precios distintos y por qué una transacción abierta durante horas degrada toda la base.',
+  meta: [['PUBLICADO', '26 AGO 2026'], ['LECTURA', '~16 min'], ['IDIOMA', 'ES · EN'], ['ORIGEN', 'Video de Hussein Nasser']],
+  chainCaption: ['DE LA TABLA A LA VERSIÓN', 'CUATRO NIVELES'],
+  chain: [
+    ['ARCHIVO', 'Una tabla es uno o más archivos en disco, partidos en segmentos de 1 GB.'],
+    ['PÁGINA', 'El archivo es un arreglo de bloques de 8 KB: tamaño fijo y offset calculable.'],
+    ['LINE POINTER', 'Dentro de la página, un puntero dice dónde empieza cada tupla.'],
+    ['TUPLA', 'El dato físico: una versión de la fila, con xmin y xmax adentro.'],
+  ],
+  chainFoot: ['TABLA', 'VERSIÓN'],
+  thesisLabel: 'LA IDEA CENTRAL',
+  thesis: 'Un UPDATE no modifica una fila: escribe una versión nueva y deja la anterior esperando a que ninguna transacción pueda necesitarla.',
+
+  s1Number: '01 / DEL ARCHIVO A LA PÁGINA', s1Title: ['Una tabla es un archivo', 'con bloques de tamaño fijo.'],
+  s1Intro: 'Postgres no lee filas sueltas del disco: lee páginas completas. Ese detalle, que parece burocrático, define el costo de casi todo lo demás.',
+  boardLabel: 'MIRALO EN TU BASE', boardTitle: 'Todo esto se consulta desde psql.',
+  boardCopy: 'El archivo, el tamaño de bloque, el ctid y las columnas de sistema no son internals ocultos: son consultables en cualquier instancia.',
+  boardLabels: ['ARCHIVO', 'BLOQUE', 'VERSIONES', 'SALUD'],
+  boardCalloutLabel: 'POR QUÉ IMPORTA',
+  boardCallout: 'Leer una fila de 100 bytes cuesta, como mínimo, traer sus 8 KB de página a memoria. Por eso el tamaño de las tuplas y la localidad de los datos afectan tanto al rendimiento.',
+  canvasTitle: 'Seis piezas del modelo de almacenamiento',
+  canvas: [
+    ['01', 'Archivo y segmentos', 'Cada tabla e índice tiene su propio archivo, dividido en segmentos de 1 GB dentro del directorio del cluster.'],
+    ['02', 'Página de 8 KB', 'El bloque es fijo: 8192 bytes por defecto, definidos al compilar. El motor razona en páginas, no en filas.'],
+    ['03', 'Offset calculable', 'La página N empieza en N × 8192. No hay que buscarla: se salta directo a esa posición y se carga el bloque.'],
+    ['04', 'Shared buffers', 'Las páginas se leen y se modifican en memoria compartida; el disco recibe el WAL primero y las páginas después.'],
+    ['05', 'TOAST', 'Un valor demasiado grande para una página se comprime y se guarda fuera de línea, en una tabla asociada.'],
+    ['06', 'WAL', 'La durabilidad no depende de escribir la página: depende de que el registro del cambio llegue antes al log.'],
+  ],
+
+  s2Number: '02 / DENTRO DE UNA PÁGINA', s2Title: ['La página tiene', 'su propio directorio.'],
+  s2Intro: 'Una página no es un bloque plano de filas. Tiene una cabecera, un arreglo de punteros que crece hacia adelante y las tuplas escritas desde el final hacia atrás. En el medio queda el espacio libre.',
+  anatomyCaption: ['PÁGINA 0 · 8192 BYTES', 'CABECERA · PUNTEROS · TUPLAS'],
+  anatomyLabels: ['PAGE HEADER', 'LINE POINTERS', 'ESPACIO LIBRE', 'TUPLAS'],
+  anatomyHeader: '24 bytes: checksum, LSN y dónde empieza y termina el espacio libre.',
+  anatomyFree: 'los punteros crecen hacia adelante · las tuplas se escriben desde el final',
+  anatomyTuples: [
+    ['TUPLA · ctid (0,2)', 'price 20.00 · xmin 964 · xmax 0'],
+    ['TUPLA · ctid (0,1)', 'price 10.00 · xmin 712 · xmax 964'],
+  ],
+  anatomyFootLabel: 'CTID',
+  anatomyFoot: 'El ctid es el par (número de página, índice del puntero). (0,1) significa página 0, primer puntero. Con eso, encontrar una tupla es aritmética y no búsqueda.',
+  pageCards: [
+    ['01', 'El puntero es la indirección', 'Mover una tupla dentro de su página no obliga a tocar nada más: alcanza con actualizar el line pointer.'],
+    ['02', 'El ctid ubica una versión', 'Cambia con cada UPDATE y puede cambiar durante un VACUUM FULL o un CLUSTER. Sirve para inspeccionar, no para identificar.'],
+    ['03', 'El espacio libre se administra', 'fillfactor reserva lugar en cada página para versiones futuras y el free space map recuerda dónde queda espacio.'],
+  ],
+  authorityLabel: 'REGLA', authority: 'El ctid ubica una versión. La clave primaria identifica una fila.',
+
+  s3Number: '03 / EL HEAP Y LOS ÍNDICES', s3Title: ['El índice no guarda filas.', 'Guarda direcciones.'],
+  s3Intro: 'El heap es el conjunto de páginas donde viven las tuplas. Un índice B-tree es otra estructura, con sus propias páginas, cuyas hojas guardan una clave y el ctid al que apunta.',
+  lookupCaption: ['ÍNDICE items_pkey · HEAP items', 'BÚSQUEDA DE item_id = 100'],
+  lookupPanels: [
+    ['B-TREE', 'Descenso ordenado', 'De la raíz a la hoja, comparando claves en cada nivel.'],
+    ['ENTRADA', 'Clave → ctid', 'La hoja no tiene el precio: tiene la dirección de una versión.'],
+    ['HEAP', 'Fetch de la página', 'Postgres trae la página 0, sigue el puntero 2 y recién ahí lee la tupla.'],
+  ],
+  lookupFootLabel: 'POR QUÉ HAY QUE IR AL HEAP',
+  lookupFoot: 'La visibilidad no está en el índice: vive en la tupla. Por eso un index scan casi siempre termina leyendo el heap, y por eso existe el visibility map, que habilita index-only scans cuando la página entera ya es visible para todos.',
+  note3Label: 'ÍNDICE ≠ COPIA DE LA TABLA',
+  note3: 'Cada índice adicional es otro archivo que hay que mantener en cada escritura y otro camino que el planner puede elegir o descartar. Un índice sin uso no es neutro: es trabajo en cada INSERT y en la mayoría de los UPDATE.',
+
+  s4Number: '04 / UPDATE NO SOBRESCRIBE', s4Title: ['Cada cambio escribe', 'una versión nueva.'],
+  s4Intro: 'Postgres implementa MVCC guardando las versiones dentro de la misma tabla. Un UPDATE busca espacio libre, escribe la tupla nueva y marca la anterior como obsoleta a partir de una transacción determinada.',
+  versionsCaption: ['UPDATE items SET price = 20 WHERE item_id = 100', 'TRANSACCIÓN 964'],
+  versionsHead: ['CTID', 'XMIN', 'XMAX', 'PRICE', 'ESTADO'],
+  versionStates: ['versión anterior · candidata a muerta', 'versión vigente'],
+  versionsFootLabel: 'DOS CAMPOS OCULTOS',
+  versionsFoot: 'xmin es la transacción que creó la tupla; xmax, la que la eliminó o la dejó obsoleta al actualizarla, y queda en 0 mientras la versión sigue vigente. Son columnas de sistema: se consultan, no se escriben.',
+  opCards: [
+    ['01', 'INSERT', 'Escribe una tupla con xmin igual a tu transacción y xmax en 0.', 'Si la página elegida no tiene lugar se usa otra, y si no hay ninguna se extiende el archivo.'],
+    ['02', 'UPDATE', 'Escribe una tupla nueva y pone xmax en la anterior.', 'La versión vieja sigue ocupando espacio hasta que vacuum la recicle.'],
+    ['03', 'DELETE', 'No borra nada: sólo escribe xmax en la versión vigente.', 'El espacio se libera después, cuando ninguna transacción pueda ver esa tupla.'],
+  ],
+  s4CalloutLabel: 'LA CONSECUENCIA',
+  s4Callout: 'Una tabla muy actualizada crece aunque la cantidad de filas sea constante. El tamaño en disco no mide cuántos datos tenés: mide cuántas versiones todavía no fueron recicladas.',
+
+  s5Number: '05 / VISIBILIDAD', s5Title: ['Dos conexiones,', 'dos verdades válidas.'],
+  s5Intro: 'Cuando una consulta llega al heap puede encontrar varias versiones de la misma fila. Elegir cuál devolver no es una decisión global: depende del snapshot de esa transacción y del estado de commit de xmin y xmax.',
+  snapshotCaption: ['MISMA FILA · MISMO INSTANTE', 'UN SNAPSHOT POR TRANSACCIÓN'],
+  lanes: [
+    ['T1 · ABIERTA ANTES', 'BEGIN previo al commit', 'Su snapshot no incluye a la transacción 964, así que sigue viendo la versión anterior.'],
+    ['T2 · POSTERIOR', 'BEGIN después del commit', 'Ve la versión creada por 964 y descarta la anterior por su xmax.'],
+  ],
+  snapshotFootLabel: 'NIVEL DE AISLAMIENTO',
+  snapshotFoot: 'En Read Committed cada sentencia toma un snapshot nuevo, así que dos SELECT dentro de la misma transacción pueden ver valores distintos. En Repeatable Read el snapshot se fija en la primera sentencia y no se mueve hasta el final.',
+  note5Label: 'XMAX NO SIEMPRE ES BORRADO',
+  note5: 'xmax también registra locks de fila, y una versión con xmax puesto sigue siendo visible si esa transacción abortó. La regla real combina xmin, xmax y el estado de commit registrado en pg_xact.',
+
+  s6Number: '06 / LA EXCEPCIÓN: HOT', s6Title: ['No todo UPDATE', 'toca los índices.'],
+  s6Intro: 'La versión corta —“un UPDATE obliga a actualizar todos los índices”— es la que más conviene corregir. Cuando ninguna columna indexada cambia y la versión nueva entra en la misma página, Postgres escribe un heap-only tuple: encadena el puntero viejo al nuevo y los índices quedan intactos.',
+  hotSides: [
+    ['UPDATE ORDINARIO', 'Entrada nueva en el índice', 'Si cambió una columna indexada, o la página no tiene espacio, hay que escribir la dirección nueva en cada índice afectado.'],
+    ['HOT UPDATE', 'Redirect dentro de la página', 'El puntero viejo redirige al nuevo y el índice sigue apuntando al mismo ctid. Además, la limpieza puede recuperar ese espacio sin esperar un vacuum completo.'],
+  ],
+  hotRows: [
+    [['ÍNDICE', 'key 100 → (0,2)'], ['(0,1)', 'versión vieja'], ['(0,2)', 'versión nueva']],
+    [['ÍNDICE', 'key 100 → (0,1)'], ['(0,1)', 'redirect → lp 3'], ['(0,3)', 'versión nueva']],
+  ],
+  hotFootLabel: 'CONDICIONES',
+  hotFoot: 'Ninguna columna indexada modificada, más espacio libre en la misma página. fillfactor reserva ese espacio; indexar columnas que se actualizan seguido desactiva el camino HOT en la práctica.',
+
+  s7Number: '07 / MUERTAS, BLOAT Y VACUUM', s7Title: ['Nadie puede limpiar', 'lo que alguien podría leer.'],
+  s7Intro: 'Una versión vieja está muerta sólo cuando ninguna transacción activa —ni ninguna que pueda empezar— puede necesitarla. Ese límite es el horizonte, y lo fija la transacción más antigua que sigue abierta.',
+  horizonCaption: ['LÍNEA DE TRANSACCIONES', 'EL HORIZONTE LO FIJA LA MÁS VIEJA'],
+  horizonRows: [
+    ['T1 · REPORTE', 'BEGIN hace tres horas · sigue abierta'],
+    ['T2 · UPDATE', 'commit'],
+    ['T3 · UPDATE', 'commit'],
+    ['TUPLAS MUERTAS', 'no reciclables mientras T1 viva'],
+  ],
+  horizonFootLabel: 'EL EFECTO',
+  horizonFoot: 'Mientras T1 siga abierta, autovacuum puede correr, encontrar las versiones viejas y no poder eliminarlas. La tabla y sus índices crecen, los scans leen más páginas y la latencia sube sin que ninguna consulta haya cambiado.',
+  vacuumCards: [
+    ['01', 'Tupla muerta', 'Versión que ya no es visible para ninguna transacción posible; su espacio puede reciclarse.'],
+    ['02', 'Horizonte', 'Lo fija la transacción abierta más antigua. También lo retienen los slots de replicación y las réplicas con hot_standby_feedback.'],
+    ['03', 'autovacuum', 'Corre solo según umbrales por tabla; en tablas muy escritas casi nunca alcanza con los valores globales por defecto.'],
+    ['04', 'VACUUM y VACUUM FULL', 'VACUUM recicla espacio dentro de las páginas; VACUUM FULL reescribe la tabla, devuelve espacio al sistema y toma un lock exclusivo.'],
+    ['05', 'Visibility map', 'Marca las páginas totalmente visibles: habilita index-only scans y le ahorra trabajo al próximo vacuum.'],
+    ['06', 'Freeze', 'Vacuum también congela tuplas viejas para evitar el wraparound del contador de transacciones de 32 bits.'],
+  ],
+  warningLabel: 'SÍNTOMA OPERATIVO',
+  warning: 'Una conexión en idle in transaction durante horas es una de las formas más baratas de degradar una base sana: no consume CPU, no aparece entre las consultas lentas y, aun así, impide reciclar una sola versión vieja en toda la instancia.',
+
+  s8Number: '08 / QUÉ HACER CON ESTO', s8Title: ['Del modelo mental', 'a decisiones operativas.'],
+  s8Intro: 'El valor de entender páginas, tuplas y MVCC aparece cuando cambia lo que hacés en el diseño y en la operación diaria.',
+  method: [
+    ['01', 'Mantené las transacciones cortas', 'Abrir, hacer el trabajo y cerrar. Nada de esperar input humano o llamadas de red con un BEGIN abierto.'],
+    ['02', 'Mirá el trabajo pendiente', 'n_dead_tup en pg_stat_user_tables y la edad de la transacción más vieja en pg_stat_activity explican la mayoría de los casos de bloat.'],
+    ['03', 'Ajustá autovacuum por tabla', 'Las tablas calientes rara vez se sirven bien con los umbrales globales por defecto.'],
+    ['04', 'Reservá espacio donde hay updates', 'Bajar fillfactor en tablas muy actualizadas hace más probable el camino HOT.'],
+    ['05', 'Indexá con criterio', 'Cada índice sobre una columna que se actualiza seguido cancela HOT y suma escrituras.'],
+    ['06', 'No uses ctid como identificador', 'Es una dirección física: cambia con updates, con VACUUM FULL y con CLUSTER.'],
+  ],
+  vacuumTitle: 'Seis términos que aparecen en cada incidente',
+  checklistKicker: 'REVISIÓN DE BASE',
+  checklistTitle: 'Preguntas para una revisión de base',
+  checklist: [
+    '¿Cuál es la transacción abierta más antigua ahora mismo?',
+    '¿Cuántas tuplas muertas acumulan las tablas más escritas?',
+    '¿Autovacuum llega a tiempo o queda atrás en los picos?',
+    '¿Qué índices existen sobre columnas que se actualizan seguido?',
+    '¿Hay slots de replicación inactivos reteniendo el horizonte?',
+    '¿El tamaño en disco creció sin que crecieran las filas?',
+    '¿Alguna parte del código guarda o compara ctid?',
+  ],
+  conclusionKicker: 'EL MODELO EN UNA LÍNEA', conclusionA: 'Página, puntero, versión.', conclusionB: 'Lo demás es consecuencia.',
+  conclusionCopy: 'El ctid, los índices que apuntan al heap, dos conexiones con precios distintos, el bloat y el vacuum no son temas separados: son la misma decisión de diseño vista desde ángulos distintos. Postgres prefiere escribir una versión nueva antes que pisar la anterior, y todo su modelo operativo sale de ahí.',
+  sourceNumber: '09 / FUENTES', sourceTitle: ['Para seguir', 'profundizando.'],
+  sourceDescriptions: [
+    'El video que disparó esta nota · Hussein Nasser',
+    'Cabecera, punteros de línea y layout físico',
+    'Actualizaciones que no tocan los índices',
+    'Snapshots, xmin, xmax y control de concurrencia',
+    'Read Committed, Repeatable Read y Serializable',
+    'Tuplas muertas, horizonte, freeze y wraparound',
+    'ctid, xmin, xmax y demás columnas de sistema',
+  ],
+  footer: 'POSTGRES · FIELD NOTE 03', top: 'VOLVER ARRIBA ↑',
+} : {
+  title: 'Postgres from the inside — Pages, tuples, and MVCC',
+  description: 'How Postgres stores a table in 8 KB pages, what a tuple and a ctid really are, what indexes actually hold, and why MVCC produces dead tuples, bloat, and vacuum.',
+  back: 'Back to the System Design module', headerLabel: 'POSTGRES · FIELD NOTE 03',
+  breadcrumb: ['System Design', 'Field Notes', 'Postgres internals'], switchLabel: 'Leer en español', switchShort: 'ES',
+  kicker: 'STORAGE · MVCC · VACUUM',
+  heroA: 'Postgres never', heroEm: 'overwrites a row.',
+  lede: 'A table is a file, that file is an array of 8 KB pages, and the row a SELECT returns is really one version stored inside one of those pages. Following that chain explains the ctid, what an index actually holds, why two connections can see different prices, and why a transaction left open for hours degrades the whole database.',
+  meta: [['PUBLISHED', 'AUG 26 2026'], ['READING', '~16 min'], ['LANGUAGE', 'EN · ES'], ['ORIGIN', 'Hussein Nasser video']],
+  chainCaption: ['FROM TABLE TO VERSION', 'FOUR LEVELS'],
+  chain: [
+    ['FILE', 'A table is one or more files on disk, split into 1 GB segments.'],
+    ['PAGE', 'The file is an array of 8 KB blocks: fixed size, computable offset.'],
+    ['LINE POINTER', 'Inside the page, a pointer says where each tuple begins.'],
+    ['TUPLE', 'The physical data: one version of the row, carrying xmin and xmax.'],
+  ],
+  chainFoot: ['TABLE', 'VERSION'],
+  thesisLabel: 'THE CENTRAL IDEA',
+  thesis: 'An UPDATE does not modify a row: it writes a new version and leaves the previous one waiting until no transaction could possibly need it.',
+
+  s1Number: '01 / FROM FILE TO PAGE', s1Title: ['A table is a file', 'of fixed-size blocks.'],
+  s1Intro: 'Postgres does not read individual rows from disk: it reads whole pages. That bureaucratic-sounding detail defines the cost of almost everything else.',
+  boardLabel: 'SEE IT IN YOUR DATABASE', boardTitle: 'All of this is queryable from psql.',
+  boardCopy: 'The file, the block size, the ctid, and the system columns are not hidden internals: any instance will show them to you.',
+  boardLabels: ['FILE', 'BLOCK', 'VERSIONS', 'HEALTH'],
+  boardCalloutLabel: 'WHY IT MATTERS',
+  boardCallout: 'Reading a 100-byte row costs, at minimum, pulling its 8 KB page into memory. That is why tuple size and data locality matter so much for performance.',
+  canvasTitle: 'Six pieces of the storage model',
+  canvas: [
+    ['01', 'File and segments', 'Every table and index has its own file, split into 1 GB segments inside the cluster directory.'],
+    ['02', '8 KB page', 'The block is fixed: 8192 bytes by default, set at compile time. The engine reasons in pages, not rows.'],
+    ['03', 'Computable offset', 'Page N begins at N × 8192. Nothing is searched: the engine jumps straight there and loads the block.'],
+    ['04', 'Shared buffers', 'Pages are read and modified in shared memory; the disk receives the WAL first and the pages later.'],
+    ['05', 'TOAST', 'A value too large for a page is compressed and stored out of line, in an associated table.'],
+    ['06', 'WAL', 'Durability does not depend on writing the page: it depends on the change record reaching the log first.'],
+  ],
+
+  s2Number: '02 / INSIDE ONE PAGE', s2Title: ['The page carries', 'its own directory.'],
+  s2Intro: 'A page is not a flat block of rows. It has a header, an array of pointers that grows forward, and tuples written from the end backwards. Free space is what remains in between.',
+  anatomyCaption: ['PAGE 0 · 8192 BYTES', 'HEADER · POINTERS · TUPLES'],
+  anatomyLabels: ['PAGE HEADER', 'LINE POINTERS', 'FREE SPACE', 'TUPLES'],
+  anatomyHeader: '24 bytes: checksum, LSN, and where free space starts and ends.',
+  anatomyFree: 'pointers grow forward · tuples are written from the end',
+  anatomyTuples: [
+    ['TUPLE · ctid (0,2)', 'price 20.00 · xmin 964 · xmax 0'],
+    ['TUPLE · ctid (0,1)', 'price 10.00 · xmin 712 · xmax 964'],
+  ],
+  anatomyFootLabel: 'CTID',
+  anatomyFoot: 'The ctid is the pair (page number, pointer index). (0,1) means page 0, first pointer. With that, finding a tuple is arithmetic rather than search.',
+  pageCards: [
+    ['01', 'The pointer is the indirection', 'Moving a tuple within its page touches nothing else: updating the line pointer is enough.'],
+    ['02', 'A ctid locates a version', 'It changes on every UPDATE and can change during VACUUM FULL or CLUSTER. Use it to inspect, never to identify.'],
+    ['03', 'Free space is managed', 'fillfactor reserves room on each page for future versions, and the free space map remembers where room is left.'],
+  ],
+  authorityLabel: 'RULE', authority: 'A ctid locates a version. The primary key identifies a row.',
+
+  s3Number: '03 / THE HEAP AND ITS INDEXES', s3Title: ['An index does not store rows.', 'It stores addresses.'],
+  s3Intro: 'The heap is the set of pages where tuples live. A B-tree index is a separate structure with its own pages, and its leaves hold a key plus the ctid it points to.',
+  lookupCaption: ['INDEX items_pkey · HEAP items', 'LOOKUP FOR item_id = 100'],
+  lookupPanels: [
+    ['B-TREE', 'Ordered descent', 'From the root to the leaf, comparing keys at each level.'],
+    ['ENTRY', 'Key → ctid', 'The leaf does not hold the price: it holds the address of one version.'],
+    ['HEAP', 'Page fetch', 'Postgres loads page 0, follows pointer 2, and only then reads the tuple.'],
+  ],
+  lookupFootLabel: 'WHY THE HEAP FETCH HAPPENS',
+  lookupFoot: 'Visibility is not in the index: it lives in the tuple. That is why an index scan almost always ends up reading the heap, and why the visibility map exists — it enables index-only scans once a whole page is visible to everyone.',
+  note3Label: 'AN INDEX IS NOT A COPY OF THE TABLE',
+  note3: 'Every extra index is another file to maintain on every write and another path the planner may choose or discard. An unused index is not neutral: it is work on every INSERT and on most UPDATEs.',
+
+  s4Number: '04 / UPDATE DOES NOT OVERWRITE', s4Title: ['Every change writes', 'a new version.'],
+  s4Intro: 'Postgres implements MVCC by keeping versions inside the same table. An UPDATE looks for free space, writes the new tuple, and marks the previous one as obsolete from a given transaction onward.',
+  versionsCaption: ['UPDATE items SET price = 20 WHERE item_id = 100', 'TRANSACTION 964'],
+  versionsHead: ['CTID', 'XMIN', 'XMAX', 'PRICE', 'STATE'],
+  versionStates: ['previous version · dead candidate', 'current version'],
+  versionsFootLabel: 'TWO HIDDEN FIELDS',
+  versionsFoot: 'xmin is the transaction that created the tuple; xmax is the one that deleted it or made it obsolete by updating it, and stays at 0 while the version is current. They are system columns: readable, never writable.',
+  opCards: [
+    ['01', 'INSERT', 'Writes a tuple with xmin set to your transaction and xmax at 0.', 'If the chosen page has no room another is used, and if none has room the file is extended.'],
+    ['02', 'UPDATE', 'Writes a new tuple and sets xmax on the previous one.', 'The old version keeps occupying space until vacuum recycles it.'],
+    ['03', 'DELETE', 'Erases nothing: it only writes xmax on the current version.', 'Space is released later, once no transaction can still see that tuple.'],
+  ],
+  s4CalloutLabel: 'THE CONSEQUENCE',
+  s4Callout: 'A heavily updated table grows even when the row count stays constant. Size on disk does not measure how much data you have: it measures how many versions have not been recycled yet.',
+
+  s5Number: '05 / VISIBILITY', s5Title: ['Two connections,', 'two valid truths.'],
+  s5Intro: 'When a query reaches the heap it may find several versions of the same row. Choosing which one to return is not a global decision: it depends on that transaction’s snapshot and on the commit status behind xmin and xmax.',
+  snapshotCaption: ['SAME ROW · SAME INSTANT', 'ONE SNAPSHOT PER TRANSACTION'],
+  lanes: [
+    ['T1 · OPENED EARLIER', 'BEGIN before the commit', 'Its snapshot does not include transaction 964, so it keeps seeing the previous version.'],
+    ['T2 · OPENED LATER', 'BEGIN after the commit', 'It sees the version created by 964 and discards the previous one because of its xmax.'],
+  ],
+  snapshotFootLabel: 'ISOLATION LEVEL',
+  snapshotFoot: 'Under Read Committed each statement takes a fresh snapshot, so two SELECTs inside one transaction can legitimately see different values. Under Repeatable Read the snapshot is taken at the first statement and does not move until the end.',
+  note5Label: 'XMAX IS NOT ALWAYS A DELETE',
+  note5: 'xmax also records row locks, and a version carrying an xmax is still visible when that transaction aborted. The real rule combines xmin, xmax, and the commit status recorded in pg_xact.',
+
+  s6Number: '06 / THE EXCEPTION: HOT', s6Title: ['Not every UPDATE', 'touches the indexes.'],
+  s6Intro: 'The short version — “an UPDATE forces every index to be updated” — is the one most worth correcting. When no indexed column changes and the new version fits on the same page, Postgres writes a heap-only tuple: it chains the old pointer to the new one and the indexes stay untouched.',
+  hotSides: [
+    ['ORDINARY UPDATE', 'A new index entry', 'If an indexed column changed, or the page has no room, the new address must be written into every affected index.'],
+    ['HOT UPDATE', 'A redirect inside the page', 'The old pointer redirects to the new one and the index keeps pointing at the same ctid. Pruning can also reclaim that space without waiting for a full vacuum.'],
+  ],
+  hotRows: [
+    [['INDEX', 'key 100 → (0,2)'], ['(0,1)', 'old version'], ['(0,2)', 'new version']],
+    [['INDEX', 'key 100 → (0,1)'], ['(0,1)', 'redirect → lp 3'], ['(0,3)', 'new version']],
+  ],
+  hotFootLabel: 'CONDITIONS',
+  hotFoot: 'No indexed column modified, plus free space on the same page. fillfactor reserves that space; indexing columns that change often disables the HOT path in practice.',
+
+  s7Number: '07 / DEAD TUPLES, BLOAT, VACUUM', s7Title: ['Nothing can be cleaned', 'while someone might read it.'],
+  s7Intro: 'An old version is dead only when no running transaction — and none that could start — can need it. That boundary is the horizon, and the oldest transaction still open sets it.',
+  horizonCaption: ['TRANSACTION TIMELINE', 'THE OLDEST ONE SETS THE HORIZON'],
+  horizonRows: [
+    ['T1 · REPORT', 'BEGIN three hours ago · still open'],
+    ['T2 · UPDATE', 'commit'],
+    ['T3 · UPDATE', 'commit'],
+    ['DEAD TUPLES', 'not reclaimable while T1 lives'],
+  ],
+  horizonFootLabel: 'THE EFFECT',
+  horizonFoot: 'While T1 stays open, autovacuum can run, find the old versions, and be unable to remove them. The table and its indexes grow, scans read more pages, and latency rises without a single query having changed.',
+  vacuumCards: [
+    ['01', 'Dead tuple', 'A version no longer visible to any possible transaction; its space can be recycled.'],
+    ['02', 'Horizon', 'Set by the oldest open transaction. Replication slots and standbys with hot_standby_feedback hold it back too.'],
+    ['03', 'autovacuum', 'Runs on per-table thresholds; heavily written tables rarely do well on the global defaults.'],
+    ['04', 'VACUUM and VACUUM FULL', 'VACUUM recycles space inside pages; VACUUM FULL rewrites the table, returns space to the system, and takes an exclusive lock.'],
+    ['05', 'Visibility map', 'Marks all-visible pages: it enables index-only scans and saves work for the next vacuum.'],
+    ['06', 'Freeze', 'Vacuum also freezes old tuples to prevent wraparound of the 32-bit transaction counter.'],
+  ],
+  warningLabel: 'OPERATIONAL SYMPTOM',
+  warning: 'A connection sitting idle in transaction for hours is one of the cheapest ways to degrade a healthy database: it burns no CPU, never shows up among slow queries, and still blocks the recycling of a single old version across the whole instance.',
+
+  s8Number: '08 / WHAT TO DO WITH THIS', s8Title: ['From a mental model', 'to operational decisions.'],
+  s8Intro: 'Understanding pages, tuples, and MVCC pays off when it changes what you do in design and in daily operations.',
+  method: [
+    ['01', 'Keep transactions short', 'Open, do the work, close. Never wait on human input or a network call with a BEGIN held open.'],
+    ['02', 'Watch the pending work', 'n_dead_tup in pg_stat_user_tables and the age of the oldest transaction in pg_stat_activity explain most bloat incidents.'],
+    ['03', 'Tune autovacuum per table', 'Hot tables are rarely served well by the global default thresholds.'],
+    ['04', 'Reserve room where updates happen', 'Lowering fillfactor on heavily updated tables makes the HOT path more likely.'],
+    ['05', 'Index deliberately', 'Every index on a frequently updated column cancels HOT and adds writes.'],
+    ['06', 'Never treat ctid as an identifier', 'It is a physical address: it changes on updates, VACUUM FULL, and CLUSTER.'],
+  ],
+  vacuumTitle: 'Six terms that show up in every incident',
+  checklistKicker: 'DATABASE REVIEW',
+  checklistTitle: 'Questions for a database review',
+  checklist: [
+    'What is the oldest open transaction right now?',
+    'How many dead tuples do the most written tables hold?',
+    'Does autovacuum keep up, or fall behind during peaks?',
+    'Which indexes sit on frequently updated columns?',
+    'Are inactive replication slots holding the horizon back?',
+    'Did size on disk grow while the row count did not?',
+    'Does any part of the code store or compare a ctid?',
+  ],
+  conclusionKicker: 'THE MODEL IN ONE LINE', conclusionA: 'Page, pointer, version.', conclusionB: 'Everything else follows.',
+  conclusionCopy: 'The ctid, indexes pointing into the heap, two connections seeing different prices, bloat, and vacuum are not separate topics: they are one design decision seen from different angles. Postgres would rather write a new version than overwrite the previous one, and its entire operational model follows from that.',
+  sourceNumber: '09 / SOURCES', sourceTitle: ['Keep going', 'deeper.'],
+  sourceDescriptions: [
+    'The video that sparked this note · Hussein Nasser',
+    'Header, line pointers, and physical layout',
+    'Updates that leave the indexes alone',
+    'Snapshots, xmin, xmax, and concurrency control',
+    'Read Committed, Repeatable Read, and Serializable',
+    'Dead tuples, horizon, freeze, and wraparound',
+    'ctid, xmin, xmax, and the other system columns',
+  ],
+  footer: 'POSTGRES · FIELD NOTE 03', top: 'BACK TO TOP ↑',
+};
+
+/* Language-neutral fragments: SQL, chips, and the geometry of the timeline. */
+const queries = [
+  "SELECT pg_relation_filepath('items');",
+  'SHOW block_size;',
+  'SELECT ctid, xmin, xmax, price FROM items;',
+  "SELECT n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'items';",
+];
+
+const pointers = ['lp 1 → 7104', 'lp 2 → 6848', 'lp 3 → free'];
+
+const lookupHits = [2, 1, 2];
+const lookupNodes = [
+  ['root · 50 | 150', 'branch · 80 | 100', 'leaf · 100 → (0,2)'],
+  ['key · 100', 'ctid · (0,2)', 'no row data'],
+  ['page 0 · lp 1', 'page 0 · lp 2', 'tuple · price 20.00'],
+];
+
+const versionRows = [
+  ['(0,1)', '712', '964', '10.00'],
+  ['(0,2)', '964', '0', '20.00'],
+];
+
+const laneSteps = [
+  ['BEGIN', 'SELECT price', '10.00'],
+  ['BEGIN', 'SELECT price', '20.00'],
+];
+
+const horizonBars = [
+  { tone: 'is-open', width: '100%', offset: '0' },
+  { tone: '', width: '24%', offset: '30%' },
+  { tone: '', width: '24%', offset: '58%' },
+  { tone: 'is-dead', width: '100%', offset: '0' },
+];
+
+const sources = [
+  ['Video', 'https://www.youtube.com/watch?v=q9jixKv4h2I', 'you won’t forget how postgres works after this'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/storage-page-layout.html', 'Database Page Layout'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/storage-hot.html', 'Heap-Only Tuples (HOT)'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/mvcc-intro.html', 'Concurrency Control: Introduction'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/transaction-iso.html', 'Transaction Isolation'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/routine-vacuuming.html', 'Routine Vacuuming'],
+  ['PostgreSQL', 'https://www.postgresql.org/docs/18/ddl-system-columns.html', 'System Columns'],
+];
+---
+
+<Layout
+  mainId="top"
+  title={t.title}
+  description={t.description}
+  lang={lang}
+  alternateHref={alternatePath}
+  ogType="article"
+  publishedTime="2026-08-26"
+>
+  <header class="sd-header db-header">
+    <a class="brand" href="/system-design/#field-notes" aria-label={t.back}>
+      <span class="brand-monogram" aria-hidden="true">MF</span>
+      <span>Matías Fernández <em>/ System Design</em></span>
+    </a>
+    <div class="db-header-actions">
+      <a href={alternatePath} aria-label={t.switchLabel}>{t.switchShort}</a>
+      <span class="sd-header-label">{t.headerLabel}</span>
+    </div>
+  </header>
+
+  <main id="top" tabindex="-1" class="db-page pg-page">
+    <article>
+      <header class="db-hero section-shell">
+        <div class="db-breadcrumb-row">
+          <p class="db-breadcrumb">
+            <a href="/system-design/">{t.breadcrumb[0]}</a><span>/</span>
+            <a href="/system-design/#field-notes">{t.breadcrumb[1]}</a><span>/</span><b>{t.breadcrumb[2]}</b>
+          </p>
+          <a class="db-language-link" href={alternatePath}>{t.switchLabel} <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="db-hero-grid">
+          <div class="db-hero-copy">
+            <p class="db-kicker"><span></span>{t.kicker}</p>
+            <h1>{t.heroA}<br /><em>{t.heroEm}</em></h1>
+            <p>{t.lede}</p>
+          </div>
+
+          <figure class="pg-chain" aria-label={t.chainCaption[0]}>
+            <figcaption><span>{t.chainCaption[0]}</span><b>{t.chainCaption[1]}</b></figcaption>
+            <ol>
+              {t.chain.map(([name, note], index) => (
+                <li class={`chain-${index + 1}`}>
+                  <span>0{index + 1}</span>
+                  <div><strong>{name}</strong><small>{note}</small></div>
+                  {index < t.chain.length - 1 && <b aria-hidden="true">↓</b>}
+                </li>
+              ))}
+            </ol>
+            <p><span>{t.chainFoot[0]}</span><i></i><span>{t.chainFoot[1]}</span></p>
+          </figure>
+        </div>
+
+        <dl class="db-meta">
+          {t.meta.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}
+        </dl>
+      </header>
+
+      <aside class="db-thesis"><div class="section-shell"><span>{t.thesisLabel}</span><p>{t.thesis}</p></div></aside>
+
+      <section class="db-section section-shell" id="pages">
+        <div class="db-section-heading"><p>{t.s1Number}</p><div><h2>{t.s1Title[0]}<br /><em>{t.s1Title[1]}</em></h2><p>{t.s1Intro}</p></div></div>
+
+        <div class="db-query-board">
+          <div class="db-query-intro"><p>{t.boardLabel}</p><h3>{t.boardTitle}</h3><p>{t.boardCopy}</p></div>
+          <ol>
+            {queries.map((query, index) => (
+              <li><span>0{index + 1} · {t.boardLabels[index]}</span><code>{query}</code></li>
+            ))}
+          </ol>
+          <aside><span>{t.boardCalloutLabel}</span><p>{t.boardCallout}</p></aside>
+        </div>
+
+        <h3 class="db-subheading">{t.canvasTitle}</h3>
+        <div class="db-canvas-grid">
+          {t.canvas.map(([number, title, copy]) => <article><span>{number}</span><h4>{title}</h4><p>{copy}</p></article>)}
+        </div>
+      </section>
+
+      <section class="db-section section-shell" id="page-layout">
+        <div class="db-section-heading"><p>{t.s2Number}</p><div><h2>{t.s2Title[0]}<br /><em>{t.s2Title[1]}</em></h2><p>{t.s2Intro}</p></div></div>
+
+        <figure class="pg-figure pg-anatomy">
+          <figcaption><span>{t.anatomyCaption[0]}</span><b>{t.anatomyCaption[1]}</b></figcaption>
+          <div class="pg-anatomy-row"><span>{t.anatomyLabels[0]}</span><p class="pg-band">{t.anatomyHeader}</p></div>
+          <div class="pg-anatomy-row">
+            <span>{t.anatomyLabels[1]}</span>
+            <div class="pg-slots">{pointers.map((pointer) => <i>{pointer}</i>)}</div>
+          </div>
+          <div class="pg-anatomy-row"><span>{t.anatomyLabels[2]}</span><p class="pg-band">{t.anatomyFree}</p></div>
+          <div class="pg-anatomy-row">
+            <span>{t.anatomyLabels[3]}</span>
+            <div class="pg-tuples">
+              {t.anatomyTuples.map(([name, detail], index) => (
+                <div class={index === 0 ? 'is-live' : ''}><b>{name}</b><span>{detail}</span></div>
+              ))}
+            </div>
+          </div>
+          <div class="pg-figure-foot"><span>{t.anatomyFootLabel}</span><p>{t.anatomyFoot}</p></div>
+        </figure>
+
+        <div class="db-index-cards">
+          {t.pageCards.map(([number, title, copy]) => <article><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>)}
+        </div>
+
+        <blockquote class="db-authority"><span>{t.authorityLabel}</span><p>{t.authority}</p></blockquote>
+      </section>
+
+      <section class="db-section pg-dark" id="heap"><div class="section-shell">
+        <div class="db-section-heading light"><p>{t.s3Number}</p><div><h2>{t.s3Title[0]}<br /><em>{t.s3Title[1]}</em></h2><p>{t.s3Intro}</p></div></div>
+
+        <figure class="pg-lookup">
+          <figcaption><span>{t.lookupCaption[0]}</span><b>{t.lookupCaption[1]}</b></figcaption>
+          <div class="pg-lookup-flow">
+            {t.lookupPanels.map(([label, title, copy], index) => (
+              <>
+                <div class="pg-panel">
+                  <span>{label}</span>
+                  <h3>{title}</h3>
+                  <div class="pg-nodes">
+                    {lookupNodes[index].map((node, nodeIndex) => (
+                      <i class={nodeIndex === lookupHits[index] ? 'is-hit' : ''}>{node}</i>
+                    ))}
+                  </div>
+                  <p>{copy}</p>
+                </div>
+                {index < t.lookupPanels.length - 1 && <b aria-hidden="true">→</b>}
+              </>
+            ))}
+          </div>
+          <div class="pg-lookup-foot"><span>{t.lookupFootLabel}</span><p>{t.lookupFoot}</p></div>
+        </figure>
+
+        <aside class="pg-note"><span>{t.note3Label}</span><p>{t.note3}</p></aside>
+      </div></section>
+
+      <section class="db-section section-shell" id="mvcc">
+        <div class="db-section-heading"><p>{t.s4Number}</p><div><h2>{t.s4Title[0]}<br /><em>{t.s4Title[1]}</em></h2><p>{t.s4Intro}</p></div></div>
+
+        <figure class="pg-figure pg-versions">
+          <figcaption><span>{t.versionsCaption[0]}</span><b>{t.versionsCaption[1]}</b></figcaption>
+          <div class="pg-table-wrap">
+            <table>
+              <thead><tr>{t.versionsHead.map((heading) => <th scope="col">{heading}</th>)}</tr></thead>
+              <tbody>
+                {versionRows.map((row, index) => (
+                  <tr class={index === 0 ? 'is-dead' : 'is-live'}>
+                    <td><b>{row[0]}</b></td><td>{row[1]}</td><td>{row[2]}</td><td>{row[3]}</td>
+                    <td>{t.versionStates[index]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div class="pg-figure-foot"><span>{t.versionsFootLabel}</span><p>{t.versionsFoot}</p></div>
+        </figure>
+
+        <div class="db-scale-cards">
+          {t.opCards.map(([number, title, summary, cost], index) => (
+            <article class={`scale-${index + 1}`}><span>{number}</span><h3>{title}</h3><strong>{summary}</strong><p>{cost}</p></article>
+          ))}
+        </div>
+
+        <aside class="db-scale-callout"><span>{t.s4CalloutLabel}</span><p>{t.s4Callout}</p></aside>
+      </section>
+
+      <section class="db-section pg-dark" id="visibility"><div class="section-shell">
+        <div class="db-section-heading light"><p>{t.s5Number}</p><div><h2>{t.s5Title[0]}<br /><em>{t.s5Title[1]}</em></h2><p>{t.s5Intro}</p></div></div>
+
+        <figure class="pg-snapshot">
+          <figcaption><span>{t.snapshotCaption[0]}</span><b>{t.snapshotCaption[1]}</b></figcaption>
+          {t.lanes.map(([tag, title, note], index) => (
+            <div class="pg-lane">
+              <div><span>{tag}</span><strong>{title}</strong><small>{note}</small></div>
+              <div class="pg-steps">
+                {laneSteps[index].map((step, stepIndex) => (
+                  <>
+                    <i class={stepIndex === 2 ? 'is-visible' : ''}>{step}</i>
+                    {stepIndex < 2 && <b aria-hidden="true">→</b>}
+                  </>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div class="pg-lookup-foot"><span>{t.snapshotFootLabel}</span><p>{t.snapshotFoot}</p></div>
+        </figure>
+
+        <aside class="pg-note"><span>{t.note5Label}</span><p>{t.note5}</p></aside>
+      </div></section>
+
+      <section class="db-section section-shell" id="hot">
+        <div class="db-section-heading"><p>{t.s6Number}</p><div><h2>{t.s6Title[0]}<br /><em>{t.s6Title[1]}</em></h2><p>{t.s6Intro}</p></div></div>
+
+        <figure class="db-index-figure pg-hot">
+          {t.hotSides.map(([label, title, copy], index) => (
+            <div>
+              <span>{label}</span>
+              <h3>{title}</h3>
+              <div class="pg-heap">
+                {t.hotRows[index].map(([name, detail], rowIndex) => (
+                  <div class={rowIndex === 0 ? 'is-index' : rowIndex === 1 ? 'is-old' : 'is-new'}>
+                    <b>{name}</b><span>{detail}</span>
+                  </div>
+                ))}
+              </div>
+              <p>{copy}</p>
+            </div>
+          ))}
+          <figcaption><span>{t.hotFootLabel}</span><p>{t.hotFoot}</p></figcaption>
+        </figure>
+      </section>
+
+      <section class="db-section section-shell" id="vacuum">
+        <div class="db-section-heading"><p>{t.s7Number}</p><div><h2>{t.s7Title[0]}<br /><em>{t.s7Title[1]}</em></h2><p>{t.s7Intro}</p></div></div>
+
+        <figure class="pg-figure pg-horizon">
+          <figcaption><span>{t.horizonCaption[0]}</span><b>{t.horizonCaption[1]}</b></figcaption>
+          <div class="pg-horizon-track">
+            {t.horizonRows.map(([label, text], index) => (
+              <div class="pg-horizon-row">
+                <span>{label}</span>
+                <p class={`pg-bar ${horizonBars[index].tone}`} style={`--w: ${horizonBars[index].width}; --x: ${horizonBars[index].offset};`}>{text}</p>
+              </div>
+            ))}
+          </div>
+          <div class="pg-figure-foot"><span>{t.horizonFootLabel}</span><p>{t.horizonFoot}</p></div>
+        </figure>
+
+        <h3 class="db-subheading">{t.vacuumTitle}</h3>
+        <div class="db-canvas-grid">
+          {t.vacuumCards.map(([number, title, copy]) => <article><span>{number}</span><h4>{title}</h4><p>{copy}</p></article>)}
+        </div>
+
+        <aside class="pg-warning"><span>{t.warningLabel}</span><p>{t.warning}</p></aside>
+      </section>
+
+      <section class="db-section section-shell" id="practice">
+        <div class="db-section-heading"><p>{t.s8Number}</p><div><h2>{t.s8Title[0]}<br /><em>{t.s8Title[1]}</em></h2><p>{t.s8Intro}</p></div></div>
+        <ol class="db-method">{t.method.map(([number, title, copy]) => <li><span>{number}</span><div><h3>{title}</h3><p>{copy}</p></div></li>)}</ol>
+        <section class="db-checklist">
+          <div><p>{t.checklistKicker}</p><h3>{t.checklistTitle}</h3></div>
+          <ol>{t.checklist.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span>{item}</li>)}</ol>
+        </section>
+      </section>
+
+      <section class="db-conclusion"><div class="section-shell"><p class="db-kicker"><span></span>{t.conclusionKicker}</p><h2>{t.conclusionA}<br /><strong>{t.conclusionB}</strong></h2><p>{t.conclusionCopy}</p></div></section>
+
+      <section class="db-sources section-shell">
+        <div><p>{t.sourceNumber}</p><h2>{t.sourceTitle[0]}<br /><em>{t.sourceTitle[1]}</em></h2></div>
+        <ol>{sources.map(([publisher, href, title], index) => <li><span>{String(index + 1).padStart(2, '0')}</span><a href={href} target="_blank" rel="noopener noreferrer"><small>{publisher}</small><strong>{title}</strong><p>{t.sourceDescriptions[index]} ↗</p></a></li>)}</ol>
+      </section>
+    </article>
+  </main>
+
+  <footer><a class="brand footer-brand" href="/system-design/#field-notes" aria-label={t.back}><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href="#top">{t.top}</a></footer>
+</Layout>

@@ -129,6 +129,17 @@
 .signal-parallel { grid-template-columns: repeat(3, 1fr); }.signal-parallel i:nth-child(1) { background: var(--coral); }.signal-parallel i:nth-child(2) { background: var(--blue); }.signal-parallel i:nth-child(3) { background: var(--lime); }
 .sd-note-signal > p { margin: 48px 0 0; font: 500 11px var(--mono); text-align: center; }.sd-note-signal > p b { margin-inline: 14px; color: var(--coral); font-size: 20px; }
 .database-signal { align-items: stretch; }.database-signal > p { margin: 0; color: rgba(255,255,255,.63); font: 500 9px var(--mono); letter-spacing: .1em; }.database-signal > b { padding: 15px; color: var(--coral); text-align: center; }.database-models { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }.database-models span,.database-guarantees span { display: grid; place-items: center; min-height: 69px; color: var(--ink); font: 500 9px var(--mono); }.database-models span:nth-child(1) { background: var(--blue); }.database-models span:nth-child(2) { background: var(--violet); }.database-models span:nth-child(3) { background: var(--lime); }.database-models span:nth-child(4) { background: var(--coral); }.database-guarantees { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; }.database-guarantees span { min-height: 48px; border: 1px solid rgba(255,255,255,.3); color: var(--strong-text); font-size: 7px; }
+.postgres-signal { gap: 11px; align-items: stretch; }
+.postgres-signal > p { margin: 0; color: rgba(255,255,255,.66); font: 500 9px var(--mono); letter-spacing: .1em; }
+.postgres-signal > p:last-child { margin-top: 26px; font-size: 10px; text-align: center; letter-spacing: .04em; }
+.postgres-signal > p:last-child b { margin-inline: 12px; color: #ffb59b; font-size: 16px; }
+.pgsig-row { display: grid; grid-template-columns: 42px 1fr 78px; gap: 10px; align-items: center; padding: 13px 12px; border: 1px solid rgba(255,255,255,.2); }
+.pgsig-row span,.pgsig-row b { color: rgba(255,255,255,.66); font: 500 8px var(--mono); }
+.pgsig-row i { color: var(--strong-text); font: normal 500 10px var(--mono); }
+.pgsig-row.is-live { border-color: #cfe08a; }
+.pgsig-row.is-live i { color: #cfe08a; }
+.pgsig-row.is-free { border-style: dashed; }
+.pgsig-row.is-free i { color: rgba(255,255,255,.6); }
 .complexity-signal { gap: 17px; }.complexity-row { display: grid; grid-template-columns: 62px 1fr 74px; gap: 12px; align-items: center; }.complexity-row span,.complexity-row b { color: rgba(255,255,255,.66); font: 500 8px var(--mono); }.complexity-row b { font-size: 7px; font-weight: 400; }.complexity-row i { width: var(--w); height: 25px; background: var(--blue); }.complexity-row:nth-child(2) i { background: var(--lime); }.complexity-row:nth-child(3) i { background: var(--coral); }.complexity-row:nth-child(4) i { background: var(--violet); }.complexity-signal > p { margin-top: 35px; }
 
 .sd-final { min-height: 650px; display: grid; place-items: center; padding-block: 100px; background: var(--coral); text-align: center; }

@@ -11,6 +11,30 @@ import SectionHeading from './SectionHeading.astro';
       description="Practical essays that connect execution and data models with the behavior, limits, and failure modes of production systems."
     />
 
+    <article class="sd-note-feature sd-note-postgres">
+      <div class="sd-note-feature-copy">
+        <p class="sd-note-kicker">POSTGRES · STORAGE &amp; MVCC · 16 MIN · ES/EN</p>
+        <h3>Postgres never<br /><em>overwrites a row.</em></h3>
+        <p>
+          Pages of 8 KB, line pointers, ctid, what a B-tree index really stores, xmin/xmax
+          visibility, HOT updates, dead tuples, bloat, and why one long transaction holds
+          vacuum back across the whole instance.
+        </p>
+        <div class="sd-note-links">
+          <a href="/en/system-design/how-postgres-works/">Read in English <b aria-hidden="true">↗</b></a>
+          <a href="/system-design/postgres-por-dentro/" lang="es">Leer en español <b aria-hidden="true">↗</b></a>
+        </div>
+      </div>
+
+      <div class="sd-note-signal postgres-signal" aria-hidden="true">
+        <p>HEAP · PAGE 0 · 8 KB</p>
+        <div class="pgsig-row"><span>lp 1</span><i>ctid (0,1)</i><b>xmax 964</b></div>
+        <div class="pgsig-row is-live"><span>lp 2</span><i>ctid (0,2)</i><b>xmax 0</b></div>
+        <div class="pgsig-row is-free"><span>lp 3</span><i>free space</i><b>fillfactor</b></div>
+        <p>1 row <b>=</b> n versions</p>
+      </div>
+    </article>
+
     <article class="sd-note-feature sd-note-database">
       <div class="sd-note-feature-copy">
         <p class="sd-note-kicker">DATABASES · DATA MODELING · 18 MIN · ES/EN</p>

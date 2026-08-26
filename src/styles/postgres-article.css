@@ -1,0 +1,145 @@
+/* Postgres internals note. Reuses the structural classes of database-article.css
+   and adds the storage-specific figures. Panels painted on --strong-surface stay
+   near-black in both themes, so their accents are fixed light values instead of
+   the theme tokens, which flip to dark shades and lose contrast there. */
+.pg-page {
+  --pg-blue: #9fc0ff;
+  --pg-violet: #d4bdf5;
+  --pg-lime: #cfe08a;
+  --pg-coral: #ffb59b;
+  --pg-on-dark: #edf1ef;
+  --pg-on-dark-soft: rgb(237 241 239 / .7);
+  --pg-chip-ink: #0b0f0e;
+  background: var(--paper);
+}
+
+/* Reused dark surfaces from the database note need the same accessible accents. */
+.pg-page .db-query-board li span { color: var(--pg-lime); }
+.pg-page .db-checklist > div p { color: var(--pg-blue); }
+
+.pg-dark { --accent-text: var(--pg-blue); --focus-ring: var(--pg-on-dark); color: var(--pg-on-dark); background: var(--strong-surface); }
+
+/* Hero: file → page → line pointer → tuple version. */
+.pg-chain { min-height: 575px; margin: 0; padding: 29px; color: var(--pg-on-dark); background: var(--strong-surface); box-shadow: 12px 12px 0 var(--blue); transform: rotate(.8deg); }
+.pg-chain figcaption { display: flex; justify-content: space-between; gap: 16px; color: var(--pg-on-dark-soft); font: 500 8px var(--mono); letter-spacing: .09em; }
+.pg-chain figcaption b { color: var(--pg-lime); }
+.pg-chain ol { list-style: none; margin: 46px 0 0; padding: 0; display: grid; gap: 30px; }
+.pg-chain li { --chain-accent: var(--pg-blue); position: relative; display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: center; padding: 17px 18px; border: 1px solid rgb(255 255 255 / .25); background: color-mix(in srgb, var(--chain-accent) 13%, transparent); }
+.pg-chain .chain-2 { --chain-accent: var(--pg-violet); }
+.pg-chain .chain-3 { --chain-accent: var(--pg-lime); }
+.pg-chain .chain-4 { --chain-accent: var(--pg-coral); }
+.pg-chain li > span { color: var(--chain-accent); font: 500 9px var(--mono); }
+.pg-chain li strong { display: block; font: 500 12px var(--mono); letter-spacing: .07em; }
+.pg-chain li small { display: block; margin-top: 9px; color: var(--pg-on-dark-soft); font-size: 10px; line-height: 1.55; }
+.pg-chain li > b { position: absolute; left: 50%; top: calc(100% + 5px); color: var(--pg-coral); font-size: 16px; transform: translateX(-50%); }
+.pg-chain > p { display: flex; align-items: center; gap: 12px; margin: 44px 0 0; color: var(--pg-on-dark-soft); font: 500 8px var(--mono); letter-spacing: .08em; }
+.pg-chain > p i { flex: 1; height: 1px; background: linear-gradient(90deg, var(--pg-blue), var(--pg-violet), var(--pg-lime), var(--pg-coral)); }
+
+/* Shared frame for the light figures. */
+.pg-figure { margin: 0; border: 1px solid var(--ink); background: var(--surface); box-shadow: 8px 8px 0 var(--ink); }
+.pg-figure > figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; padding: 21px 26px; border-bottom: 1px solid var(--ink); font: 500 8px var(--mono); letter-spacing: .09em; }
+.pg-figure > figcaption b { color: var(--accent-text); }
+.pg-figure-foot { display: grid; grid-template-columns: 180px 1fr; gap: 30px; padding: 21px 26px; border-top: 1px solid var(--ink); background: var(--blue); }
+.pg-figure-foot span { font: 500 8px var(--mono); letter-spacing: .08em; }
+.pg-figure-foot p { margin: 0; font-size: 13px; line-height: 1.65; }
+
+/* 8 KB page anatomy. */
+.pg-anatomy-row { display: grid; grid-template-columns: 158px 1fr; gap: 26px; align-items: center; padding: 20px 26px; border-bottom: 1px solid var(--line); }
+.pg-anatomy-row > span { color: rgb(var(--ink-rgb) / .62); font: 500 8px var(--mono); letter-spacing: .08em; }
+.pg-slots { display: flex; flex-wrap: wrap; gap: 8px; }
+.pg-slots i { display: inline-grid; place-items: center; min-width: 104px; padding: 11px 12px; border: 1px solid var(--ink); background: var(--blue); font: normal 500 10px var(--mono); }
+.pg-band { margin: 0; display: grid; place-items: center; min-height: 56px; padding: 12px; border: 1px dashed var(--line-strong); color: rgb(var(--ink-rgb) / .66); font: 500 9px var(--mono); letter-spacing: .08em; text-align: center; }
+.pg-tuples { display: grid; gap: 8px; }
+.pg-tuples > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 13px 14px; border: 1px solid var(--ink); background: var(--paper-2); font: 500 9px var(--mono); }
+.pg-tuples b { color: var(--accent-text); }
+.pg-tuples .is-live { background: var(--lime); }
+
+/* Index entry → heap fetch. */
+.pg-lookup { margin: 0; padding: 32px; border: 1px solid rgb(255 255 255 / .23); background: rgb(255 255 255 / .035); }
+.pg-lookup > figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid rgb(255 255 255 / .2); color: var(--pg-on-dark-soft); font: 500 8px var(--mono); letter-spacing: .09em; }
+.pg-lookup > figcaption b { color: var(--pg-lime); }
+.pg-lookup-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center; margin-top: 34px; }
+.pg-lookup-flow > b { color: var(--pg-coral); font-size: 18px; text-align: center; }
+.pg-panel { min-height: 268px; padding: 21px; border: 1px solid rgb(255 255 255 / .25); }
+.pg-panel > span { color: var(--pg-blue); font: 500 8px var(--mono); letter-spacing: .09em; }
+.pg-panel h3 { margin: 15px 0 20px; font-size: 19px; letter-spacing: -.03em; }
+.pg-nodes { display: grid; gap: 7px; }
+.pg-nodes i { display: grid; place-items: center; padding: 10px; border: 1px solid rgb(255 255 255 / .3); font: normal 500 10px var(--mono); }
+.pg-nodes i.is-hit { color: var(--pg-chip-ink); background: var(--pg-lime); border-color: var(--pg-lime); }
+.pg-panel p { margin: 18px 0 0; color: var(--pg-on-dark-soft); font-size: 11px; line-height: 1.6; }
+.pg-lookup-foot { display: grid; grid-template-columns: 150px 1fr; gap: 30px; margin-top: 30px; padding-top: 25px; border-top: 1px solid rgb(255 255 255 / .2); }
+.pg-lookup-foot span { color: var(--pg-coral); font: 500 9px var(--mono); letter-spacing: .09em; }
+.pg-lookup-foot p { max-width: 890px; margin: 0; color: var(--pg-on-dark-soft); font-size: 13px; line-height: 1.7; }
+
+/* Tuple versions after an UPDATE. */
+.pg-table-wrap { overflow-x: auto; }
+.pg-versions table { width: 100%; min-width: 620px; border-collapse: collapse; }
+.pg-versions th, .pg-versions td { padding: 15px 18px; border-bottom: 1px solid var(--line); text-align: left; font: 500 11px var(--mono); }
+.pg-versions th { color: rgb(var(--ink-rgb) / .62); font-size: 8px; letter-spacing: .09em; text-transform: uppercase; }
+.pg-versions tbody tr:last-child td { border-bottom: 0; }
+.pg-versions .is-dead td { color: rgb(var(--ink-rgb) / .62); background: var(--paper-2); }
+.pg-versions .is-live td { background: var(--lime); }
+.pg-versions td b { color: var(--accent-text); }
+
+/* Two transactions, two visible versions. */
+.pg-snapshot { margin: 0; padding: 32px; border: 1px solid rgb(255 255 255 / .23); background: rgb(255 255 255 / .035); }
+.pg-snapshot > figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid rgb(255 255 255 / .2); color: var(--pg-on-dark-soft); font: 500 8px var(--mono); letter-spacing: .09em; }
+.pg-snapshot > figcaption b { color: var(--pg-lime); }
+.pg-lane { display: grid; grid-template-columns: 172px 1fr; gap: 24px; align-items: center; padding: 24px 0; border-bottom: 1px solid rgb(255 255 255 / .16); }
+.pg-lane:last-of-type { border-bottom: 0; }
+.pg-lane > div span { color: var(--pg-blue); font: 500 8px var(--mono); letter-spacing: .09em; }
+.pg-lane > div strong { display: block; margin-top: 11px; font: 500 12px var(--mono); }
+.pg-lane > div small { display: block; margin-top: 8px; color: var(--pg-on-dark-soft); font-size: 10px; line-height: 1.55; }
+.pg-steps { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+.pg-steps i { padding: 11px 13px; border: 1px solid rgb(255 255 255 / .3); font: normal 500 9px var(--mono); }
+.pg-steps i.is-visible { color: var(--pg-chip-ink); background: var(--pg-lime); border-color: var(--pg-lime); }
+.pg-steps b { color: var(--pg-coral); }
+
+/* The HOT comparison reuses the two-sided index figure with a prose caption. */
+.pg-hot figcaption p { margin: 0; font-size: 13px; line-height: 1.65; }
+
+/* Ordinary update versus heap-only tuple. */
+.pg-heap { display: grid; gap: 8px; }
+.pg-heap > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 12px 13px; border: 1px solid var(--ink); background: var(--surface); font: 500 9px var(--mono); }
+.pg-heap b { color: var(--accent-text); }
+.pg-heap .is-index { background: var(--coral); }
+.pg-heap .is-new { background: var(--lime); }
+.pg-heap .is-old { color: rgb(var(--ink-rgb) / .62); background: var(--paper-2); }
+
+/* Vacuum horizon held by the oldest running transaction. */
+.pg-horizon-track { display: grid; gap: 14px; padding: 28px 26px; }
+.pg-horizon-row { display: grid; grid-template-columns: 158px 1fr; gap: 26px; align-items: center; }
+.pg-horizon-row > span { color: rgb(var(--ink-rgb) / .62); font: 500 8px var(--mono); letter-spacing: .08em; }
+.pg-bar { margin: 0; display: flex; align-items: center; width: var(--w, 100%); min-height: 38px; margin-left: var(--x, 0); padding: 0 13px; border: 1px solid var(--ink); background: var(--blue); font: 500 9px var(--mono); }
+.pg-bar.is-open { background: var(--violet); box-shadow: inset 3px 0 0 var(--accent-text); }
+.pg-bar.is-dead { color: rgb(var(--ink-rgb) / .68); background: var(--paper-2); border-style: dashed; }
+
+/* Dark callouts placed on light sections. */
+.pg-warning { display: grid; grid-template-columns: 190px 1fr; gap: 35px; margin-top: 45px; padding: 30px; color: var(--pg-on-dark); background: var(--strong-surface); }
+.pg-warning span { color: var(--pg-coral); font: 500 9px var(--mono); letter-spacing: .09em; }
+.pg-warning p { max-width: 900px; margin: 0; color: var(--pg-on-dark-soft); font-size: 13px; line-height: 1.7; }
+.pg-note { display: grid; grid-template-columns: 180px 1fr; gap: 35px; margin-top: 42px; padding: 28px; border-left: 3px solid var(--pg-lime); background: rgb(255 255 255 / .055); }
+.pg-note span { color: var(--pg-lime); font: 500 9px var(--mono); letter-spacing: .09em; }
+.pg-note p { max-width: 890px; margin: 0; color: var(--pg-on-dark-soft); font-size: 13px; line-height: 1.7; }
+
+@media (max-width: 980px) {
+  .pg-chain { width: min(680px, 100%); }
+  .pg-lookup-flow { grid-template-columns: 1fr; }
+  .pg-lookup-flow > b { transform: rotate(90deg); }
+  .pg-panel { min-height: 0; }
+}
+
+@media (max-width: 680px) {
+  .pg-chain { min-height: 0; padding: 24px 17px; box-shadow: 8px 8px 0 var(--blue); }
+  .pg-chain figcaption b { display: none; }
+  .pg-chain ol { gap: 26px; margin-top: 38px; }
+  .pg-chain li { grid-template-columns: 1fr; gap: 10px; }
+  .pg-figure { box-shadow: 6px 6px 0 var(--ink); }
+  .pg-anatomy-row, .pg-horizon-row { grid-template-columns: 1fr; gap: 12px; padding-inline: 19px; }
+  .pg-horizon-track { padding-inline: 19px; }
+  .pg-bar { width: 100%; margin-left: 0; }
+  .pg-figure-foot, .pg-lookup-foot, .pg-warning, .pg-note { grid-template-columns: 1fr; gap: 13px; padding: 23px 19px; }
+  .pg-lookup, .pg-snapshot { padding: 22px 17px; }
+  .pg-lane { grid-template-columns: 1fr; gap: 16px; }
+  .pg-slots i { min-width: 0; flex: 1 1 44%; }
+}
