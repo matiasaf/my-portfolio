@@ -47,6 +47,8 @@ articles may contain their page structure directly.
 | `/ai/` | `src/pages/ai.astro` |
 | `/ai/transformer-architecture/` | `src/pages/ai/transformer-architecture.astro` |
 | `/ai/production-rag/` | `src/pages/ai/production-rag.astro` |
+| `/en/ai/harness-engineering/` | `src/pages/en/ai/harness-engineering.astro` |
+| `/es/ai/ingenieria-de-harness/` | `src/pages/es/ai/ingenieria-de-harness.astro` |
 | `/es/ai/rag-en-produccion/` | `src/pages/es/ai/rag-en-produccion.astro` |
 | `/es/ai/incidente-openai-hugging-face/` | `src/pages/es/ai/incidente-openai-hugging-face.astro` |
 | `/en/ai/openai-hugging-face-incident/` | `src/pages/en/ai/openai-hugging-face-incident.astro` |

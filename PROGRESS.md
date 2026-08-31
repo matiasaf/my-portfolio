@@ -14,6 +14,18 @@ short and replace stale detail instead of accumulating a diary.
 
 ## Recently completed
 
+- Published the bilingual AI & Harnesses article “Harness engineering: making coding agents
+  reliable” / “Harness engineering: cómo volver confiables a los agentes de código”. It distills
+  all 14 Learn Harness Engineering lectures into one practical progression: the five harness
+  subsystems, repository-backed knowledge, session initialization and handoff, WIP=1 feature
+  contracts, layered verification, runtime and process observability, autonomous-loop stopping
+  rules, and the point where graph topology becomes justified. A one-line map preserves the key
+  decision from every lecture, while the main narrative removes anecdotal metrics and repeated
+  examples. Both translations render from `src/components/ai/HarnessEngineeringArticle.astro`
+  and are linked from AI & Harnesses and both editorial indexes. Reviewed in light and dark at
+  1280px and 390px in both languages with no horizontal overflow; `npm run verify` passed with
+  80 files clean and 38 static pages built.
+
 - Published the bilingual System Design field note “Postgres por dentro” / “Postgres from the
   inside”, sourced from the Hussein Nasser whiteboard video and the PostgreSQL 18 docs. It walks
   the file → 8 KB page → line pointer → tuple chain, the page anatomy and `ctid`, what a B-tree

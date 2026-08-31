@@ -17,6 +17,7 @@ export interface Note {
 
 export const notes: Record<Lang, Note[]> = {
   en: [
+    { tag: 'HARNESS', meta: 'AI · BILINGUAL', title: 'Harness engineering: making coding agents reliable', href: '/en/ai/harness-engineering/' },
     { tag: 'POSTGRES', meta: 'SYSTEM DESIGN · BILINGUAL', title: 'Postgres from the inside: pages, tuples, and MVCC', href: '/en/system-design/how-postgres-works/' },
     { tag: 'AI SECURITY', meta: 'AI · BILINGUAL', title: 'The agent that escaped the exam: understanding the OpenAI–Hugging Face incident', href: '/en/ai/openai-hugging-face-incident/' },
     { tag: 'RAG', meta: 'AI · BILINGUAL', title: 'What a production RAG system actually needs', href: '/ai/production-rag/' },
@@ -27,6 +28,7 @@ export const notes: Record<Lang, Note[]> = {
     { tag: 'DDIA', meta: 'BOOK NOTES', title: 'Reliable, scalable, and maintainable applications', href: '/system-design/ddia/chapter-01/' },
   ],
   es: [
+    { tag: 'HARNESS', meta: 'AI · BILINGÜE', title: 'Harness engineering: cómo volver confiables a los agentes de código', href: '/es/ai/ingenieria-de-harness/' },
     { tag: 'POSTGRES', meta: 'SYSTEM DESIGN · BILINGÜE', title: 'Postgres por dentro: páginas, tuplas y MVCC', href: '/system-design/postgres-por-dentro/' },
     { tag: 'SEGURIDAD AI', meta: 'AI · CASO REAL · BILINGÜE', title: 'El agente que escapó del examen: entendiendo el incidente OpenAI–Hugging Face', href: '/es/ai/incidente-openai-hugging-face/' },
     { tag: 'RAG', meta: 'AI · BILINGÜE', title: 'Qué necesita realmente un sistema RAG en producción', href: '/es/ai/rag-en-produccion/' },

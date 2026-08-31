@@ -1,0 +1,190 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ModuleHeader from './ModuleHeader.astro';
+import ModuleFooter from './ModuleFooter.astro';
+import '../../styles/ai.css';
+import '../../styles/harness-engineering-article.css';
+
+interface Props { lang: 'es' | 'en' }
+const { lang } = Astro.props;
+const es = lang === 'es';
+const tr = (spanish: string, english: string) => es ? spanish : english;
+const alternatePath = es ? '/en/ai/harness-engineering/' : '/es/ai/ingenieria-de-harness/';
+
+const subsystems = es ? [
+  ['01', 'INSTRUCCIONES', 'Intención', 'Un mapa corto del proyecto, restricciones no negociables y enlaces a detalle relevante.'],
+  ['02', 'HERRAMIENTAS', 'Capacidad', 'Acceso suficiente para leer, cambiar, ejecutar y diagnosticar, limitado por mínimo privilegio.'],
+  ['03', 'ENTORNO', 'Repetibilidad', 'Runtime, dependencias y comandos fijados para que dos sesiones operen el mismo sistema.'],
+  ['04', 'ESTADO', 'Continuidad', 'Progreso, decisiones, bloqueos y próximo paso persistidos fuera de la conversación.'],
+  ['05', 'FEEDBACK', 'Evidencia', 'Checks rápidos, pruebas de comportamiento y señales de runtime que cierran el loop.'],
+] : [
+  ['01', 'INSTRUCTIONS', 'Intent', 'A short project map, non-negotiable constraints, and links to relevant detail.'],
+  ['02', 'TOOLS', 'Capability', 'Enough access to read, change, execute, and diagnose, bounded by least privilege.'],
+  ['03', 'ENVIRONMENT', 'Repeatability', 'Pinned runtime, dependencies, and commands so two sessions operate the same system.'],
+  ['04', 'STATE', 'Continuity', 'Progress, decisions, blockers, and the next action persisted outside the conversation.'],
+  ['05', 'FEEDBACK', 'Evidence', 'Fast checks, behavioral tests, and runtime signals that close the loop.'],
+];
+
+const lectureIdeas = es ? [
+  ['01', 'Diagnosticar el sistema', 'Un agente capaz puede fallar por requisitos vagos, contexto ausente, entorno roto, feedback débil o pérdida de estado.'],
+  ['02', 'Diseñar cinco subsistemas', 'Un prompt file no es un harness: instrucciones, herramientas, entorno, estado y feedback tienen responsabilidades distintas.'],
+  ['03', 'Hacer del repo el registro', 'Lo que no está en un lugar visible y mantenido no existe para una sesión nueva.'],
+  ['04', 'Dar un mapa, no un manual', 'El archivo de entrada debe enrutar a documentación cercana al código y cargada bajo demanda.'],
+  ['05', 'Persistir el porqué', 'El código conserva qué cambió; el handoff debe conservar decisiones, resultados y próximo paso.'],
+  ['06', 'Inicializar antes de implementar', 'Primero hay que probar que el proyecto arranca, se verifica y puede ser retomado.'],
+  ['07', 'Limitar WIP a uno', 'Terminar una unidad verificable antes de abrir otra reduce alcance accidental y trabajo a medias.'],
+  ['08', 'Externalizar el contrato', 'Cada feature necesita comportamiento esperado, verificación, estado y evidencia.'],
+  ['09', 'Quitarle al autor el “done”', 'La confianza del agente no es criterio de cierre; una condición ejecutable e independiente sí.'],
+  ['10', 'Probar el recorrido completo', 'Los unit tests aíslan; integración y E2E encuentran contratos, estado y recursos que fallan al componerse.'],
+  ['11', 'Volver visible la ejecución', 'Logs y health checks explican qué pasó; planes, criterios y rúbricas explican por qué aceptarlo.'],
+  ['12', 'Cerrar limpio', 'Build y tests verdes, estado actualizado, temporales removidos y camino de arranque funcional.'],
+  ['13', 'Automatizar solo un loop cerrado', 'Autonomía exige meta, verificador, límite y estado externo; sin eso solo repetimos incertidumbre.'],
+  ['14', 'Usar grafos cuando la topología importe', 'Especialización, paralelismo, rollback y arbitraje justifican nodos y rutas explícitas.'],
+] : [
+  ['01', 'Diagnose the system', 'A capable agent can fail because requirements are vague, context is missing, the environment is broken, feedback is weak, or state is lost.'],
+  ['02', 'Design five subsystems', 'A prompt file is not a harness: instructions, tools, environment, state, and feedback have separate jobs.'],
+  ['03', 'Make the repo the record', 'What is not visible and maintained somewhere a fresh session can reach effectively does not exist.'],
+  ['04', 'Give a map, not a manual', 'The entry file should route to documentation near the code and loaded on demand.'],
+  ['05', 'Persist the why', 'Code preserves what changed; the handoff must preserve decisions, results, and the next action.'],
+  ['06', 'Initialize before implementing', 'First prove the project starts, can be verified, and can be resumed.'],
+  ['07', 'Limit WIP to one', 'Finishing one verifiable unit before opening another reduces accidental scope and half-work.'],
+  ['08', 'Externalize the contract', 'Every feature needs expected behavior, verification, state, and evidence.'],
+  ['09', 'Take “done” away from the author', 'Agent confidence is not a termination criterion; an executable, independent condition is.'],
+  ['10', 'Test the whole journey', 'Unit tests isolate; integration and E2E expose contracts, state, and resources that fail when composed.'],
+  ['11', 'Make execution visible', 'Logs and health checks explain what happened; plans, criteria, and rubrics explain why to accept it.'],
+  ['12', 'Close cleanly', 'Green build and tests, updated state, no temporary debris, and a working startup path.'],
+  ['13', 'Automate only a closed loop', 'Autonomy needs a goal, verifier, limit, and external state; without them it only repeats uncertainty.'],
+  ['14', 'Use graphs when topology matters', 'Specialization, parallelism, rollback, and arbitration justify explicit nodes and routes.'],
+];
+
+const sources = [
+  [tr('Curso completo · Learn Harness Engineering', 'Complete course · Learn Harness Engineering'), 'https://walkinglabs.github.io/learn-harness-engineering/en/'],
+  [tr('Harness engineering en un entorno agent-first · OpenAI', 'Harness engineering in an agent-first world · OpenAI'), 'https://openai.com/index/harness-engineering/'],
+  [tr('Harnesses efectivos para agentes de larga duración · Anthropic', 'Effective harnesses for long-running agents · Anthropic'), 'https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents'],
+  [tr('Diseño de harness para desarrollo de aplicaciones de larga duración · Anthropic', 'Harness design for long-running application development · Anthropic'), 'https://www.anthropic.com/engineering/harness-design-long-running-apps'],
+  [tr('Construir agentes efectivos · Anthropic', 'Building effective agents · Anthropic'), 'https://www.anthropic.com/engineering/building-effective-agents'],
+] as const;
+---
+
+<Layout
+  mainId="top"
+  lang={lang}
+  title={tr('Harness engineering: cómo volver confiables a los agentes de código', 'Harness engineering: making coding agents reliable')}
+  description={tr('Una síntesis concreta de las 14 lectures de Learn Harness Engineering: contexto, estado, alcance, verificación, observabilidad, loops y grafos.', 'A concise synthesis of all 14 Learn Harness Engineering lectures: context, state, scope, verification, observability, loops, and graphs.')}
+  alternateHref={alternatePath}
+  ogType="article"
+  publishedTime="2026-08-31"
+>
+  <ModuleHeader label={tr('ARTÍCULO 03 · HARNESS', 'ARTICLE 03 · HARNESS')} lang={lang} />
+
+  <main id="top" tabindex="-1" class="ai-page harness-page">
+    <article>
+      <header class="ai-post-hero section-shell harness-hero">
+        <div class="harness-breadcrumb-row">
+          <p class="ai-breadcrumb"><a href="/ai/">AI &amp; Harnesses</a><span aria-hidden="true">/</span><a href="/ai/#writing">The harness</a><span aria-hidden="true">/</span><b>{tr('Artículo 03', 'Article 03')}</b></p>
+          <a class="harness-language-link" href={alternatePath} hreflang={es ? 'en' : 'es'} aria-label={tr('Read in English', 'Leer en español')}>{es ? 'EN' : 'ES'} ↗</a>
+        </div>
+        <p class="eyebrow"><span></span> {tr('AGENTES · SISTEMAS · CONFIABILIDAD', 'AGENTS · SYSTEMS · RELIABILITY')}</p>
+        <h1>{tr('El modelo no es', 'The model is not')}<br /><strong>{tr('el sistema.', 'the system.')}</strong></h1>
+        <p class="ai-post-lede">{tr('Un agente de código confiable no aparece porque el prompt sea brillante. Aparece cuando el repositorio le da un mapa, el trabajo tiene límites, la ejecución produce evidencia y cada sesión deja un estado que otra puede retomar. Esta es la versión compacta de las catorce lectures de Learn Harness Engineering.', 'A reliable coding agent does not emerge from a brilliant prompt. It emerges when the repository provides a map, work has boundaries, execution produces evidence, and every session leaves state another can resume. This is the compact version of all fourteen Learn Harness Engineering lectures.')}</p>
+        <div class="ai-post-meta">
+          <div><span>{tr('PUBLICADO', 'PUBLISHED')}</span><b>{tr('31 AGO 2026', 'AUG 31 2026')}</b></div>
+          <div><span>{tr('LECTURA', 'READING')}</span><b>~14 min</b></div>
+          <div><span>{tr('COBERTURA', 'COVERAGE')}</span><b>{tr('14 LECTURES', '14 LECTURES')}</b></div>
+          <div><span>{tr('RESULTADO', 'OUTCOME')}</span><b>{tr('PLAYBOOK PRÁCTICO', 'PRACTICAL PLAYBOOK')}</b></div>
+        </div>
+      </header>
+
+      <aside class="harness-thesis"><div class="section-shell"><span>{tr('LA TESIS', 'THE THESIS')}</span><p>{tr('Harness engineering no vuelve más inteligente al modelo. Convierte capacidad probabilística en trabajo acotado, observable, verificable y recuperable.', 'Harness engineering does not make the model smarter. It turns probabilistic capability into bounded, observable, verifiable, recoverable work.')}</p></div></aside>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">01 / {tr('LA UNIDAD DE DISEÑO', 'THE DESIGN UNIT')}</p><div><h2>{tr('No diseñes', 'Do not design')}<br /><em>{tr('un prompt.', 'a prompt.')}</em></h2><p>{tr('Diseñá el sistema que rodea al modelo.', 'Design the system around the model.')}</p></div></div>
+        <div class="harness-prose"><p>{tr('La primera corrección conceptual del curso es separar capacidad de confiabilidad. Un modelo puede entender el código y aun así implementar otra cosa, tocar de más, perder decisiones entre sesiones o declarar victoria con el sistema roto. Esos no son necesariamente fallos de inteligencia: son fallos del entorno de ejecución.', 'The course’s first conceptual correction is to separate capability from reliability. A model can understand the code and still build the wrong thing, touch too much, lose decisions across sessions, or declare victory while the system is broken. Those are not necessarily intelligence failures; they are execution-system failures.')}</p><p>{tr('El harness es todo lo que convierte una intención en un ciclo de trabajo: qué sabe el agente, qué puede hacer, dónde actúa, qué recuerda y qué evidencia recibe. Si una falla se puede atribuir a uno de esos subsistemas, cambiar de modelo es una respuesta prematura.', 'The harness is everything that turns intent into a work cycle: what the agent knows, what it can do, where it acts, what it remembers, and which evidence it receives. If a failure can be attributed to one of those subsystems, changing models is a premature response.')}</p></div>
+        <div class="harness-subsystems">{subsystems.map(([number, label, title, copy]) => <article><span>{number} / {label}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
+      </section>
+
+      <section class="ai-section ai-section-tint"><div class="section-shell">
+        <div class="ai-section-head"><p class="section-number">02 / {tr('EL REPOSITORIO COMO MEMORIA', 'THE REPOSITORY AS MEMORY')}</p><div><h2>{tr('Un mapa corto.', 'A short map.')}<br /><em>{tr('Detalle cerca del código.', 'Detail near the code.')}</em></h2><p>{tr('La información útil tiene que ser encontrable, vigente y proporcional a la tarea.', 'Useful information must be findable, current, and proportional to the task.')}</p></div></div>
+        <div class="harness-map">
+          <div><code>AGENTS.md</code><strong>{tr('Entrada', 'Entry')}</strong><p>{tr('Propósito, stack, comandos, restricciones y rutas hacia documentación específica.', 'Purpose, stack, commands, constraints, and routes to specific documentation.')}</p></div>
+          <i aria-hidden="true">→</i>
+          <div><code>docs/ + module docs</code><strong>{tr('Contexto bajo demanda', 'Context on demand')}</strong><p>{tr('Arquitectura, decisiones y reglas al lado del área donde aplican.', 'Architecture, decisions, and rules beside the area where they apply.')}</p></div>
+          <i aria-hidden="true">→</i>
+          <div><code>PROGRESS.md</code><strong>{tr('Estado operativo', 'Operational state')}</strong><p>{tr('Qué terminó, qué está activo, qué bloquea y cuál es el próximo paso verificable.', 'What is done, active, blocked, and the next verifiable action.')}</p></div>
+        </div>
+        <p class="harness-callout"><span>{tr('TEST DE SESIÓN NUEVA', 'FRESH-SESSION TEST')}</span>{tr('Con solo el repositorio, una sesión nueva debería poder explicar qué es el proyecto, cómo arrancarlo, qué reglas no puede romper, cómo verificarlo y dónde continuar. Cada respuesta ausente se convierte en costo de descubrimiento o en una suposición.', 'Using only the repository, a fresh session should be able to explain what the project is, how to start it, which rules it cannot break, how to verify it, and where to continue. Every missing answer becomes discovery cost or a guess.')}</p>
+        <div class="harness-warning"><strong>{tr('La trampa del archivo gigante', 'The giant-file trap')}</strong><p>{tr('Acumular toda corrección en un único archivo reduce señal, entierra restricciones y crea contradicciones. El entrypoint debe orientar, no contener el universo. Las reglas repetitivas y mecánicas deberían ascender a tipos, lint, tests o CI.', 'Accumulating every correction in one file lowers signal, buries constraints, and creates contradictions. The entry point should route, not contain the universe. Repetitive mechanical rules should graduate into types, lint, tests, or CI.')}</p></div>
+      </div></section>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">03 / {tr('EL CICLO DE UNA SESIÓN', 'THE SESSION LIFECYCLE')}</p><div><h2>{tr('Empezar listo.', 'Start ready.')}<br /><em>{tr('Terminar retomable.', 'End resumable.')}</em></h2><p>{tr('La continuidad se diseña en los bordes de la sesión.', 'Continuity is designed at session boundaries.')}</p></div></div>
+        <ol class="harness-lifecycle">
+          <li><span>01</span><div><small>{tr('INICIALIZAR', 'INITIALIZE')}</small><h3>{tr('Reconstruir realidad', 'Reconstruct reality')}</h3><p>{tr('Leer instrucciones y estado, inspeccionar el worktree, instalar lo necesario y ejecutar un baseline. Si el punto de partida ya está rojo, registrarlo antes de tocar negocio.', 'Read instructions and state, inspect the worktree, install what is needed, and run a baseline. If the starting point is already red, record it before touching business code.')}</p></div></li>
+          <li><span>02</span><div><small>{tr('EJECUTAR', 'EXECUTE')}</small><h3>{tr('Una unidad a la vez', 'One unit at a time')}</h3><p>{tr('Elegir una tarea, declarar alcance y exclusiones, implementar, observar y corregir hasta obtener evidencia.', 'Choose one task, declare scope and exclusions, implement, observe, and correct until evidence exists.')}</p></div></li>
+          <li><span>03</span><div><small>{tr('CERRAR', 'CLOSE')}</small><h3>{tr('Commit lógico o handoff honesto', 'Logical commit or honest handoff')}</h3><p>{tr('Verificar, limpiar temporales y persistir decisiones, resultados y próximo paso. Incompleto no es fracaso; ambiguo sí.', 'Verify, remove temporary debris, and persist decisions, results, and the next action. Incomplete is not failure; ambiguous is.')}</p></div></li>
+        </ol>
+        <p class="harness-boundary">{tr('Pensalo como un cambio de turno: la próxima sesión no necesita la transcripción completa; necesita una representación compacta y fiel del estado ejecutable.', 'Think of it as a shift change: the next session does not need the full transcript; it needs a compact, faithful representation of the executable state.')}</p>
+      </section>
+
+      <section class="ai-section ai-dark"><div class="section-shell">
+        <div class="ai-section-head light"><p class="section-number">04 / {tr('ALCANCE Y DEFINICIÓN DE DONE', 'SCOPE AND DEFINITION OF DONE')}</p><div><h2>{tr('Menos trabajo abierto.', 'Less open work.')}<br /><em>{tr('Más trabajo terminado.', 'More finished work.')}</em></h2><p>{tr('Para agentes, WIP=1 es un default de seguridad.', 'For agents, WIP=1 is a safety default.')}</p></div></div>
+        <div class="harness-contract">
+          <div><span>FEATURE</span><code>F-03</code></div>
+          <div><span>{tr('COMPORTAMIENTO', 'BEHAVIOR')}</span><p>{tr('Un usuario puede exportar el reporte completo desde la pantalla de resultados.', 'A user can export the complete report from the results screen.')}</p></div>
+          <div><span>{tr('VERIFICACIÓN', 'VERIFICATION')}</span><code>npm run test:e2e -- export</code></div>
+          <div><span>{tr('ESTADO', 'STATE')}</span><code>active → passing</code></div>
+          <div><span>{tr('EXCLUSIONES', 'EXCLUSIONS')}</span><p>{tr('Sin refactor del sistema de archivos ni rediseño visual.', 'No filesystem refactor and no visual redesign.')}</p></div>
+        </div>
+        <p class="harness-dark-note">{tr('Una feature list no es una lista de deseos. Es el contrato compartido entre quien selecciona, quien implementa, quien verifica y quien retoma. El agente puede proponer que algo está listo; solo la evidencia puede moverlo a passing.', 'A feature list is not a wish list. It is the shared contract between the selector, implementer, verifier, and next session. The agent may propose that something is ready; only evidence may move it to passing.')}</p>
+      </div></section>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">05 / {tr('FEEDBACK QUE CIERRA EL LOOP', 'FEEDBACK THAT CLOSES THE LOOP')}</p><div><h2>{tr('“Parece correcto”', '“Looks correct”')}<br /><em>{tr('no es evidencia.', 'is not evidence.')}</em></h2><p>{tr('Cada nivel responde una pregunta distinta y descubre fallas diferentes.', 'Each level answers a different question and exposes different failures.')}</p></div></div>
+        <ol class="harness-evidence">
+          <li><span>01</span><div><small>{tr('ESTÁTICO', 'STATIC')}</small><h3>{tr('¿Tiene forma válida?', 'Is its shape valid?')}</h3><p>{tr('Format, lint, tipos, build y unit tests. Son rápidos y localizan bien, pero no prueban el producto compuesto.', 'Format, lint, types, build, and unit tests. They are fast and localize well, but do not prove the composed product.')}</p></div><b>{tr('BARATO · FRECUENTE', 'CHEAP · FREQUENT')}</b></li>
+          <li><span>02</span><div><small>{tr('RUNTIME', 'RUNTIME')}</small><h3>{tr('¿Arranca y se comporta?', 'Does it start and behave?')}</h3><p>{tr('Integración, migraciones, health checks, side effects y rutas críticas con dependencias reales.', 'Integration, migrations, health checks, side effects, and critical paths with real dependencies.')}</p></div><b>{tr('CONCRETO · DIAGNÓSTICO', 'CONCRETE · DIAGNOSTIC')}</b></li>
+          <li><span>03</span><div><small>{tr('SISTEMA', 'SYSTEM')}</small><h3>{tr('¿La persona logra la tarea?', 'Can the person finish the job?')}</h3><p>{tr('E2E, revisión visual, accesibilidad y escenarios de falla. Prueba interfaces y fronteras, no solo componentes.', 'E2E, visual review, accessibility, and failure scenarios. It tests interfaces and boundaries, not only components.')}</p></div><b>{tr('CARO · DECISIVO', 'EXPENSIVE · DECISIVE')}</b></li>
+        </ol>
+        <div class="harness-feedback"><strong>{tr('Un buen error ya contiene el siguiente paso.', 'A good failure already contains the next step.')}</strong><p>{tr('“Falló el test” deja al agente adivinando. “El renderer accedió al filesystem; mové la operación al preload bridge y repetí el flujo export” convierte el check en un mecanismo de autocorrección. Cuando una observación humana se repite, promovela a una regla ejecutable.', '“Test failed” leaves the agent guessing. “The renderer accessed the filesystem; move the operation to the preload bridge and rerun the export flow” turns the check into a self-correction mechanism. When human feedback repeats, promote it into an executable rule.')}</p></div>
+      </section>
+
+      <section class="ai-section ai-section-tint"><div class="section-shell">
+        <div class="ai-section-head"><p class="section-number">06 / {tr('OBSERVABILIDAD', 'OBSERVABILITY')}</p><div><h2>{tr('Ver qué hizo.', 'See what it did.')}<br /><em>{tr('Entender por qué siguió.', 'Know why it continued.')}</em></h2><p>{tr('La confiabilidad es un problema de evidencia, no de vibes.', 'Reliability is an evidence problem, not a vibes problem.')}</p></div></div>
+        <div class="harness-observability">
+          <article><span>{tr('RUNTIME', 'RUNTIME')}</span><h3>{tr('El sistema observado', 'The observed system')}</h3><p>{tr('Inicio, ready state, logs correlacionados, errores completos, rutas críticas, consumo de recursos y cleanup.', 'Startup, ready state, correlated logs, full errors, critical paths, resource use, and cleanup.')}</p></article>
+          <article><span>{tr('PROCESO', 'PROCESS')}</span><h3>{tr('La decisión observable', 'The observable decision')}</h3><p>{tr('Objetivo, alcance, exclusiones, plan, criterio de aceptación, resultado del verificador y motivo de cada retry.', 'Goal, scope, exclusions, plan, acceptance criteria, verifier result, and the reason for each retry.')}</p></article>
+        </div>
+        <p class="harness-callout"><span>{tr('TRAZA MÍNIMA', 'MINIMUM TRACE')}</span><code>task_id · code_version · active_feature · command · result · attempt · next_action</code></p>
+      </div></section>
+
+      <section class="ai-section section-shell">
+        <div class="ai-section-head"><p class="section-number">07 / {tr('DE LOOP A GRAFO', 'FROM LOOP TO GRAPH')}</p><div><h2>{tr('Automatizá después', 'Automate after')}<br /><em>{tr('de poder detener.', 'you can stop.')}</em></h2><p>{tr('La autonomía amplifica tanto el diseño como sus defectos.', 'Autonomy amplifies both the design and its defects.')}</p></div></div>
+        <div class="harness-loop" aria-label={tr('Loop autónomo de trabajo', 'Autonomous work loop')}>
+          <span>{tr('DESCUBRIR', 'DISCOVER')}<small>{tr('leer estado', 'read state')}</small></span><i>→</i><span>{tr('ELEGIR', 'SELECT')}<small>WIP=1</small></span><i>→</i><span>{tr('ACTUAR', 'ACT')}<small>{tr('con límites', 'within limits')}</small></span><i>→</i><span>{tr('VERIFICAR', 'VERIFY')}<small>{tr('independiente', 'independently')}</small></span><i>→</i><span>{tr('PERSISTIR', 'PERSIST')}<small>{tr('evidencia', 'evidence')}</small></span><i>↺</i>
+        </div>
+        <div class="harness-loop-rules">
+          <article><span>01</span><h3>{tr('Meta verificable', 'Verifiable goal')}</h3><p>{tr('Describir el estado final, no una sucesión infinita de acciones.', 'Describe the end state, not an endless sequence of actions.')}</p></article>
+          <article><span>02</span><h3>{tr('Juez separado', 'Separate judge')}</h3><p>{tr('Tests determinísticos o un evaluador con contexto fresco; el autor no corrige su propio examen.', 'Deterministic tests or an evaluator with fresh context; the author does not grade their own exam.')}</p></article>
+          <article><span>03</span><h3>{tr('Presupuesto y salida', 'Budget and exit')}</h3><p>{tr('Máximo de intentos, tiempo, costo y escalamiento explícito cuando no hay progreso.', 'Maximum attempts, time, cost, and explicit escalation when progress stops.')}</p></article>
+          <article><span>04</span><h3>{tr('Memoria externa', 'External memory')}</h3><p>{tr('El loop reconstruye contexto desde artefactos; no depende de recordar la conversación.', 'The loop rebuilds context from artifacts; it does not depend on remembering the conversation.')}</p></article>
+        </div>
+        <div class="harness-graph"><div><span>{tr('UN LOOP ALCANZA CUANDO', 'A LOOP IS ENOUGH WHEN')}</span><p>{tr('hay un objetivo principal, un camino dominante, retries locales y un único estado que avanza.', 'there is one primary goal, one dominant path, local retries, and one advancing state.')}</p></div><div><span>{tr('UN GRAFO SE JUSTIFICA CUANDO', 'A GRAPH IS JUSTIFIED WHEN')}</span><p>{tr('hay roles especializados, trabajo paralelo, rutas condicionales, rollback a etapas distintas, árbitros o aprobación humana.', 'there are specialized roles, parallel work, conditional routes, rollback to different stages, arbiters, or human approval.')}</p></div></div>
+        <p class="harness-boundary">{tr('Un grafo no reemplaza el harness: lo hace visible a escala. Sus nodos tienen responsabilidades; sus aristas, condiciones; su estado, reglas de merge; y sus anchors lo conectan con resultados reales para que una métrica no se convierta en el objetivo equivocado.', 'A graph does not replace the harness: it makes it visible at scale. Its nodes have responsibilities; its edges, conditions; its state, merge rules; and its anchors tie it to real outcomes so a metric does not become the wrong goal.')}</p>
+      </section>
+
+      <section class="harness-conclusion"><div class="section-shell"><p class="eyebrow"><span></span> {tr('EL PLAYBOOK MÍNIMO', 'THE MINIMUM PLAYBOOK')}</p><h2>{tr('Mapa. Contrato.', 'Map. Contract.')}<br /><strong>{tr('Evidencia. Handoff.', 'Evidence. Handoff.')}</strong></h2><ol><li>{tr('Hacé que una sesión nueva pueda operar el repo sin explicación oral.', 'Make a fresh session able to operate the repo without an oral explanation.')}</li><li>{tr('Activá una sola unidad con comportamiento, exclusiones y check explícitos.', 'Activate one unit with explicit behavior, exclusions, and a check.')}</li><li>{tr('Usá tests y runtime para decidir done; nunca la confianza del autor.', 'Use tests and runtime to decide done; never the author’s confidence.')}</li><li>{tr('Dejá el sistema verde o documentá con precisión por qué no lo está.', 'Leave the system green or document precisely why it is not.')}</li><li>{tr('Recién entonces automatizá el loop; dibujá un grafo solo si las rutas lo exigen.', 'Only then automate the loop; draw a graph only when the routes require one.')}</li></ol></div></section>
+
+      <section class="ai-section section-shell harness-lectures">
+        <div class="ai-section-head"><p class="section-number">08 / {tr('LAS 14 LECTURES EN UNA LÍNEA', 'ALL 14 LECTURES IN ONE LINE')}</p><div><h2>{tr('Cobertura completa.', 'Complete coverage.')}<br /><em>{tr('Sin relleno.', 'No filler.')}</em></h2><p>{tr('El hilo completo del curso, reducido a la decisión que vale la pena conservar de cada unidad.', 'The course’s full arc, reduced to the decision worth keeping from each unit.')}</p></div></div>
+        <ol>{lectureIdeas.map(([number, title, copy]) => <li><span>{number}</span><div><h3>{title}</h3><p>{copy}</p></div></li>)}</ol>
+      </section>
+
+      <section class="ai-section ai-section-tint"><div class="section-shell harness-sources">
+        <div class="ai-section-head"><p class="section-number">09 / {tr('FUENTES', 'SOURCES')}</p><div><h2>{tr('Leé el curso.', 'Read the course.')}<br /><em>{tr('Después, las bases.', 'Then the foundations.')}</em></h2><p>{tr('Esta pieza sintetiza las lectures; no reemplaza sus ejemplos, ejercicios ni matices.', 'This piece synthesizes the lectures; it does not replace their examples, exercises, or nuance.')}</p></div></div>
+        <ol>{sources.map(([label, href], index) => <li><span>{String(index + 1).padStart(2, '0')}</span><a href={href} target="_blank" rel="noreferrer">{label}<b aria-hidden="true">↗</b></a></li>)}</ol>
+        <p>{tr('Síntesis editorial basada en el contenido público disponible al 31 de agosto de 2026. Las recomendaciones prácticas fueron reformuladas y agrupadas; no son una reproducción literal del curso.', 'Editorial synthesis based on public material available on August 31, 2026. Practical recommendations were rewritten and grouped; this is not a verbatim reproduction of the course.')}</p>
+      </div></section>
+    </article>
+  </main>
+  <ModuleFooter label={tr('ARTÍCULO 03 · HARNESS ENGINEERING', 'ARTICLE 03 · HARNESS ENGINEERING')} lang={lang} />
+</Layout>

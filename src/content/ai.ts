@@ -64,10 +64,12 @@ export const posts: Post[] = [
   },
   {
     number: '03',
-    title: 'What a harness actually is',
+    title: 'Harness engineering: making coding agents reliable',
     track: 'Harness',
-    status: 'planned',
-    hook: 'The loop, the tool schema, the permission boundary, and the transcript. The parts nobody demos.',
+    status: 'published',
+    href: '/en/ai/harness-engineering/',
+    reading: '~14 min',
+    hook: 'A compact synthesis of context, state, scope, verification, observability, loops, and graphs across all fourteen Learn Harness Engineering lectures.',
   },
   {
     number: '04',
