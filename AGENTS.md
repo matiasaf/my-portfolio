@@ -1,36 +1,51 @@
 # Agent guide
 
-This repository is the source of truth for `builtbymatias.dev`, a bilingual static portfolio
-built with Astro. Use this file as a map; follow the linked documentation for details.
+This repository is the source of truth for `builtbymatias.dev`, a bilingual static Astro
+portfolio. This file is the vendor-neutral operating contract; tool-specific files only point
+here. Follow links for detail instead of loading every document into context.
 
-## Start here
+## Mission
 
-1. Read `PROGRESS.md` for active, blocked, and recently completed work.
-2. Run `git status --short` and preserve changes unrelated to the current task.
-3. Install dependencies with `npm ci` when `node_modules/` is missing or the lockfile changed.
-4. Read `docs/ARCHITECTURE.md` before changing routes, shared content, or build behavior.
+Make one bounded, evidence-backed change at a time while preserving the site's accessibility,
+language parity, disclosure boundaries, and reproducible static build.
 
-## Environment
+## Startup gate
 
-- Runtime: Node.js 22 (see `.nvmrc`).
-- Package manager: npm; `package-lock.json` is authoritative.
-- Framework: Astro 5 with strict TypeScript and static output.
-- Styling: hand-written CSS; no component framework.
-- Optional PDF toolchain: Tectonic or another LaTeX engine, only for `npm run cv:pdf`.
+1. Read `PROGRESS.md` and identify its status and exact next action.
+2. Run `git status --short` and preserve unrelated work.
+3. Run `npm run harness:init`. It checks Node/npm, installs locked dependencies only when they
+   are absent or stale, and validates harness readiness.
+4. Read the controlling guide from the task router before editing.
 
-Use the least privilege needed for a task. Do not read local secrets or modify external systems
-unless the task explicitly requires it.
+The gate proves that the repository can start and test, that active state is visible, and that
+the next action is explicit. If it fails, stop implementation and report the actionable error.
 
-## Repository map
+## Environment and tools
 
-- `src/pages/`: file-based public routes.
-- `src/components/`: reusable and page-level Astro components.
-- `src/content/`: structured content shared by views and generators.
-- `src/layouts/`: shared HTML shell, metadata, canonical URLs, and themes.
-- `src/styles/`: global and module-specific styles.
-- `src/lib/` and `scripts/`: utilities and artifact generation.
-- `public/`: files copied unchanged, including committed résumé PDFs.
-- `docs/`: architecture and harness maintenance documentation.
+- Runtime: Node.js 22 (pinned by `.nvmrc`; `package.json` allows compatible newer releases).
+- Package manager: npm; `package-lock.json` is authoritative and `npm ci` is the clean install.
+- Stack: Astro 5, strict TypeScript, static output, and hand-written CSS.
+- Local server: `npm run dev`; production preview: `npm run preview`.
+- Optional PDFs: `npm run cv:pdf` requires Tectonic or another supported LaTeX engine.
+- No application database, backend, migrations, or required external service exists.
+
+Use the least privilege needed. Never weaken TLS, print or request secrets, deploy, mutate cloud
+resources, or modify external accounts unless the user explicitly authorizes that separate action.
+
+## Repository map and task router
+
+| Task | Controlling paths | Load first |
+|---|---|---|
+| Routes, shared content, build, metadata | `src/pages/`, `src/content/`, `src/layouts/`, `astro.config.mjs` | `docs/ARCHITECTURE.md` |
+| Components, styling, accessibility, responsive UI | `src/components/`, `src/styles/` | `docs/ARCHITECTURE.md`, then the nearest implementation |
+| Résumé web/PDF variants | `src/content/resume.ts`, `src/lib/resume-tex.ts`, `scripts/build-cv-pdf.mjs` | Résumé section in `docs/ARCHITECTURE.md` |
+| Harness, setup, state, or CI | This file, `scripts/harness-*.mjs`, `PROGRESS.md`, `.github/workflows/` | `docs/HARNESS.md` |
+| Contribution or disclosure policy | `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE` | The matching policy file |
+
+Authority order for conflicts is: user request and security constraints; public specifications or
+accepted plans; architecture decisions and schemas/contracts; tests and executable checks;
+implementation; setup and explanatory docs; external context. A more specific repository guide
+overrides a general one only within its stated scope. Flag unresolved product or ownership conflicts.
 
 ## Non-negotiable constraints
 
@@ -41,28 +56,48 @@ unless the task explicitly requires it.
 - Avoid dependencies for small behaviors supported by the web platform.
 - Never edit generated `dist/`, `.astro/`, or `node_modules/` content.
 - Do not expose credentials, private data, production exports, or unlicensed material.
+- Do not run concurrent editing roles in one checkout. Use separate worktrees and state files for
+  concurrent changes.
 
-## Verification
+## Goal loop
 
-Run the narrowest useful check while iterating, then the full gate before finishing:
+Before editing, normalize the request into an observable goal, ordered acceptance criteria,
+constraints and out-of-scope actions, a focused check, a final gate, a stop condition, and a retry
+budget (default: three implementation attempts).
 
-```bash
-npm run check
-npm run verify
-```
+1. **Explore (read-only):** locate the controlling authority and path; state one falsifiable
+   hypothesis, the cheapest discriminating check, and material risks.
+2. **Implement:** make one atomic increment and immediately run the focused check.
+3. **Verify (read-only):** re-read the goal and diff, map every criterion to code and executable
+   evidence, and return `PASS`, `REVISE`, or `BLOCKED`. The implementer cannot approve its own work.
+4. **Coordinate:** retry `REVISE` within budget; finish as `PASS`, `BLOCKED`, or
+   `BUDGET_EXHAUSTED`.
 
-`npm run verify` is the single full automated gate and must pass before a change is considered
-complete. It runs Astro/TypeScript diagnostics and the production static build. There is no
-automated browser test suite yet.
+Use a fresh verifier/subagent when the active tool genuinely supports it. Otherwise run the phases
+sequentially, re-read the original goal and diff before verification, and disclose that the review
+was logically separated rather than context-isolated.
 
-For visual or content changes, also inspect affected pages at mobile and desktop widths, in
-light and dark themes, and in both languages when applicable. Check keyboard navigation,
-metadata, links, and downloads relevant to the change.
+## Feedback ladder
 
-## State and handoff
+1. After the first substantive edit, run the cheapest relevant check (for harness changes,
+   `npm run harness:check`; for application code, normally `npm run check`).
+2. Run focused artifact or route checks when available.
+3. For shared code, contracts, dependencies, configuration, or broad behavior, run the full gate:
+   `npm run verify`.
+4. For visual or content changes, also inspect affected pages at mobile and desktop widths, in
+   light and dark themes, and in both languages when applicable. Check keyboard navigation,
+   metadata, links, and downloads.
 
-Update `PROGRESS.md` whenever work spans sessions, becomes blocked, or changes the next useful
-action. Before finishing, record verification results and leave the worktree in an explainable
-state. Do not claim completion with failing or skipped required checks.
+Inspect warnings, skipped checks, generated-file drift, and fallbacks; exit code alone is not
+enough. Distinguish new failures, pre-existing failures, and environment blockers.
+
+## State and definition of done
+
+Update `PROGRESS.md` when work spans sessions, becomes blocked, or changes the next action. Git is
+durable history; the state file is concise operational context, not a changelog.
+
+A change is done only when the diff is scoped, every acceptance criterion has evidence, the
+required focused checks and final gate pass, manual checks are recorded when applicable,
+`PROGRESS.md` is current, and no secrets or generated local artifacts entered the diff.
 
 More detail: `README.md`, `CONTRIBUTING.md`, `docs/ARCHITECTURE.md`, and `docs/HARNESS.md`.

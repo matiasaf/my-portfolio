@@ -2,8 +2,8 @@
 
 - [Architecture](ARCHITECTURE.md): routes, components, structured content,
   internationalization, artifacts, build, and deployment.
-- [Harness maintenance](HARNESS.md): instructions, environment, state, feedback, and failure
-  attribution for reliable agent and contributor workflows.
+- [Harness maintenance](HARNESS.md): authority routing, cross-platform readiness, state, feedback,
+  role separation, and recovery for reliable agent and contributor workflows.
 - [Contributing](../CONTRIBUTING.md): local workflow, content conventions, validation, and pull
   request expectations.
 - [Security policy](../SECURITY.md): private vulnerability reporting and repository safeguards.

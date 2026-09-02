@@ -12,7 +12,9 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "verify": "npm run build",
+    "harness:init": "node scripts/harness-init.mjs",
+    "harness:check": "node scripts/verify-harness.mjs",
+    "verify": "npm run harness:check && npm run build",
     "cv:pdf": "node scripts/build-cv-pdf.mjs"
   },
   "dependencies": {

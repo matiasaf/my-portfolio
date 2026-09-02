@@ -76,6 +76,7 @@ Astro prints the local URL, usually `http://localhost:4321`.
 Validate a change with:
 
 ```bash
+npm run harness:init
 npm run verify
 ```
 
@@ -86,7 +87,9 @@ npm run verify
 | `npm run dev` | Start the Astro development server |
 | `npm run check` | Validate types and Astro files |
 | `npm run build` | Validate and generate the static site in `dist/` |
-| `npm run verify` | Run the complete automated verification gate |
+| `npm run harness:init` | Check runtime and state, install absent locked dependencies, and prove readiness |
+| `npm run harness:check` | Read-only validation of the repository-owned agent harness |
+| `npm run verify` | Validate the harness and run the complete application build gate |
 | `npm run preview` | Serve the generated `dist/` output locally |
 | `npm run cv:pdf` | Rebuild both résumé variants in both languages from the TypeScript source |
 
@@ -157,8 +160,9 @@ site build and committed under `public/downloads/` because Pages does not compil
 
 ## Testing and verification
 
-`npm run verify` is the required automated gate. It runs strict Astro/TypeScript diagnostics and a
-production static build. CI runs the same gate on pushes and pull requests.
+`npm run verify` is the required automated gate. It validates the repository harness, runs strict
+Astro/TypeScript diagnostics, and produces a static build. CI runs the same gate on pushes and pull
+requests.
 
 For visual or editorial changes, the repository guide additionally requires mobile and desktop
 inspection in both themes and languages, plus keyboard, metadata, link, and download checks. There
