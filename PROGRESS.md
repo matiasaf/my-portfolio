@@ -5,11 +5,11 @@ history; replace stale detail instead of accumulating a diary.
 
 ## Current state
 
-- Status: active
+- Status: idle
 - Branch: `main`
-- HEAD: `fdb45b6`
-- Updated: `2026-09-02T14:30:00-03:00`
-- Worktree: scoped root-render fix verified and ready for its main-branch commit.
+- HEAD: `283d2da`
+- Updated: `2026-09-02T15:07:00-03:00`
+- Worktree: the scoped root-render fix is committed, published, and verified in production.
 
 ### Objective
 
@@ -39,7 +39,7 @@ Eliminate the initial blank-screen flick when visiting `https://builtbymatias.de
 
 ### Blockers
 
-- None currently.
+- None.
 
 ### Verification
 
@@ -52,11 +52,14 @@ Eliminate the initial blank-screen flick when visiting `https://builtbymatias.de
   load, remained at `/`, rendered the home, and had no horizontal overflow or meta refresh.
 - `npm run verify` — PASS (harness: 9 checks; Astro: 88 files clean; 41 pages built).
 - `git diff --check` — PASS.
+- GitHub Verify run 16 — PASS for commit `283d2da` on `main`.
+- Production cold load — PASS; `/` renders the full home directly with no meta refresh or overflow,
+  while retaining canonical `/en/` and Spanish alternate `/es/`.
 
 ### Next action
 
-Commit the scoped fix to `main`, push it, and confirm the production root no longer serves the
-intermediate redirect document after deployment.
+No active implementation remains. Begin the next request from a clean checkout and use the current
+production deployment as the baseline.
 
 ## Recently completed
 
