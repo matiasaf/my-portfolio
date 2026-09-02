@@ -5,84 +5,69 @@ history; replace stale detail instead of accumulating a diary.
 
 ## Current state
 
-- Status: active
+- Status: idle
 - Branch: `main`
 - HEAD: `a43d05a`
-- Updated: `2026-09-02T10:13:05-03:00`
-- Worktree: uncommitted harness/documentation work was present at startup and remains preserved;
-  the OpenCode-inspired UI migration is an additional scoped change under `src/`.
+- Updated: `2026-09-02T10:46:00-03:00`
+- Worktree: the scoped Event-Driven Azure article passed verification and is recorded by the
+  accompanying main-branch commit; no unrelated work was included.
 
 ### Objective
 
-Migrate the portfolio UI foundations to the supplied OpenCode design system while preserving
-content, accessibility, bilingual parity, responsive behavior, and static-build reproducibility.
+Publish a bilingual System Design field note explaining how the supplied Website Chatbot
+architecture implemented event-driven behavior on Azure.
 
 ### Acceptance criteria
 
-1. Centralize the supplied OpenCode palette, mono typography, spacing, radii, and surface roles.
-2. Apply the new system to shared UI plus Home, About, Work, case-study, and résumé surfaces.
-3. Preserve light/dark themes, English/Spanish routes, focus visibility, and mobile layout.
-4. Pass focused diagnostics, visual checks, and the complete repository gate.
-5. Give every published long-form note a quiet documentation-style reading layout with no
-   decorative hero imagery, poster-like panels, or unnecessary color noise.
-6. Add an OpenCode-style left navigation only to Writing and article routes, with publications
-   grouped by topic, an active-page state, and an accessible mobile disclosure.
+1. Add the requested English article to Writing and preserve Spanish parity.
+2. Explain the Web PubSub conversation plane, Queue Storage/Functions ingestion plane, and
+   Azure SQL/REST source-of-truth boundary from the supplied architecture.
+3. Cover state machines, at-least-once handling, idempotency, correlation, reconciliation, and
+   the documented cancellation limitation without exposing secrets or private identifiers.
+4. Preserve the established reading layout, active Writing navigation, accessibility, themes,
+   responsive behavior, metadata, and static build.
+5. Pass focused diagnostics, bilingual visual checks, and the complete repository gate.
 
 ### Decisions
 
 - IBM Plex Mono is the licensed/open fallback used by the official OpenCode site; Berkeley Mono is
   not copied because no redistribution license was provided.
-- The supplied light tokens remain canonical. The dark variant follows the official site's current
-  near-black surfaces while keeping the portfolio's existing user-selectable theme behavior.
-- Existing content and technical illustrations remain intact; this change migrates their shared UI
-  foundations without rewriting editorial information or product claims.
-- The final selected wordmark direction uses Pixelify Sans with soft pixel forms and a tonal
-  first name. Its readable “Matías Fernández” label remains in the accessibility tree.
-- Published notes share a 700px reading column modeled on the official OpenCode documentation.
-  Explanatory code, tables, and diagrams remain available, while hero illustrations and purely
-  decorative color treatments are removed or flattened.
-- Writing navigation is derived from `src/content/notes.ts`; topic, compact navigation title, full
-  title, and public URL therefore remain a single source of truth in both languages.
+- The article is a sanitized synthesis of the supplied canonical architecture document; it does
+  not reproduce secrets, internal keys, customer names, or deploy-time configuration.
+- The central design argument is that realtime delivery, durable work dispatch, and authoritative
+  state need separate responsibilities rather than one generic event mechanism.
+- The requested English route has a Spanish counterpart because the publication system and the
+  repository contract require language parity for translated long-form notes.
+- Existing OpenCode-style reading tokens, navigation, theme behavior, and social metadata are
+  reused; no new dependency or decorative image is needed.
 
 ### Progress
 
-- Added canonical OpenCode-inspired tokens and mapped every legacy shared color/font alias to them.
-- Migrated the shared shell, navigation, theme control, buttons, cards, footers, Work pages, and web
-  résumé away from rounded pills, decorative shadows, and mixed font families.
-- Corrected the Spanish mobile writing-header overflow found during visual verification.
-- Added the final responsive soft-pixel “Matías Fernández” wordmark to the main hero and every shared
-  brand position across professional, Work, AI, System Design, article, and footer surfaces.
-- Added a shared reading layer to all nine published article templates/routes in both languages:
-  smaller headings, documentation rows instead of cards, neutral callouts, compact metadata, and
-  flat explanatory figures with the redundant hero visuals removed.
-- Added the Writing sidebar to the bilingual Writing indexes and every long-form article. Desktop
-  uses a fixed 280px rail; mobile uses a native disclosure, and the current article is exposed with
-  `aria-current` and a visible active marker.
+- Added the English `/en/system-design/event-driven-design-azure/` article and its Spanish
+  `/system-design/event-driven-design-azure/` counterpart.
+- Added the publication to the shared bilingual Writing index and System Design navigation group.
+- Explained the two event planes, end-to-end chat and crawl flows, aggregate crawl states,
+  idempotency, bounded retries, correlation, reconciliation, and known cancellation gap.
+- Added official Microsoft Learn references for the Azure architecture pattern, Web PubSub,
+  Functions queue triggers, and reliability patterns.
 
 ### Blockers
 
-- None for the UI migration. The pre-existing GitHub-alignment publishing boundary remains unrelated.
+- None.
 
 ### Verification
 
 - `npm run harness:init` — PASS on macOS 26.5 arm64 with Node 24.18.0 and npm 11.16.0.
-- `npm run check` — PASS (Astro: 84 files clean, no errors, warnings, or hints).
-- Browser review — PASS at desktop and mobile widths, light/dark themes, English/Spanish Home,
-  English About, Spanish Work, and English résumé; no horizontal overflow remains.
-- Final wordmark review — PASS at 1440×1000 and 390×844 in light/dark themes; Pixelify Sans loads,
-  the accessible text name remains present, and no horizontal overflow is introduced.
-- Article reading review — PASS against the official OpenCode docs reference at 1280×800 and
-  390×844, in light/dark themes and English/Spanish routes; the Harness and database articles were
-  checked at the hero and internal-content levels.
-- Writing sidebar review — PASS in Spanish at desktop and mobile widths, light/dark themes, closed
-  and open mobile states, active-page styling, keyboard-visible focus, and navigation from Harness
-  to Postgres; the bilingual Writing index also retains its content layout beside the rail.
-- `npm run verify` — PASS on 2026-09-02 (harness: 9 checks; Astro: 84 files clean; build: 38 pages).
+- `npm run check` — PASS (Astro: 87 files clean, no errors, warnings, or hints).
+- Browser review — PASS at 1280×800 light and 390×844 dark, English and Spanish; no horizontal
+  overflow, correct active Writing link, working mobile disclosure, and correct language metadata.
+- `git diff --check` — PASS.
+- `npm run verify` — PASS on 2026-09-02 (harness: 9 checks; Astro: 87 files clean; 40 pages built).
 
 ### Next action
 
-Review and commit the scoped OpenCode-inspired UI migration together with the supplied reference
-artifacts when ready; publishing or deployment remains a separate action.
+No active implementation remains. Begin the next request from a clean checkout and use the
+current production deployment as the baseline.
 
 ## Recently completed
 

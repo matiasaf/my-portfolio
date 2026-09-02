@@ -41,6 +41,7 @@ export const noteTopics: Record<Lang, NoteTopicGroup[]> = {
 
 export const notes: Record<Lang, Note[]> = {
   en: [
+    { tag: 'EVENT-DRIVEN', meta: 'SYSTEM DESIGN · AZURE · BILINGUAL', title: 'Event-driven design in Azure: realtime chat, asynchronous ingestion, and durable truth', navTitle: 'Event-driven Azure', topic: 'system-design', href: '/en/system-design/event-driven-design-azure/' },
     { tag: 'HARNESS', meta: 'AI · BILINGUAL', title: 'Harness engineering: making coding agents reliable', navTitle: 'Harness engineering', topic: 'ai-agents', href: '/en/ai/harness-engineering/' },
     { tag: 'POSTGRES', meta: 'SYSTEM DESIGN · BILINGUAL', title: 'Postgres from the inside: pages, tuples, and MVCC', navTitle: 'Postgres internals', topic: 'databases', href: '/en/system-design/how-postgres-works/' },
     { tag: 'AI SECURITY', meta: 'AI · BILINGUAL', title: 'The agent that escaped the exam: understanding the OpenAI–Hugging Face incident', navTitle: 'Agent security incident', topic: 'ai-agents', href: '/en/ai/openai-hugging-face-incident/' },
@@ -52,6 +53,7 @@ export const notes: Record<Lang, Note[]> = {
     { tag: 'DDIA', meta: 'BOOK NOTES', title: 'Reliable, scalable, and maintainable applications', navTitle: 'DDIA · Chapter 1', topic: 'book-notes', href: '/system-design/ddia/chapter-01/' },
   ],
   es: [
+    { tag: 'EVENT-DRIVEN', meta: 'SYSTEM DESIGN · AZURE · BILINGÜE', title: 'Event-driven design en Azure: chat en tiempo real, ingesta asíncrona y verdad durable', navTitle: 'Event-driven en Azure', topic: 'system-design', href: '/system-design/event-driven-design-azure/' },
     { tag: 'HARNESS', meta: 'AI · BILINGÜE', title: 'Harness engineering: cómo volver confiables a los agentes de código', navTitle: 'Harness engineering', topic: 'ai-agents', href: '/es/ai/ingenieria-de-harness/' },
     { tag: 'POSTGRES', meta: 'SYSTEM DESIGN · BILINGÜE', title: 'Postgres por dentro: páginas, tuplas y MVCC', navTitle: 'Postgres por dentro', topic: 'databases', href: '/system-design/postgres-por-dentro/' },
     { tag: 'SEGURIDAD AI', meta: 'AI · CASO REAL · BILINGÜE', title: 'El agente que escapó del examen: entendiendo el incidente OpenAI–Hugging Face', navTitle: 'Incidente de seguridad', topic: 'ai-agents', href: '/es/ai/incidente-openai-hugging-face/' },

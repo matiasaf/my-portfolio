@@ -1,0 +1,203 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PixelWordmark from '../PixelWordmark.astro';
+import WritingSidebar from '../WritingSidebar.astro';
+import '../../styles/system-design.css';
+import '../../styles/event-driven-article.css';
+import '../../styles/article-reading.css';
+
+interface Props { lang: 'es' | 'en' }
+const { lang } = Astro.props;
+const es = lang === 'es';
+const alternatePath = es
+  ? '/en/system-design/event-driven-design-azure/'
+  : '/system-design/event-driven-design-azure/';
+
+const t = es ? {
+  title: 'Event-driven design en Azure: chat en tiempo real, ingesta asíncrona y verdad durable',
+  description: 'Cómo una plataforma RAG separó conversación, trabajo asíncrono y estado durable con Azure Web PubSub, Queue Storage, Functions y SQL.',
+  back: 'Volver al módulo de System Design', header: 'EVENT-DRIVEN · FIELD NOTE 03', switchLabel: 'Read in English', switchShort: 'EN',
+  breadcrumb: ['System Design', 'Field Notes', 'Event-driven en Azure'],
+  kicker: 'AZURE · REALTIME · TRABAJO ASÍNCRONO', heroA: 'Event-driven,', heroB: 'pero con una verdad durable.',
+  lede: 'Así implementamos una plataforma RAG para sitios web donde el chat debía sentirse inmediato y la ingesta podía durar minutos. La solución no fue convertir todo en eventos: fue elegir dos canales asíncronos distintos y mantener una autoridad clara para el estado.',
+  meta: [['PUBLICADO', '2 SEP 2026'], ['LECTURA', '~12 min'], ['PLATAFORMA', 'AZURE'], ['CASO', 'RAG + CHATBOT']],
+  thesisLabel: 'LA TESIS', thesis: 'Los eventos transportan intención y cambio. No deberían ser la única memoria del sistema cuando el usuario necesita recuperar, auditar o reconciliar el resultado.',
+  s1: ['01 / LA DECISIÓN DE ARQUITECTURA', 'Dos planos de eventos.', 'Dos tipos de latencia.', 'La conversación necesita respuestas de baja latencia sobre conexiones persistentes. El crawling necesita buffering, reintentos y escala independiente. Un solo mecanismo habría mezclado garantías incompatibles.'],
+  lanes: [
+    ['REALTIME', 'Azure Web PubSub', 'Widget ↔ API', 'Mensajes de chat y señales de actualización con baja latencia.'],
+    ['TRABAJO DURABLE', 'Queue Storage + Functions', 'API → worker', 'Crawls desacoplados de la request, con reintentos y procesamiento independiente.'],
+    ['AUTORIDAD', 'Azure SQL + REST', 'API → clientes', 'Estado consultable y reconciliable después de una desconexión o un evento perdido.'],
+  ],
+  ruleLabel: 'REGLA DE DISEÑO', rule: 'No preguntamos “¿qué servicio de eventos usamos?”. Primero preguntamos “¿este mensaje notifica, ordena trabajo o representa verdad durable?”.',
+  s2: ['02 / PLANO DE CONVERSACIÓN', 'Web PubSub mueve la respuesta.', 'La API conserva el control.', 'El widget habla por WebSocket, pero no ejecuta lógica de negocio ni accede a modelos o datos. Web PubSub administra las conexiones; la API valida el contexto, orquesta Azure OpenAI, persiste el mensaje y devuelve una respuesta correlacionada.'],
+  chatSteps: [
+    ['01', 'NEGOTIATE', 'La API resuelve al visitante y emite una URL de conexión de vida corta.'],
+    ['02', 'CREATE MESSAGE', 'El widget publica un evento con conversación, sesión y hash del mensaje.'],
+    ['03', 'ORCHESTRATE', 'El webhook llega a FastAPI, que ejecuta retrieval y el run de Azure OpenAI.'],
+    ['04', 'COMMIT', 'La respuesta, las fuentes y el costo se guardan antes de entregarse.'],
+    ['05', 'CORRELATE', 'La API publica al cliente original; el hash permite asociar y deduplicar.'],
+  ],
+  authorityTitle: 'Realtime no significa durable.', authorityCopy: 'Una conexión puede cortarse y una notificación puede llegar tarde o no llegar. Por eso el historial autoritativo vive en SQL. En el panel administrativo, los eventos invalidan o refrescan la vista; REST reconstruye la realidad.',
+  s3: ['03 / PLANO DE INGESTA', 'La request inicia.', 'La cola termina el trabajo.', 'Un crawl usa navegador, descubre enlaces, transforma contenido, genera embeddings y escribe en varios stores. Mantener la request HTTP abierta habría acoplado al operador con el tiempo de ejecución y con cada dependencia externa.'],
+  crawlSteps: [
+    ['API', 'Crea GlobalCrawl y LocalCrawl en INPROGRESS.'],
+    ['QUEUE', 'Publica URL e identificadores de correlación.'],
+    ['FUNCTION', 'Extrae, descubre y envía el resultado por callback interno.'],
+    ['API', 'Guarda Markdown, genera metadata, embeddings y vectores.'],
+    ['STATE', 'Recalcula estados y publica una notificación al panel.'],
+  ],
+  statesTitle: 'El estado agregado es una función, no un evento', states: [
+    ['INPROGRESS', 'Si cualquier URL activa sigue procesándose.'],
+    ['FAILED', 'Si ninguna sigue activa y al menos una falló.'],
+    ['COMPLETED', 'Solo cuando todas las URLs activas terminaron.'],
+  ],
+  s4: ['04 / GARANTÍAS REALES', 'Diseñá para repetir.', 'Reconciliá lo que se separa.', 'Las colas y los canales realtime mejoran desacople y respuesta, pero introducen duplicados, retrasos, fallos parciales y estados intermedios. La confiabilidad aparece cuando esos casos forman parte del contrato.'],
+  guarantees: [
+    ['IDEMPOTENCIA', 'Normalizar URLs y verificar existencia reduce duplicados. Un recrawl reutiliza la identidad existente. Los callbacks deben tolerar repetición.'],
+    ['CORRELACIÓN', 'Request ID, hash de mensaje, conexión, conversación, crawl global, crawl local y dequeue count conectan una operación distribuida.'],
+    ['REINTENTOS ACOTADOS', 'La Function reintenta fallos transitorios; al alcanzar el límite, informa FAILED en lugar de dejar una tarea eternamente pendiente.'],
+    ['RECONCILIACIÓN', 'SQL es autoridad, pero Blob y el índice vectorial pueden quedar desalineados. Métricas y jobs de reparación deben detectar esa deriva.'],
+  ],
+  deliveryLabel: 'SEMÁNTICA HONESTA', delivery: 'El sistema no promete exactly-once. Acepta que una entrega puede repetirse y diseña efectos seguros para at-least-once.',
+  s5: ['05 / MODOS DE FALLO', 'La parte difícil aparece', 'después del happy path.', 'El valor de la arquitectura se mide por lo que hace cuando un canal, un worker o una escritura externa falla a mitad del recorrido.'],
+  failures: [
+    ['Se pierde una notificación', 'El panel vuelve a consultar REST; el evento acelera la UI, no define el estado.'],
+    ['El worker falla', 'La cola habilita reintentos. El estado termina en FAILED cuando el presupuesto se agota.'],
+    ['SQL, Blob o vectores divergen', 'No se declara COMPLETED si falta un artefacto requerido; luego se reconcilian residuos.'],
+    ['Se elimina un crawl activo', 'La baja lógica no cancela mágicamente una Function en ejecución. Hace falta run ID, señal de cancelación y polling cooperativo.'],
+  ],
+  limitationLabel: 'LÍMITE CONOCIDO', limitation: 'Soft delete no equivale a cancelación distribuida. Un worker ya iniciado todavía puede descubrir descendientes hasta que exista un protocolo explícito de cancelación.',
+  s6: ['06 / EL PLAYBOOK', 'Seis preguntas antes', 'de elegir el broker.', 'El producto define las garantías; Azure implementa el canal. Este orden evita usar la misma herramienta para problemas que solo se parecen en un diagrama.'],
+  checklist: ['¿El mensaje notifica un hecho o asigna trabajo?', '¿Quién conserva la fuente de verdad?', '¿Qué pasa si el mensaje llega dos veces?', '¿Qué dato correlaciona todo el recorrido?', '¿Cuándo dejamos de reintentar?', '¿Cómo se detecta y repara un estado parcial?'],
+  conclusionA: 'Los eventos desacoplan.', conclusionB: 'El estado explica qué ocurrió.', conclusion: 'Azure Web PubSub hizo inmediata la conversación. Queue Storage y Functions aislaron el trabajo pesado. Azure SQL mantuvo una historia consultable. La solución funcionó porque cada pieza tuvo una responsabilidad distinta y porque las garantías se diseñaron alrededor de fallos, no solo de flujos.',
+  sourcesTitle: 'Fuentes y contexto', sourceNote: 'La implementación descripta es una síntesis sanitizada del documento de arquitectura provisto para este artículo. Las referencias externas documentan los servicios y patrones de Azure.', footer: 'EVENT-DRIVEN · FIELD NOTE 03', top: 'VOLVER ARRIBA ↑',
+} : {
+  title: 'Event-driven design in Azure: realtime chat, asynchronous ingestion, and durable truth',
+  description: 'How a RAG platform separated conversation, asynchronous work, and durable state with Azure Web PubSub, Queue Storage, Functions, and SQL.',
+  back: 'Back to the System Design module', header: 'EVENT-DRIVEN · FIELD NOTE 03', switchLabel: 'Leer en español', switchShort: 'ES',
+  breadcrumb: ['System Design', 'Field Notes', 'Event-driven Azure'],
+  kicker: 'AZURE · REALTIME · ASYNCHRONOUS WORK', heroA: 'Event-driven,', heroB: 'but grounded in durable truth.',
+  lede: 'This is how we implemented a website RAG platform where chat had to feel immediate while ingestion could take minutes. The answer was not turning everything into an event: it was choosing two asynchronous channels and keeping one clear authority for state.',
+  meta: [['PUBLISHED', 'SEP 2 2026'], ['READING', '~12 min'], ['PLATFORM', 'AZURE'], ['CASE', 'RAG + CHATBOT']],
+  thesisLabel: 'THE THESIS', thesis: 'Events carry intent and change. They should not be the system’s only memory when users need to recover, audit, or reconcile the result.',
+  s1: ['01 / THE ARCHITECTURE DECISION', 'Two event planes.', 'Two kinds of latency.', 'Conversation needs low-latency responses over persistent connections. Crawling needs buffering, retries, and independent scaling. One mechanism would have mixed incompatible guarantees.'],
+  lanes: [
+    ['REALTIME', 'Azure Web PubSub', 'Widget ↔ API', 'Chat messages and update signals delivered with low latency.'],
+    ['DURABLE WORK', 'Queue Storage + Functions', 'API → worker', 'Crawls decoupled from the request, with retries and independent processing.'],
+    ['AUTHORITY', 'Azure SQL + REST', 'API → clients', 'Queryable state that can be reconciled after a disconnect or missed event.'],
+  ],
+  ruleLabel: 'DESIGN RULE', rule: 'We did not start with “which event service should we use?” We started with “does this message notify, schedule work, or represent durable truth?”',
+  s2: ['02 / CONVERSATION PLANE', 'Web PubSub moves the answer.', 'The API keeps control.', 'The widget communicates over WebSocket, but it never executes business logic or reaches models and data directly. Web PubSub manages connections; the API validates context, orchestrates Azure OpenAI, persists the message, and returns a correlated response.'],
+  chatSteps: [
+    ['01', 'NEGOTIATE', 'The API resolves the visitor and issues a short-lived connection URL.'],
+    ['02', 'CREATE MESSAGE', 'The widget publishes an event with conversation, session, and message hash.'],
+    ['03', 'ORCHESTRATE', 'The webhook reaches FastAPI, which runs retrieval and Azure OpenAI.'],
+    ['04', 'COMMIT', 'The answer, sources, and cost are stored before delivery.'],
+    ['05', 'CORRELATE', 'The API publishes to the originating client; the hash associates and deduplicates.'],
+  ],
+  authorityTitle: 'Realtime is not the same as durable.', authorityCopy: 'A connection can drop, and a notification can arrive late or not at all. The authoritative history therefore lives in SQL. In the admin app, events invalidate or refresh the view; REST reconstructs reality.',
+  s3: ['03 / INGESTION PLANE', 'The request starts it.', 'The queue finishes the work.', 'A crawl launches a browser, discovers links, transforms content, generates embeddings, and writes to several stores. Holding the HTTP request open would have coupled the operator to runtime duration and every downstream dependency.'],
+  crawlSteps: [
+    ['API', 'Creates GlobalCrawl and LocalCrawl as INPROGRESS.'],
+    ['QUEUE', 'Publishes the URL and correlation identifiers.'],
+    ['FUNCTION', 'Extracts, discovers, and reports through an internal callback.'],
+    ['API', 'Stores Markdown, generates metadata, embeddings, and vectors.'],
+    ['STATE', 'Recomputes status and publishes an admin notification.'],
+  ],
+  statesTitle: 'Aggregate state is a function, not an event', states: [
+    ['INPROGRESS', 'When any active URL is still processing.'],
+    ['FAILED', 'When none is active and at least one failed.'],
+    ['COMPLETED', 'Only when every active URL completed.'],
+  ],
+  s4: ['04 / REAL GUARANTEES', 'Design for repetition.', 'Reconcile what you separate.', 'Queues and realtime channels improve decoupling and responsiveness, but introduce duplicates, delays, partial failures, and intermediate states. Reliability appears when those cases are part of the contract.'],
+  guarantees: [
+    ['IDEMPOTENCY', 'URL normalization and existence checks reduce duplicates. A recrawl reuses the existing identity. Callbacks must tolerate repetition.'],
+    ['CORRELATION', 'Request ID, message hash, connection, conversation, global crawl, local crawl, and dequeue count join a distributed operation.'],
+    ['BOUNDED RETRIES', 'The Function retries transient failures; at the limit, it reports FAILED instead of leaving work pending forever.'],
+    ['RECONCILIATION', 'SQL is authoritative, but Blob and the vector index can drift. Metrics and repair jobs must detect that mismatch.'],
+  ],
+  deliveryLabel: 'HONEST SEMANTICS', delivery: 'The system does not promise exactly-once. It accepts repeated delivery and makes effects safe under at-least-once processing.',
+  s5: ['05 / FAILURE MODES', 'The hard part starts', 'after the happy path.', 'The architecture earns its value in what it does when a channel, worker, or external write fails halfway through the flow.'],
+  failures: [
+    ['A notification is missed', 'The admin refetches REST; the event accelerates the UI but does not define state.'],
+    ['The worker fails', 'The queue enables retries. State ends as FAILED when the budget is exhausted.'],
+    ['SQL, Blob, or vectors diverge', 'The system does not claim COMPLETED while a required artifact is missing; residual drift is reconciled.'],
+    ['An active crawl is deleted', 'Soft deletion does not magically cancel a running Function. Run IDs, cancellation state, and cooperative polling are required.'],
+  ],
+  limitationLabel: 'KNOWN LIMIT', limitation: 'Soft delete is not distributed cancellation. A worker already running can still discover descendants until the system has an explicit cancellation protocol.',
+  s6: ['06 / THE PLAYBOOK', 'Six questions before', 'choosing the broker.', 'The product defines the guarantees; Azure implements the channel. This order prevents one tool from being used for problems that only look alike on a diagram.'],
+  checklist: ['Does the message announce a fact or assign work?', 'Which component owns the source of truth?', 'What happens if the message arrives twice?', 'Which identifier correlates the whole journey?', 'When do retries stop?', 'How is partial state detected and repaired?'],
+  conclusionA: 'Events decouple.', conclusionB: 'State explains what happened.', conclusion: 'Azure Web PubSub made conversation immediate. Queue Storage and Functions isolated heavy work. Azure SQL kept a queryable history. The solution worked because every piece had a distinct responsibility and guarantees were designed around failure, not only flow.',
+  sourcesTitle: 'Sources and context', sourceNote: 'The implementation is a sanitized synthesis of the architecture document supplied for this article. External references document the Azure services and patterns.', footer: 'EVENT-DRIVEN · FIELD NOTE 03', top: 'BACK TO TOP ↑',
+};
+
+const sources = [
+  ['Microsoft Learn', 'https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/event-driven', 'Event-driven architecture style'],
+  ['Microsoft Learn', 'https://learn.microsoft.com/en-us/azure/azure-web-pubsub/overview', 'Azure Web PubSub overview'],
+  ['Microsoft Learn', 'https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger', 'Azure Queue Storage trigger for Functions'],
+  ['Microsoft Learn', 'https://learn.microsoft.com/en-us/azure/architecture/patterns/', 'Cloud design patterns'],
+] as const;
+---
+
+<Layout mainId="top" title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} ogType="article" publishedTime="2026-09-02">
+  <header class="sd-header ed-header">
+    <a class="brand" href="/system-design/#field-notes" aria-label={t.back}><PixelWordmark compact /><em>/ System Design</em></a>
+    <div class="ed-header-actions"><a href={alternatePath} aria-label={t.switchLabel}>{t.switchShort}</a><span class="sd-header-label">{t.header}</span></div>
+  </header>
+  <WritingSidebar {lang} />
+
+  <main id="top" tabindex="-1" class="ed-page reading-article has-writing-sidebar">
+    <article>
+      <header class="ed-hero section-shell">
+        <div class="ed-breadcrumb-row"><p><a href="/system-design/">{t.breadcrumb[0]}</a><span>/</span><a href="/system-design/#field-notes">{t.breadcrumb[1]}</a><span>/</span><b>{t.breadcrumb[2]}</b></p><a href={alternatePath}>{t.switchLabel} <span aria-hidden="true">↗</span></a></div>
+        <p class="ed-kicker"><span></span>{t.kicker}</p>
+        <h1>{t.heroA}<br /><strong>{t.heroB}</strong></h1>
+        <p class="ed-lede">{t.lede}</p>
+        <dl class="ed-meta">{t.meta.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+      </header>
+
+      <aside class="ed-thesis"><div class="section-shell"><span>{t.thesisLabel}</span><p>{t.thesis}</p></div></aside>
+
+      <section class="ed-section section-shell">
+        <div class="ed-section-heading"><p>{t.s1[0]}</p><div><h2>{t.s1[1]}<br /><strong>{t.s1[2]}</strong></h2><p>{t.s1[3]}</p></div></div>
+        <div class="ed-lanes">{t.lanes.map(([label, service, flow, copy]) => <article><span>{label}</span><h3>{service}</h3><code>{flow}</code><p>{copy}</p></article>)}</div>
+        <blockquote class="ed-callout"><span>{t.ruleLabel}</span><p>{t.rule}</p></blockquote>
+      </section>
+
+      <section class="ed-section ed-tint"><div class="section-shell">
+        <div class="ed-section-heading"><p>{t.s2[0]}</p><div><h2>{t.s2[1]}<br /><strong>{t.s2[2]}</strong></h2><p>{t.s2[3]}</p></div></div>
+        <ol class="ed-flow">{t.chatSteps.map(([number, label, copy]) => <li><span>{number}</span><div><small>{label}</small><p>{copy}</p></div></li>)}</ol>
+        <aside class="ed-note"><h3>{t.authorityTitle}</h3><p>{t.authorityCopy}</p></aside>
+      </div></section>
+
+      <section class="ed-section section-shell">
+        <div class="ed-section-heading"><p>{t.s3[0]}</p><div><h2>{t.s3[1]}<br /><strong>{t.s3[2]}</strong></h2><p>{t.s3[3]}</p></div></div>
+        <ol class="ed-pipeline">{t.crawlSteps.map(([label, copy], index) => <li><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{label}</strong><p>{copy}</p></div></li>)}</ol>
+        <section class="ed-states"><h3>{t.statesTitle}</h3><dl>{t.states.map(([state, copy]) => <div><dt>{state}</dt><dd>{copy}</dd></div>)}</dl></section>
+      </section>
+
+      <section class="ed-section ed-tint"><div class="section-shell">
+        <div class="ed-section-heading"><p>{t.s4[0]}</p><div><h2>{t.s4[1]}<br /><strong>{t.s4[2]}</strong></h2><p>{t.s4[3]}</p></div></div>
+        <div class="ed-guarantees">{t.guarantees.map(([title, copy], index) => <article><span>{String(index + 1).padStart(2, '0')}</span><h3>{title}</h3><p>{copy}</p></article>)}</div>
+        <blockquote class="ed-callout"><span>{t.deliveryLabel}</span><p>{t.delivery}</p></blockquote>
+      </div></section>
+
+      <section class="ed-section section-shell">
+        <div class="ed-section-heading"><p>{t.s5[0]}</p><div><h2>{t.s5[1]}<br /><strong>{t.s5[2]}</strong></h2><p>{t.s5[3]}</p></div></div>
+        <div class="ed-failures">{t.failures.map(([trigger, response]) => <article><h3>{trigger}</h3><p>{response}</p></article>)}</div>
+        <aside class="ed-warning"><span>{t.limitationLabel}</span><p>{t.limitation}</p></aside>
+      </section>
+
+      <section class="ed-section ed-tint"><div class="section-shell">
+        <div class="ed-section-heading"><p>{t.s6[0]}</p><div><h2>{t.s6[1]}<br /><strong>{t.s6[2]}</strong></h2><p>{t.s6[3]}</p></div></div>
+        <ol class="ed-checklist">{t.checklist.map((item, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><p>{item}</p></li>)}</ol>
+      </div></section>
+
+      <section class="ed-conclusion"><div class="section-shell"><h2>{t.conclusionA}<br /><strong>{t.conclusionB}</strong></h2><p>{t.conclusion}</p></div></section>
+
+      <section class="ed-sources section-shell"><div><p>07 / REFERENCES</p><h2>{t.sourcesTitle}</h2><p>{t.sourceNote}</p></div><ol>{sources.map(([publisher, href, title], index) => <li><span>{String(index + 1).padStart(2, '0')}</span><a href={href} target="_blank" rel="noopener noreferrer"><small>{publisher}</small><strong>{title}</strong><b aria-hidden="true">↗</b></a></li>)}</ol></section>
+    </article>
+  </main>
+
+  <footer><a class="brand footer-brand" href="/system-design/#field-notes" aria-label={t.back}><PixelWordmark compact /></a><p>{t.footer}</p><a href="#top">{t.top}</a></footer>
+</Layout>
