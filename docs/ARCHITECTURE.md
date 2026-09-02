@@ -82,8 +82,9 @@ internationalization dependency or runtime router.
 
 Stores structured data consumed by multiple views. `resume.ts` is the résumé's single source of
 truth: it feeds both `ResumePage.astro` and the LaTeX generator. It projects shared role highlights
-into Frontend Lead and AI Product Engineer variants; variants change positioning, selected current-
-role highlights, and skill order without duplicating the underlying experience. `work.ts` owns selected-work cards,
+into Full-Stack and Full-Stack + AI variants; both target Senior Full-Stack Engineer roles while
+changing emphasis, selected current-role highlights, and skill order without duplicating the
+underlying experience. `work.ts` owns selected-work cards,
 case-study content, public evidence links, and project status so those claims cannot drift between
 the home, Writing, Work index, and case-study routes. `ai.ts`, `ddia.ts`, and `system-design.ts`
 contain indexes and reusable module content.
@@ -134,10 +135,10 @@ pretending a translation exists.
 ```text
 src/content/resume.ts
         ├─> shared roles, highlights, and skill groups
-        ├─> Frontend Lead projection ─┬─> ResumePage.astro
-        │                            └─> resume-tex.ts ─> PDF
-        └─> AI Product projection ───┬─> ResumePage.astro
-                                     └─> resume-tex.ts ─> PDF
+        ├─> Full-Stack projection ──────┬─> ResumePage.astro
+        │                              └─> resume-tex.ts ─> PDF
+        └─> Full-Stack + AI projection ─┬─> ResumePage.astro
+                                       └─> resume-tex.ts ─> PDF
 ```
 
 `npm run cv:pdf` validates characters that are problematic in LaTeX, compiles both positioning

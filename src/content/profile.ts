@@ -158,14 +158,14 @@ export interface Positioning {
 
 export const positioning: Positioning = {
   name: 'Matías Fernández',
-  role: { en: 'Senior Software Engineer', es: 'Senior Software Engineer' },
+  role: { en: 'Senior Full-Stack Engineer', es: 'Senior Full-Stack Engineer' },
   specialization: {
-    en: 'Frontend Lead · Applied AI',
-    es: 'Frontend Lead · Applied AI',
+    en: 'TypeScript · React · Next.js · Node.js · AWS',
+    es: 'TypeScript · React · Next.js · Node.js · AWS',
   },
   statement: {
-    en: 'I build reliable product experiences across frontend architecture, AI systems, APIs, and cloud delivery.',
-    es: 'Construyo experiencias de producto confiables sobre arquitectura frontend, sistemas de AI, APIs y entrega en la nube.',
+    en: 'I build reliable web products end to end, with deep frontend expertise and production experience across APIs, cloud systems, and AI-enabled workflows.',
+    es: 'Construyo productos web confiables de punta a punta, con profundidad frontend y experiencia en producción sobre APIs, sistemas cloud y flujos con AI.',
   },
   availability: {
     en: '10+ years shipping software from Argentina, with overlap across American time zones.',
@@ -179,8 +179,8 @@ export const positioning: Positioning = {
  * describes what is being applied for, not a title already held.
  */
 export const targetRoles: Localized = {
-  en: 'Senior or Lead Frontend Engineer · Senior Full-Stack Engineer with a frontend focus · Full-Stack AI Product Engineer · React/TypeScript Tech Lead',
-  es: 'Senior o Lead Frontend Engineer · Senior Full-Stack Engineer con foco frontend · Full-Stack AI Product Engineer · Tech Lead React/TypeScript',
+  en: 'Senior Full-Stack Engineer · TypeScript / React / Next.js / Node.js / AWS · AI-enabled products',
+  es: 'Senior Full-Stack Engineer · TypeScript / React / Next.js / Node.js / AWS · productos con AI',
 };
 
 export const preferredEnvironment: Localized = {

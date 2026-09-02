@@ -1,8 +1,8 @@
 # Matías Fernández — Professional Portfolio
 
 The source for [builtbymatias.dev](https://builtbymatias.dev): a bilingual, hiring-focused
-portfolio for a Senior Software Engineer with frontend leadership depth and hands-on applied AI,
-API, and cloud experience.
+portfolio for a Senior Full-Stack Engineer working with TypeScript, React, Next.js, Node.js, AWS,
+and production AI products.
 
 **Status:** actively maintained and deployed on Cloudflare Pages. The professional home, selected
 work, case studies, About pages, writing archive, and two résumé positioning variants are live in
@@ -31,7 +31,7 @@ only through sanitized case studies with explicit ownership and disclosure bound
 - A selected-work index and three bilingual engineering case studies with explicit ownership,
   decisions, trade-offs, failure modes, and evidence.
 - About pages focused on leadership behavior, working style, experience, and preferred environment.
-- Frontend Lead and AI Product Engineer résumé variants generated from one shared experience source,
+- Full-Stack and Full-Stack + AI résumé variants generated from one shared experience source,
   available as accessible web pages and four committed PDFs.
 - A technical writing archive covering applied AI, system design, data, and product engineering.
 - Static output, semantic HTML, keyboard navigation, visible focus, reduced-motion support, responsive
@@ -106,8 +106,8 @@ Useful evaluation paths:
 
 - Start at the [professional home](https://builtbymatias.dev/en/) for positioning and evidence.
 - Open [selected work](https://builtbymatias.dev/en/work/) for disclosure-safe engineering cases.
-- Compare the [Frontend Lead résumé](https://builtbymatias.dev/en/cv/) with the
-  [AI Product Engineer variant](https://builtbymatias.dev/en/cv/ai-product-engineer/).
+- Compare the [Full-Stack résumé](https://builtbymatias.dev/en/cv/) with the
+  [Full-Stack + AI variant](https://builtbymatias.dev/en/cv/ai-product-engineer/).
 - Switch to Spanish from any bilingual professional route.
 
 ## Main routes

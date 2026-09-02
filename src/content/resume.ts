@@ -177,13 +177,14 @@ const es: Resume = {
 };
 
 /**
- * Public routes and downloads for the two positioning variants. The canonical
- * résumé routes remain the Frontend Lead version; the AI Product Engineer
- * variant has an explicit route so links and PDFs never depend on query state.
+ * Public routes and downloads for the two positioning variants. Both target
+ * Senior Full-Stack Engineer roles; the canonical route presents the balanced
+ * stack while the legacy AI route emphasizes AI product delivery. Existing
+ * paths and filenames remain stable so published links keep working.
  */
 export const resumeVariantMeta: Record<ResumeVariantId, ResumeVariantMeta> = {
   'frontend-lead': {
-    label: { en: 'Frontend Lead', es: 'Frontend Lead' },
+    label: { en: 'Full-Stack', es: 'Full-Stack' },
     path: { en: '/en/cv/', es: '/cv/' },
     pdfPath: {
       en: '/downloads/matias-fernandez-resume.pdf',
@@ -191,7 +192,7 @@ export const resumeVariantMeta: Record<ResumeVariantId, ResumeVariantMeta> = {
     },
   },
   'ai-product-engineer': {
-    label: { en: 'AI Product Engineer', es: 'AI Product Engineer' },
+    label: { en: 'Full-Stack + AI', es: 'Full-Stack + AI' },
     path: { en: '/en/cv/ai-product-engineer/', es: '/cv/ingeniero-productos-ai/' },
     pdfPath: {
       en: '/downloads/matias-fernandez-ai-product-engineer-resume.pdf',
@@ -212,19 +213,19 @@ interface ResumeVariantDefinition {
 const variantDefinitions: Record<'es' | 'en', Record<ResumeVariantId, ResumeVariantDefinition>> = {
   en: {
     'frontend-lead': {
-      headline: 'FRONTEND LEAD · SENIOR SOFTWARE ENGINEER',
+      headline: 'SENIOR FULL-STACK ENGINEER · TYPESCRIPT · REACT · NODE.JS · AWS',
       summary: {
-        headline: 'I lead frontend systems without losing sight of the product behind them.',
-        body: 'Senior Software Engineer with more than ten years of experience delivering complex web products. Deepest in React, Next.js, TypeScript, and frontend architecture, with hands-on backend and cloud reach across Node.js, Python/FastAPI, .NET, Azure, and AWS. I lead through implementation, explicit trade-offs, code reviews, mentoring, conventions, and architecture documentation.',
+        headline: 'I build reliable web products from interface to cloud.',
+        body: 'Senior Full-Stack Engineer with more than ten years of experience delivering complex web products. Deepest in TypeScript, React, Next.js, Node.js, and frontend architecture, with hands-on backend, data, and cloud delivery across AWS and Azure. Current work includes production AI products, document pipelines, retrieval, streaming, and enterprise workflows. I lead through implementation, explicit trade-offs, code reviews, mentoring, conventions, and architecture documentation.',
       },
-      currentRoleHighlights: [0, 1, 3, 5, 6],
-      skillOrder: ['Frontend', 'Quality', 'Applied AI', 'Backend & APIs', 'Realtime & data', 'Cloud & delivery'],
+      currentRoleHighlights: [1, 3, 0, 4, 6],
+      skillOrder: ['Frontend', 'Backend & APIs', 'Cloud & delivery', 'Applied AI', 'Realtime & data', 'Quality'],
     },
     'ai-product-engineer': {
-      headline: 'AI PRODUCT ENGINEER · SENIOR SOFTWARE ENGINEER',
+      headline: 'SENIOR FULL-STACK ENGINEER · AI PRODUCTS',
       summary: {
-        headline: 'I turn AI capabilities into reliable, usable product systems.',
-        body: 'Senior Software Engineer with more than ten years of experience and current production work across AI-enabled products, document pipelines, retrieval, streaming, and enterprise workflows. I connect React and Next.js interfaces with Python/FastAPI, .NET, Azure OpenAI, Pinecone, data, and cloud delivery, while making failure states, source attribution, observability, cost, and maintainability part of the product.',
+        headline: 'I turn AI capabilities into reliable full-stack product systems.',
+        body: 'Senior Full-Stack Engineer with more than ten years of experience, strongest in TypeScript, React, Next.js, Node.js, and cloud delivery across AWS and Azure. My current production work spans AI-enabled products, document pipelines, retrieval, streaming, and enterprise workflows. I connect user-facing experiences with APIs, data, and AI services while making failure states, source attribution, observability, cost, and maintainability part of the product.',
       },
       currentRoleHighlights: [0, 3, 4, 1, 6],
       skillOrder: ['Applied AI', 'Frontend', 'Backend & APIs', 'Realtime & data', 'Cloud & delivery', 'Quality'],
@@ -232,19 +233,19 @@ const variantDefinitions: Record<'es' | 'en', Record<ResumeVariantId, ResumeVari
   },
   es: {
     'frontend-lead': {
-      headline: 'FRONTEND LEAD · SENIOR SOFTWARE ENGINEER',
+      headline: 'SENIOR FULL-STACK ENGINEER · TYPESCRIPT · REACT · NODE.JS · AWS',
       summary: {
-        headline: 'Lidero sistemas frontend sin perder de vista el producto que sostienen.',
-        body: 'Senior Software Engineer con más de diez años entregando productos web complejos. Mi mayor profundidad está en React, Next.js, TypeScript y arquitectura frontend, con alcance hands-on de backend y cloud en Node.js, Python/FastAPI, .NET, Azure y AWS. Lidero desde la implementación, los trade-offs explícitos, code reviews, mentoring, convenciones y documentación de arquitectura.',
+        headline: 'Construyo productos web confiables desde la interfaz hasta la nube.',
+        body: 'Senior Full-Stack Engineer con más de diez años entregando productos web complejos. Mi mayor profundidad está en TypeScript, React, Next.js, Node.js y arquitectura frontend, con trabajo hands-on en backend, datos y cloud sobre AWS y Azure. Mi trabajo actual incluye productos de AI en producción, pipelines documentales, retrieval, streaming y flujos empresariales. Lidero desde la implementación, los trade-offs explícitos, code reviews, mentoring, convenciones y documentación de arquitectura.',
       },
-      currentRoleHighlights: [0, 1, 3, 5, 6],
-      skillOrder: ['Frontend', 'Calidad', 'Applied AI', 'Backend & APIs', 'Tiempo real & datos', 'Cloud & entrega'],
+      currentRoleHighlights: [1, 3, 0, 4, 6],
+      skillOrder: ['Frontend', 'Backend & APIs', 'Cloud & entrega', 'Applied AI', 'Tiempo real & datos', 'Calidad'],
     },
     'ai-product-engineer': {
-      headline: 'AI PRODUCT ENGINEER · SENIOR SOFTWARE ENGINEER',
+      headline: 'SENIOR FULL-STACK ENGINEER · PRODUCTOS AI',
       summary: {
-        headline: 'Convierto capacidades de AI en sistemas de producto confiables y usables.',
-        body: 'Senior Software Engineer con más de diez años de experiencia y trabajo actual en productos con AI, pipelines documentales, retrieval, streaming y flujos empresariales. Conecto interfaces React y Next.js con Python/FastAPI, .NET, Azure OpenAI, Pinecone, datos y cloud, incorporando estados de falla, atribución de fuentes, observabilidad, costos y mantenibilidad al producto.',
+        headline: 'Convierto capacidades de AI en sistemas de producto full-stack confiables.',
+        body: 'Senior Full-Stack Engineer con más de diez años de experiencia, con mayor profundidad en TypeScript, React, Next.js, Node.js y entrega cloud sobre AWS y Azure. Mi trabajo actual en producción abarca productos con AI, pipelines documentales, retrieval, streaming y flujos empresariales. Conecto experiencias de usuario con APIs, datos y servicios de AI, incorporando estados de falla, atribución de fuentes, observabilidad, costos y mantenibilidad al producto.',
       },
       currentRoleHighlights: [0, 3, 4, 1, 6],
       skillOrder: ['Applied AI', 'Frontend', 'Backend & APIs', 'Tiempo real & datos', 'Cloud & entrega', 'Calidad'],
