@@ -36,13 +36,13 @@ const imageUrl = image ? new URL(image, Astro.url.origin) : undefined;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#111513" data-theme-color />
+    <meta name="theme-color" content="#fdfcfc" data-theme-color />
     <script is:inline>
       (() => {
         const storageKey = 'mf-color-theme';
         let storedTheme = null;
         try { storedTheme = localStorage.getItem(storageKey); } catch {}
-        const theme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : 'dark';
+        const theme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : 'light';
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
       })();
@@ -51,7 +51,7 @@ const imageUrl = image ? new URL(image, Astro.url.origin) : undefined;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
     />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -111,7 +111,7 @@ const imageUrl = image ? new URL(image, Astro.url.origin) : undefined;
               : `Switch to ${isDark ? 'light' : 'dark'} theme`,
           );
           button?.setAttribute('aria-pressed', String(isDark));
-          themeColor?.setAttribute('content', isDark ? '#111513' : '#fafaf8');
+          themeColor?.setAttribute('content', isDark ? '#131010' : '#fdfcfc');
         };
 
         renderTheme(document.documentElement.dataset.theme || 'light');

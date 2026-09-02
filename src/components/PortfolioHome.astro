@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PixelWordmark from './PixelWordmark.astro';
 import '../styles/portfolio.css';
 import {
   condensedExperience,
@@ -80,7 +81,7 @@ const t = en ? {
 
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="inicio">
   <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}><PixelWordmark compact /></a>
     <nav aria-label={t.navLabel}>{nav.map((item) => <a href={item.href} aria-current={item.href === route.about ? 'page' : undefined}>{item.label}</a>)}</nav>
     <div class="portfolio-header-actions">
       <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}><a href={routes.es.about} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a><a href={routes.en.about} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a></nav>
@@ -131,6 +132,6 @@ const t = en ? {
     <section class="contact-section" aria-labelledby="contact-title"><div class="contact-rings" aria-hidden="true"></div><div class="contact-content"><p class="portfolio-kicker"><span></span> {t.contactKicker}</p><h2 id="contact-title">{t.contactA}<br /><em>{t.contactB}</em></h2><p>{t.contactCopy}</p><div class="contact-links"><a href={contactLinks.email}>{t.email} <span aria-hidden="true">↗</span></a><a href={contactLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a><a href={contactLinks.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span><span class="visually-hidden">{newTab}</span></a><a href={route.resume}>{en ? 'Résumé' : 'CV'} <span aria-hidden="true">↗</span></a></div></div></section>
   </main>
 
-  <footer class="portfolio-footer"><a class="portfolio-brand" href={route.home}><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a><p>Product · Applied AI · Systems</p><span>{t.footer}</span></footer>
+  <footer class="portfolio-footer"><a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a><p>Product · Applied AI · Systems</p><span>{t.footer}</span></footer>
   <script>const header = document.querySelector('[data-portfolio-header]'); const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20); onScroll(); window.addEventListener('scroll', onScroll, { passive: true });</script>
 </Layout>

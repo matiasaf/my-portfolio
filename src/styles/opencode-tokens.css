@@ -1,0 +1,73 @@
+/* OpenCode-inspired design tokens.
+   The light values come from the supplied RICOUI reference. The dark theme
+   keeps the same roles while following the current official OpenCode site. */
+:root {
+  --color-primary: #201d1d;
+  --color-on-primary: #fdfcfc;
+  --color-ink: #201d1d;
+  --color-ink-deep: #0f0000;
+  --color-charcoal: #302c2c;
+  --color-body: #424245;
+  --color-mute: #646262;
+  --color-stone: #6e6e73;
+  --color-ash: #9a9898;
+  --color-canvas: #fdfcfc;
+  --color-surface-soft: #f8f7f7;
+  --color-surface-card: #f1eeee;
+  --color-surface-dark: #201d1d;
+  --color-surface-dark-elevated: #302c2c;
+  --color-hairline: rgb(15 0 0 / .12);
+  --color-hairline-strong: #646262;
+  --color-on-dark: #fdfcfc;
+  --color-on-dark-mute: #9a9898;
+  --color-accent: #007aff;
+  --color-accent-hover: #0056b3;
+  --color-accent-active: #004085;
+  --color-warning: #ff9f0a;
+  --color-danger: #ff3b30;
+  --color-success: #30d158;
+  --font-primary: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  --text-display-xl: 38px;
+  --text-heading-md: 16px;
+  --text-body-md: 16px;
+  --text-caption-md: 14px;
+  --leading-display-xl: 1.5;
+  --leading-body: 1.5;
+  --leading-tight: 1;
+  --leading-caption: 2;
+  --spacing-xxs: 1px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+  --spacing-section: 96px;
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-full: 9999px;
+}
+
+html[data-theme='dark'] {
+  --color-primary: #f2eded;
+  --color-on-primary: #131010;
+  --color-ink: #f2eded;
+  --color-ink-deep: #ffffff;
+  --color-charcoal: #e0dada;
+  --color-body: #b8b2b2;
+  --color-mute: #9a9494;
+  --color-stone: #888282;
+  --color-ash: #716b6b;
+  --color-canvas: #131010;
+  --color-surface-soft: #191616;
+  --color-surface-card: #201d1d;
+  --color-surface-dark: #0c0c0e;
+  --color-surface-dark-elevated: #201d1d;
+  --color-hairline: rgb(255 255 255 / .14);
+  --color-hairline-strong: #716b6b;
+  --color-on-dark: #fdfcfc;
+  --color-on-dark-mute: #b8b2b2;
+  --color-accent: #66aaff;
+  --color-accent-hover: #8abdff;
+  --color-accent-active: #b3d5ff;
+}

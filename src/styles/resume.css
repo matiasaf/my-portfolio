@@ -1,5 +1,5 @@
 .resume-page { --accent-text: var(--focus-ring); min-height: 100vh; padding: 26px; background: var(--paper-2); }
-.resume-toolbar { width: min(1100px,100%); margin: 0 auto 18px; display: flex; justify-content: space-between; align-items: center; font: 500 12px var(--mono); }.resume-toolbar > a { padding-bottom: 4px; border-bottom: 1px solid var(--ink); }.resume-toolbar-actions,.resume-language { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 99px; }.resume-language { gap: 2px; }.resume-language a { min-width: 30px; padding: 6px 8px; border-radius: 99px; text-align: center; opacity: 1; transition: background .18s, color .18s; }
+.resume-toolbar { width: min(1100px,100%); margin: 0 auto 18px; display: flex; justify-content: space-between; align-items: center; font: 500 12px var(--mono); }.resume-toolbar > a { padding-bottom: 4px; border-bottom: 1px solid var(--ink); }.resume-toolbar-actions,.resume-language { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: var(--radius-sm); }.resume-language { gap: 2px; }.resume-language a { min-width: 30px; padding: 6px 8px; border-radius: 2px; text-align: center; opacity: 1; transition: background .18s, color .18s; }
 .resume-toolbar-actions,.resume-language { background: var(--surface); }
 .resume-language a { color: var(--muted); }
 .resume-language a:hover { background: rgb(var(--ink-rgb) / .08); color: var(--ink); }.resume-language a[aria-current="page"] { background: var(--strong-surface); color: var(--strong-text); font-weight: 500; }.resume-toolbar button { border: 1px solid var(--ink); background: var(--strong-surface); color: var(--strong-text); padding: 11px 14px; cursor: pointer; font: inherit; }.resume-toolbar button span { margin-left: 18px; }
@@ -9,11 +9,11 @@
 .resume-download:hover { background: var(--strong-surface); color: var(--strong-text); }
 .resume-toolbar button { background: none; color: var(--ink); }
 .resume-toolbar button:hover { background: var(--strong-surface); color: var(--strong-text); }
-.resume-variants { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); }
-.resume-variants a { padding: 6px 8px; border-radius: 99px; color: var(--muted); text-align: center; transition: background .18s, color .18s; }
+.resume-variants { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.resume-variants a { padding: 6px 8px; border-radius: 2px; color: var(--muted); text-align: center; transition: background .18s, color .18s; }
 .resume-variants a:hover { background: rgb(var(--ink-rgb) / .08); color: var(--ink); }
 .resume-variants a[aria-current="page"] { background: var(--strong-surface); color: var(--strong-text); font-weight: 500; }
-.resume-sheet { width: min(1100px,100%); margin: auto; padding: 58px; background: var(--surface); box-shadow: var(--shadow-soft); }
+.resume-sheet { width: min(1100px,100%); margin: auto; padding: 58px; border: 1px solid var(--line); background: var(--surface); }
 .resume-identity { display: grid; grid-template-columns: 1.6fr 1fr; gap: 50px; padding-bottom: 42px; border-bottom: 4px solid var(--ink); }/* The h1 comes first in the DOM so an ATS reads the name first. Flex reorders
    the headline above it on screen. */
 .resume-identity > div:first-child { display: flex; flex-direction: column; }

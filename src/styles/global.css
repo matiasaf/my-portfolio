@@ -1,69 +1,55 @@
+@import './opencode-tokens.css';
+
 /* Fonts are loaded from Layout.astro with preconnect and stylesheet links. Using
    @import here would chain the site CSS, font CSS, and WOFF2 downloads. */
 
 :root {
   color-scheme: light;
-  --ink: #1b2422;
-  --ink-rgb: 27 36 34;
-  --paper: #fafaf8;
-  --paper-rgb: 250 250 248;
-  --paper-2: #f2f3f0;
-  --surface: #ffffff;
-  --surface-rgb: 255 255 255;
-  --surface-raised: #ffffff;
-  --strong-surface: #18201e;
-  --strong-text: #f8faf9;
-  --muted: #5d6865;
-  --muted-strong: #46514e;
-  --coral: #dce6ff;
-  --lime: #e4ead5;
-  --blue: #dbe8f1;
-  --violet: #e7e1ed;
-  --line: #d8ddda;
-  --line-strong: #737e7a;
-  --header-bg: rgb(250 250 248 / .92);
-  --shadow-soft: 0 12px 30px rgb(27 36 34 / .06);
-  --mono: 'DM Mono', monospace;
-  --sans: 'Manrope', sans-serif;
+  --ink: var(--color-ink);
+  --ink-rgb: 32 29 29;
+  --paper: var(--color-canvas);
+  --paper-rgb: 253 252 252;
+  --paper-2: var(--color-surface-soft);
+  --surface: var(--color-canvas);
+  --surface-rgb: 253 252 252;
+  --surface-raised: var(--color-surface-card);
+  --strong-surface: var(--color-surface-dark);
+  --strong-text: var(--color-on-dark);
+  --muted: var(--color-mute);
+  --muted-strong: var(--color-body);
+  --coral: var(--color-surface-card);
+  --lime: var(--color-surface-soft);
+  --blue: var(--color-surface-card);
+  --violet: var(--color-surface-soft);
+  --line: var(--color-hairline);
+  --line-strong: var(--color-hairline-strong);
+  --header-bg: rgb(253 252 252 / .96);
+  --shadow-soft: none;
+  --mono: var(--font-primary);
+  --sans: var(--font-primary);
   --measure: 72ch;
   --radius-sm: 4px;
   --radius-md: 8px;
 
   /* Shared width guide for content shells and full-bleed header padding. */
-  --shell-max: 1160px;
+  --shell-max: 1200px;
   --shell-gutter: 24px;
-  --focus-ring: #3659b2;
-  --accent-text: #3659b2;
-  --inverse-accent: #9fb3ff;
+  --focus-ring: var(--color-accent);
+  --accent-text: var(--color-accent-hover);
+  --inverse-accent: #66aaff;
   --inverse-focus: #f8faf9;
 }
 
 html[data-theme='dark'] {
   color-scheme: dark;
-  --ink: #edf1ef;
-  --ink-rgb: 237 241 239;
-  --paper: #111513;
-  --paper-rgb: 17 21 19;
-  --paper-2: #171c1a;
-  --surface: #1a201e;
-  --surface-rgb: 26 32 30;
-  --surface-raised: #202624;
-  --strong-surface: #090c0b;
-  --strong-text: #edf1ef;
-  --muted: #aeb8b4;
-  --muted-strong: #c7cfcc;
-  --coral: #263b67;
-  --lime: #354326;
-  --blue: #203c4c;
-  --violet: #3b3048;
-  --line: #343c39;
-  --line-strong: #69736f;
-  --header-bg: rgb(17 21 19 / .92);
-  --shadow-soft: 0 12px 30px rgb(0 0 0 / .2);
-  --focus-ring: #aebfff;
-  --accent-text: #aebfff;
-  --inverse-accent: #aebfff;
-  --inverse-focus: #edf1ef;
+  --ink-rgb: 242 237 237;
+  --paper-rgb: 19 16 16;
+  --surface-rgb: 19 16 16;
+  --header-bg: rgb(19 16 16 / .96);
+  --focus-ring: var(--color-accent);
+  --accent-text: var(--color-accent-hover);
+  --inverse-accent: var(--color-accent);
+  --inverse-focus: var(--color-on-dark);
 }
 
 * { box-sizing: border-box; }
@@ -74,11 +60,10 @@ body {
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.65;
+  line-height: var(--leading-body);
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  transition: background-color .2s ease, color .2s ease;
 }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; }
@@ -87,10 +72,30 @@ img, svg, video { max-width: 100%; }
 .section-shell { width: min(var(--shell-max), calc(100% - var(--shell-gutter) * 2)); margin-inline: auto; }
 
 /* Shared MF monogram used by the portfolio, modules, and favicon. */
-.brand-monogram { display: grid; place-items: center; width: 31px; height: 31px; background: var(--strong-surface); color: var(--strong-text); border-radius: 50%; font: 500 10px var(--mono); letter-spacing: -.08em; }
-footer .brand-monogram { background: var(--coral); color: var(--ink); }
+.brand-monogram { display: grid; place-items: center; width: 32px; height: 32px; background: var(--strong-surface); color: var(--strong-text); border-radius: var(--radius-sm); font: 500 10px var(--mono); letter-spacing: -.08em; }
+footer .brand-monogram { background: var(--color-on-dark); color: var(--color-surface-dark); }
 .brand { display: inline-flex; gap: 12px; align-items: center; font-size: 13px; font-weight: 800; letter-spacing: -.02em; }
 .brand em { font-style: normal; font-weight: 500; opacity: .7; }
+
+/* Selected wordmark direction: softer lowercase pixel forms with a tonal first
+   name. Hidden text keeps the identity available to assistive technology. */
+.pixel-wordmark {
+  display: inline-block;
+  color: var(--ink);
+  line-height: .82;
+  white-space: nowrap;
+}
+.pixel-wordmark-visual {
+  display: inline-block;
+  font-family: 'Pixelify Sans', var(--font-primary);
+  font-size: clamp(34px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -.075em;
+  text-transform: lowercase;
+}
+.pixel-wordmark-tone { opacity: .5; }
+.pixel-wordmark.is-compact .pixel-wordmark-visual { font-size: 20px; }
+.portfolio-footer .pixel-wordmark { color: var(--ink); }
 
 /* Inverse surfaces use their own accessibility tokens. */
 .archive-section, .writing-section, .now-strip, .working-on, .primary-action,
@@ -133,10 +138,9 @@ footer .brand-monogram { background: var(--coral); color: var(--ink); }
   gap: 8px;
   padding: 9px 13px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--surface-raised);
   color: var(--ink);
-  box-shadow: var(--shadow-soft);
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
@@ -164,11 +168,11 @@ body main :is(.ai-prose, .ddia-prose, .cp-prose) :is(a, code) { overflow-wrap: a
 .eyebrow { display: flex; align-items: center; gap: 10px; }
 .eyebrow span { width: 28px; height: 2px; background: var(--coral); }
 h1 em, h2 em { font-style: normal; color: var(--accent-text); }
-.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 30px; padding: 17px 20px; border-radius: 2px; font-size: 13px; font-weight: 700; transition: transform .2s, box-shadow .2s; }
-.button:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--coral); }
+.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 30px; padding: 17px 20px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; transition: background-color .18s, color .18s, border-color .18s; }
+.button:hover { border-color: var(--ink); }
 .button-dark { background: var(--strong-surface); color: var(--strong-text); }
 .button-light { margin-top: 10px; background: var(--paper); }
-.button-light:hover { box-shadow: 6px 6px 0 var(--ink); }
+.button-light:hover { background: var(--paper-2); }
 .text-link { font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--ink); padding-bottom: 4px; }
 .text-link span { margin-left: 16px; }
 

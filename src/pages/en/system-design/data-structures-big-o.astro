@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import PixelWordmark from '../../../components/PixelWordmark.astro';
 import '../../../styles/system-design.css';
 import '../../../styles/concurrency-article.css';
 import '../../../styles/data-structures-article.css';
@@ -54,8 +55,8 @@ const checklist = [
 >
   <header class="sd-header cp-header">
     <a class="brand" href="/system-design/#field-notes" aria-label="Back to the System Design module">
-      <span class="brand-monogram" aria-hidden="true">MF</span>
-      <span>Matías Fernández <em>/ System Design</em></span>
+      <PixelWordmark compact />
+      <em>/ System Design</em>
     </a>
     <span class="sd-header-label">ALGORITHMS · FIELD NOTE 03</span>
   </header>
@@ -224,7 +225,7 @@ const checklist = [
   </main>
 
   <footer>
-    <a class="brand footer-brand" href="/system-design/#field-notes" aria-label="Back to the System Design module"><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a>
+    <a class="brand footer-brand" href="/system-design/#field-notes" aria-label="Back to the System Design module"><PixelWordmark compact /></a>
     <p>ALGORITHMS · FIELD NOTE 03</p><a href="#top">BACK TO TOP ↑</a>
   </footer>
 </Layout>

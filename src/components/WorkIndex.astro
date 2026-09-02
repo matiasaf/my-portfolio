@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PixelWordmark from './PixelWordmark.astro';
 import '../styles/portfolio.css';
 import '../styles/work.css';
 import { contactLinks, navigation, routes, type Lang } from '../content/profile';
@@ -33,7 +34,7 @@ const t = en ? {
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternate} mainId="work-main">
   <header class="portfolio-header work-header" data-portfolio-header>
     <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
-      <span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span>
+      <PixelWordmark compact />
     </a>
     <nav aria-label={t.nav}>{nav.map((item) => <a href={item.href} aria-current={item.href === route.work ? 'page' : undefined}>{item.label}</a>)}</nav>
     <nav class="language-switcher" aria-label={t.language}>
@@ -78,7 +79,7 @@ const t = en ? {
     </section>
   </main>
 
-  <footer class="portfolio-footer work-footer"><a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href={route.resume}>{en ? 'Résumé' : 'CV'} ↗</a></footer>
+  <footer class="portfolio-footer work-footer"><a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a><p>{t.footer}</p><a href={route.resume}>{en ? 'Résumé' : 'CV'} ↗</a></footer>
 
   <script>
     const header = document.querySelector('[data-portfolio-header]');

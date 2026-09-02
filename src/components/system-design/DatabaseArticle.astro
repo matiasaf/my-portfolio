@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PixelWordmark from '../PixelWordmark.astro';
 import '../../styles/system-design.css';
 import '../../styles/database-article.css';
 
@@ -245,8 +246,8 @@ const sources = [
 >
   <header class="sd-header db-header">
     <a class="brand" href="/system-design/#field-notes" aria-label={t.back}>
-      <span class="brand-monogram" aria-hidden="true">MF</span>
-      <span>Matías Fernández <em>/ System Design</em></span>
+      <PixelWordmark compact />
+      <em>/ System Design</em>
     </a>
     <div class="db-header-actions">
       <a href={alternatePath} aria-label={t.switchLabel}>{t.switchShort}</a>
@@ -404,5 +405,5 @@ const sources = [
     </article>
   </main>
 
-  <footer><a class="brand footer-brand" href="/system-design/#field-notes" aria-label={t.back}><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href="#top">{t.top}</a></footer>
+  <footer><a class="brand footer-brand" href="/system-design/#field-notes" aria-label={t.back}><PixelWordmark compact /></a><p>{t.footer}</p><a href="#top">{t.top}</a></footer>
 </Layout>

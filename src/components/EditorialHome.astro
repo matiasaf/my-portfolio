@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PixelWordmark from './PixelWordmark.astro';
 import '../styles/portfolio.css';
 import { notes as allNotes } from '../content/notes';
 import { contactLinks, navigation, routes } from '../content/profile';
@@ -89,8 +90,7 @@ const t = en ? {
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="inicio">
   <header class="portfolio-header" data-portfolio-header>
     <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
-      <span class="brand-monogram" aria-hidden="true">MF</span>
-      <span>Matías Fernández</span>
+      <PixelWordmark compact />
     </a>
 
     <nav aria-label={t.nav}>
@@ -220,7 +220,7 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer">
-    <a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a>
     <p>{en ? 'Notes · Active project · Systems' : 'Posteos · Proyecto activo · Sistemas'}</p><span>{t.footer}</span>
   </footer>
 

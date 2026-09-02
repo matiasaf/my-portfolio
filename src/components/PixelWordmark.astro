@@ -1,0 +1,15 @@
+---
+interface Props {
+  class?: string;
+  compact?: boolean;
+}
+
+const { class: className = '', compact = false } = Astro.props;
+---
+
+<span class:list={['pixel-wordmark', { 'is-compact': compact }, className]}>
+  <span class="visually-hidden">Matías Fernández</span>
+  <span class="pixel-wordmark-visual" aria-hidden="true">
+    <span class="pixel-wordmark-tone">matías</span><span>&nbsp;fernández</span>
+  </span>
+</span>

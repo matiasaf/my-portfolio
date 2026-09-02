@@ -1,12 +1,6 @@
-/* --work-accent doubles as body-copy colour and as a solid fill, so it has to clear 4.5:1
-   both ways. The previous #5274d4 sat in the luminance dead zone and failed against light and
-   dark ink alike; #3659b2 is the accent global.css already uses for --accent-text/--focus-ring.
-   --work-accent-ink is the fill's text colour and runs opposite --ink, because --work-accent is
-   saturated in light and pale in dark (the reverse of --coral/--lime/--blue/--violet). */
+/* Work pages reuse the canonical interaction and surface roles. */
 .work-index,
-.case-study { --work-accent: #3659b2; --work-accent-soft: #dce6ff; --work-accent-ink: #fafaf8; }
-
-html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; --work-accent-soft: #253052; --work-accent-ink: #101310; }
+.case-study { --work-accent: var(--color-accent-hover); --work-accent-soft: var(--color-surface-card); --work-accent-ink: var(--color-on-primary); }
 
 .work-header > .language-switcher { justify-self: end; }
 .work-header > nav[aria-label]:not(.language-switcher) a[aria-current='page'] { text-decoration-color: var(--portfolio-accent); }
@@ -24,7 +18,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .work-index-lime { --card-accent: var(--lime); }
 .work-index-violet { --card-accent: var(--violet); }
 .work-index-card header { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
-.work-index-card header > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--card-accent); color: var(--ink); font: 500 12px var(--mono); }
+.work-index-card header > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--card-accent); color: var(--ink); font: 500 12px var(--mono); }
 .work-index-card header p,
 .work-index-card header small { margin: 0; color: var(--muted); font: 500 12px/1.6 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
 .work-index-card header small { max-width: 180px; }
@@ -52,7 +46,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .case-back { display: inline-flex; margin-bottom: 52px; color: var(--muted); font-size: 12px; font-weight: 700; }
 .case-hero h1 { max-width: 900px; margin: 28px 0; font-size: clamp(58px, 7vw, 98px); font-weight: 630; line-height: .92; letter-spacing: -.075em; }
 .case-lede { max-width: 780px; margin: 0; color: var(--muted-strong); font-size: clamp(16px, 1.6vw, 19px); line-height: 1.7; }
-.case-status { padding: 26px; border: 1px solid var(--ink); border-top: 6px solid var(--work-accent); background: var(--surface); box-shadow: 7px 7px 0 var(--ink); }
+.case-status { padding: 26px; border: 1px solid var(--ink); border-top: 4px solid var(--work-accent); background: var(--surface); }
 .case-status p { margin: 0 0 26px; color: var(--muted); font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 .case-status strong { display: block; color: var(--portfolio-accent-text); font-size: 22px; line-height: 1.2; }
 .case-status > span { display: block; margin-top: 14px; color: var(--muted-strong); font-size: 12px; line-height: 1.65; }
@@ -102,7 +96,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .case-split li::before,
 .case-next li::before { content: '→'; position: absolute; left: 0; color: var(--portfolio-accent-text); }
 
-.case-architecture { margin: 0; padding: 36px; border: 1px solid var(--ink); background: var(--surface); box-shadow: 8px 8px 0 var(--ink); }
+.case-architecture { margin: 0; padding: 36px; border: 1px solid var(--ink); background: var(--surface); }
 .case-architecture figcaption { display: grid; grid-template-columns: .55fr 1.45fr; gap: 40px; padding-bottom: 30px; border-bottom: 1px solid var(--line); }
 .case-architecture figcaption strong { font: 500 12px var(--mono); letter-spacing: .05em; text-transform: uppercase; }
 .case-architecture figcaption p { margin: 0; color: var(--muted-strong); font-size: 13px; line-height: 1.7; }
@@ -140,7 +134,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
 .case-metrics a { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); color: var(--portfolio-accent-text); font-size: 12px; font-weight: 750; }
 .case-milestones { margin: 0; padding: 0; list-style: none; }
 .case-milestones li { display: grid; grid-template-columns: 60px 1fr; gap: 24px; padding: 0 0 42px; }
-.case-milestones li > span { display: grid; place-items: center; width: 45px; height: 45px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font: 500 12px var(--mono); }
+.case-milestones li > span { display: grid; place-items: center; width: 45px; height: 45px; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--muted); font: 500 12px var(--mono); }
 .case-milestones li.is-accepted > span { border-color: var(--lime); background: var(--lime); color: var(--ink); }
 .case-milestones li.is-delivered > span { border-color: var(--lime); background: var(--lime); color: var(--ink); }
 .case-milestones li.is-implemented > span { border-color: var(--work-accent); color: var(--portfolio-accent-text); }
@@ -201,7 +195,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
   .work-header { grid-template-columns: 1fr auto; height: auto; }
   .work-header > .language-switcher { display: inline-flex; }
   .work-header > nav[aria-label]:not(.language-switcher) { display: flex; gap: 18px; }
-  .work-header .portfolio-brand > span:last-child { display: none; }
+  .work-header .portfolio-brand > span:not(.pixel-wordmark):last-child { display: none; }
   .work-index-hero { padding-top: 150px; padding-bottom: 64px; }
   .work-index-hero h1 { font-size: clamp(48px, 14.5vw, 67px); }
   .work-index-card { grid-template-columns: 1fr; gap: 25px; padding-left: 14px; }
@@ -221,7 +215,7 @@ html[data-theme='dark'] :is(.work-index, .case-study) { --work-accent: #9bb1ff; 
   .case-reading-layout { padding-block: 70px 90px; }
   .case-section { padding-block: 68px; }
   .case-split { grid-template-columns: 1fr; gap: 48px; }
-  .case-architecture { padding: 24px 20px; margin-right: 7px; box-shadow: 6px 6px 0 var(--ink); }
+  .case-architecture { padding: 24px 20px; }
   .case-architecture figcaption { grid-template-columns: 1fr; gap: 14px; }
   .case-architecture ol { grid-template-columns: 1fr; gap: 27px; }
   .case-architecture li:not(:last-child)::after { display: block; content: '↓'; right: auto; top: auto; left: 50%; bottom: -23px; }

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PixelWordmark from './PixelWordmark.astro';
 import '../styles/portfolio.css';
 import '../styles/work.css';
 import { contactLinks, navigation, routes, type Lang } from '../content/profile';
@@ -57,7 +58,7 @@ const toc = [
 
 <Layout title={study.seoTitle[lang]} description={study.description[lang]} lang={lang} alternateHref={alternate} mainId="case-main">
   <header class="portfolio-header work-header" data-portfolio-header>
-    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}><span class="brand-monogram" aria-hidden="true">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}><PixelWordmark compact /></a>
     <nav aria-label={t.nav}>{nav.map((item) => <a href={item.href} aria-current={item.href === route.work ? 'page' : undefined}>{item.label}</a>)}</nav>
     <nav class="language-switcher" aria-label={t.language}>
       <a href={study.routes.es} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
@@ -137,7 +138,7 @@ const toc = [
     </div>
   </main>
 
-  <footer class="portfolio-footer work-footer"><a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a><p>{t.footer}</p><a href="#case-main">{t.top} ↑</a></footer>
+  <footer class="portfolio-footer work-footer"><a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a><p>{t.footer}</p><a href="#case-main">{t.top} ↑</a></footer>
   <script>
     const header = document.querySelector('[data-portfolio-header]');
     const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);

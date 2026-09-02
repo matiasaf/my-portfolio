@@ -1,4 +1,6 @@
 ---
+import PixelWordmark from '../PixelWordmark.astro';
+
 interface Props { label?: string; lang?: 'es' | 'en'; }
 const { label = 'MODULE 01 · AI & HARNESSES', lang = 'en' } = Astro.props;
 const homeHref = lang === 'es' ? '/es/' : '/en/';
@@ -6,8 +8,7 @@ const homeHref = lang === 'es' ? '/es/' : '/en/';
 
 <footer>
   <a class="brand footer-brand" href={homeHref} aria-label={lang === 'es' ? 'Volver al portfolio' : 'Back to the portfolio'}>
-    <span class="brand-monogram" aria-hidden="true">MF</span>
-    <span>Matías Fernández</span>
+    <PixelWordmark compact />
   </a>
   <p>{label}</p>
   <a href="#top">BACK TO TOP ↑</a>

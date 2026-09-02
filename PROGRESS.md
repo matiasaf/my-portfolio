@@ -8,52 +8,65 @@ history; replace stale detail instead of accumulating a diary.
 - Status: active
 - Branch: `main`
 - HEAD: `a43d05a`
-- Updated: `2026-09-01T17:10:27-03:00`
-- Worktree: uncommitted harness files and documentation from the completed migration; no unrelated
-  tracked changes existed at startup.
+- Updated: `2026-09-02T00:39:00-03:00`
+- Worktree: uncommitted harness/documentation work was present at startup and remains preserved;
+  the OpenCode-inspired UI migration is an additional scoped change under `src/`.
 
 ### Objective
 
-Complete Portfolio V2 PR 5 by aligning the public GitHub profile and selected repositories with
-the portfolio's professional positioning.
+Migrate the portfolio UI foundations to the supplied OpenCode design system while preserving
+content, accessibility, bilingual parity, responsive behavior, and static-build reproducibility.
 
 ### Acceptance criteria
 
-1. Review the public GitHub profile and candidate repositories without exposing private material.
-2. Align profile wording and pinned evidence with the verified positioning in `src/content/profile.ts`.
-3. Obtain explicit authorization before publishing any GitHub account change.
-4. Run and record repository verification for any local edits.
+1. Centralize the supplied OpenCode palette, mono typography, spacing, radii, and surface roles.
+2. Apply the new system to shared UI plus Home, About, Work, case-study, and résumé surfaces.
+3. Preserve light/dark themes, English/Spanish routes, focus visibility, and mobile layout.
+4. Pass focused diagnostics, visual checks, and the complete repository gate.
 
 ### Decisions
 
-- The portfolio repository remains the source of truth for public claims, preventing drift between
-  the site and GitHub surfaces.
-- Publishing is out of scope until separately authorized because it mutates an external account.
+- IBM Plex Mono is the licensed/open fallback used by the official OpenCode site; Berkeley Mono is
+  not copied because no redistribution license was provided.
+- The supplied light tokens remain canonical. The dark variant follows the official site's current
+  near-black surfaces while keeping the portfolio's existing user-selectable theme behavior.
+- Existing content and technical illustrations remain intact; this change migrates their shared UI
+  foundations without rewriting editorial information or product claims.
+- The final selected wordmark direction uses Pixelify Sans with soft pixel forms and a tonal
+  first name. Its readable “Matías Fernández” label remains in the accessibility tree.
 
 ### Progress
 
-- Portfolio V2 PRs 1–4 are complete on `feat/professional-home`.
-- The repository harness now has executable cross-platform readiness, state validation, thin agent
-  adapters, and a full-gate verifier; it does not publish or alter the portfolio product.
+- Added canonical OpenCode-inspired tokens and mapped every legacy shared color/font alias to them.
+- Migrated the shared shell, navigation, theme control, buttons, cards, footers, Work pages, and web
+  résumé away from rounded pills, decorative shadows, and mixed font families.
+- Corrected the Spanish mobile writing-header overflow found during visual verification.
+- Added the final responsive soft-pixel “Matías Fernández” wordmark to the main hero and every shared
+  brand position across professional, Work, AI, System Design, article, and footer surfaces.
 
 ### Blockers
 
-- Publishing GitHub changes requires explicit account authorization; read-only review can proceed.
+- None for the UI migration. The pre-existing GitHub-alignment publishing boundary remains unrelated.
 
 ### Verification
 
-- `npm run harness:init -- --check` — PASS on macOS 26.5 arm64 with Node 24.18.0 and npm 11.16.0.
-- `npm run dev -- --host 127.0.0.1` plus `HEAD /en/` — PASS (`200 OK`); the first sandboxed
-  bind was BLOCKED by local socket permissions, then the approved local-only run passed.
-- `npm run verify` — PASS on 2026-09-01 (harness: 9 checks; Astro: 82 files clean; build: 38 pages).
+- `npm run harness:init` — PASS on macOS 26.5 arm64 with Node 24.18.0 and npm 11.16.0.
+- `npm run check` — PASS (Astro: 82 files clean, no errors, warnings, or hints).
+- Browser review — PASS at desktop and mobile widths, light/dark themes, English/Spanish Home,
+  English About, Spanish Work, and English résumé; no horizontal overflow remains.
+- Final wordmark review — PASS at 1440×1000 and 390×844 in light/dark themes; Pixelify Sans loads,
+  the accessible text name remains present, and no horizontal overflow is introduced.
+- `npm run verify` — PASS on 2026-09-02 (harness: 9 checks; Astro: 82 files clean; build: 38 pages).
 
 ### Next action
 
-Review the public GitHub profile and selected repositories, then draft disclosure-safe alignment
-changes without publishing them.
+Review and commit the scoped OpenCode-inspired UI migration together with the supplied reference
+artifacts when ready; publishing or deployment remains a separate action.
 
 ## Recently completed
 
+- Migrated the portfolio's shared design foundations and primary professional surfaces to the
+  OpenCode-inspired mono, flat, hairline-bordered visual system with responsive theme parity.
 - Upgraded the five-subsystem agent harness with a canonical goal loop and authority router,
   cross-platform Node initialization, a validated operational-state schema, thin Claude/Copilot
   adapters, and a read-only verifier included in the CI-equivalent full gate.

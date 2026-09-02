@@ -26,7 +26,16 @@
 
 .professional-home .hero-intro h1 {
   margin: 22px 0 14px;
-  font-size: clamp(42px, 5.2vw, 66px);
+  font-size: clamp(38px, 4.8vw, 56px);
+}
+
+.professional-home .wordmark-heading {
+  width: min(760px, 100%);
+  line-height: 0;
+}
+
+.professional-home .wordmark-heading .pixel-wordmark-visual {
+  font-size: clamp(38px, 6vw, 72px);
 }
 
 .pro-availability {
@@ -139,6 +148,7 @@
   .professional-home .pro-actions { flex-direction: column; align-items: stretch; }
   .professional-home .pro-actions .quiet-action { align-self: flex-start; }
   .pro-snapshot dl > div { grid-template-columns: 1fr; gap: 6px; }
-  .notes-title-row .pro-all-notes { align-self: end; }
+  .notes-title-row { align-items: flex-start; flex-direction: column; }
+  .notes-title-row .pro-all-notes { align-self: flex-start; }
   .professional-home .pro-hero { padding-top: 136px; }
 }

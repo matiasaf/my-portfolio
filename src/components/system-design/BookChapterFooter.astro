@@ -1,11 +1,12 @@
 ---
+import PixelWordmark from '../PixelWordmark.astro';
+
 interface Props { number: string }
 const { number } = Astro.props;
 ---
 <footer>
   <a class="brand footer-brand" href="/system-design/#ddia" aria-label="Back to the System Design module">
-    <span class="brand-monogram" aria-hidden="true">MF</span>
-    <span>Matías Fernández</span>
+    <PixelWordmark compact />
   </a>
   <p>DDIA · CHAPTER {number}</p>
   <a href="#top">BACK TO TOP ↑</a>

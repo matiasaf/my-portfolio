@@ -1,4 +1,6 @@
 ---
+import PixelWordmark from '../PixelWordmark.astro';
+
 /** AI module header. `label` changes between the module home and article pages. */
 interface Props { label?: string; lang?: 'es' | 'en'; }
 const { label = 'MODULE 01 · AI LAB', lang = 'en' } = Astro.props;
@@ -7,8 +9,8 @@ const homeHref = lang === 'es' ? '/es/' : '/en/';
 
 <header class="ai-header">
   <a class="brand" href={homeHref} aria-label={lang === 'es' ? 'Volver al portfolio' : 'Back to the portfolio'}>
-    <span class="brand-monogram" aria-hidden="true">MF</span>
-    <span>Matías Fernández <em>/ AI &amp; Harnesses</em></span>
+    <PixelWordmark compact />
+    <em>/ AI &amp; Harnesses</em>
   </a>
   <span class="ai-header-label">{label}</span>
 </header>

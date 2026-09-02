@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PixelWordmark from './PixelWordmark.astro';
 import '../styles/portfolio.css';
 import '../styles/professional-home.css';
 import { notes } from '../content/notes';
@@ -123,8 +124,7 @@ const t = en ? {
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="top">
   <header class="portfolio-header pro-header" data-portfolio-header>
     <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
-      <span class="brand-monogram" aria-hidden="true">MF</span>
-      <span>Matías Fernández</span>
+      <PixelWordmark compact />
     </a>
 
     <nav aria-label={t.navLabel}>
@@ -144,7 +144,7 @@ const t = en ? {
     <section class="portfolio-hero portfolio-shell pro-hero">
       <div class="hero-intro">
         <p class="portfolio-kicker"><span></span> {t.kicker}</p>
-        <h1>{positioning.name}</h1>
+        <h1 class="wordmark-heading"><PixelWordmark /></h1>
         <p class="pro-role">
           {positioning.role[lang]}<br />
           <em>{positioning.specialization[lang]}</em>
@@ -272,7 +272,7 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer">
-    <a class="portfolio-brand" href={route.home}><span class="brand-monogram">MF</span><span>Matías Fernández</span></a>
+    <a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a>
     <p>{t.footer}</p>
     <span>{t.footerNote}</span>
   </footer>
