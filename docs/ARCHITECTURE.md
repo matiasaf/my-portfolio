@@ -25,7 +25,7 @@ articles may contain their page structure directly.
 
 | Route | Entry file |
 |---|---|
-| `/` | Redirect to `/en/` from `astro.config.mjs` |
+| `/` | English home rendered directly; canonical remains `/en/` |
 | `/en/` | `src/pages/en/index.astro` |
 | `/es/` | `src/pages/es/index.astro` |
 | `/sobre-mi/` | `src/pages/sobre-mi.astro` |
@@ -117,7 +117,8 @@ manifest, and the generated résumé PDFs.
 
 The strategy is intentionally explicit and small:
 
-- `/` redirects to `/en/`, making English the default language for new visits.
+- `/` renders the English home directly so static hosting never flashes an intermediate redirect
+  document. `/en/` remains the canonical English URL and the target of internal English-home links.
 - English uses `/en/` and Spanish uses `/es/` for the bilingual professional home page.
 - Other translated sections use explicit paired routes, such as `/sobre-mi/` and `/en/about/`, or
   `/es/trabajo/` and `/en/work/`.

@@ -17,8 +17,11 @@ import {
 } from '../content/profile';
 import { selectedWork } from '../content/work';
 
-interface Props { lang: 'es' | 'en'; }
-const { lang } = Astro.props;
+interface Props {
+  lang: 'es' | 'en';
+  canonicalHref?: string;
+}
+const { lang, canonicalHref } = Astro.props;
 const en = lang === 'en';
 const route = routes[lang];
 const alternatePath = en ? routes.es.home : routes.en.home;
@@ -121,7 +124,7 @@ const t = en ? {
 };
 ---
 
-<Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="top">
+<Layout title={t.title} description={t.description} lang={lang} {canonicalHref} alternateHref={alternatePath} mainId="top">
   <header class="portfolio-header pro-header" data-portfolio-header>
     <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
       <PixelWordmark compact />

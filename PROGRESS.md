@@ -5,69 +5,58 @@ history; replace stale detail instead of accumulating a diary.
 
 ## Current state
 
-- Status: idle
+- Status: active
 - Branch: `main`
-- HEAD: `a43d05a`
-- Updated: `2026-09-02T10:46:00-03:00`
-- Worktree: the scoped Event-Driven Azure article passed verification and is recorded by the
-  accompanying main-branch commit; no unrelated work was included.
+- HEAD: `fdb45b6`
+- Updated: `2026-09-02T14:30:00-03:00`
+- Worktree: scoped root-render fix verified and ready for its main-branch commit.
 
 ### Objective
 
-Publish a bilingual System Design field note explaining how the supplied Website Chatbot
-architecture implemented event-driven behavior on Azure.
+Eliminate the initial blank-screen flick when visiting `https://builtbymatias.dev/`.
 
 ### Acceptance criteria
 
-1. Add the requested English article to Writing and preserve Spanish parity.
-2. Explain the Web PubSub conversation plane, Queue Storage/Functions ingestion plane, and
-   Azure SQL/REST source-of-truth boundary from the supplied architecture.
-3. Cover state machines, at-least-once handling, idempotency, correlation, reconciliation, and
-   the documented cancellation limitation without exposing secrets or private identifiers.
-4. Preserve the established reading layout, active Writing navigation, accessibility, themes,
-   responsive behavior, metadata, and static build.
-5. Pass focused diagnostics, bilingual visual checks, and the complete repository gate.
+1. Make `/` paint the English home in its first document instead of loading an intermediate page.
+2. Preserve `/en/` as the canonical English URL and `/es/` as its language alternate.
+3. Preserve theme initialization, accessibility, internal navigation, and static output.
+4. Verify the generated root HTML contains the home and no meta refresh, then pass the full gate.
 
 ### Decisions
 
-- IBM Plex Mono is the licensed/open fallback used by the official OpenCode site; Berkeley Mono is
-  not copied because no redistribution license was provided.
-- The article is a sanitized synthesis of the supplied canonical architecture document; it does
-  not reproduce secrets, internal keys, customer names, or deploy-time configuration.
-- The central design argument is that realtime delivery, durable work dispatch, and authoritative
-  state need separate responsibilities rather than one generic event mechanism.
-- The requested English route has a Spanish counterpart because the publication system and the
-  repository contract require language parity for translated long-form notes.
-- Existing OpenCode-style reading tokens, navigation, theme behavior, and social metadata are
-  reused; no new dependency or decorative image is needed.
+- Production serves the generated Astro redirect document as HTTP 200 from S3/CloudFront, so its
+  zero-delay meta refresh still paints a blank intermediate document.
+- The root now renders `ProfessionalHome` directly. A canonical override points its metadata to
+  `/en/`, avoiding competing canonical English URLs while removing the extra navigation.
+- Internal English-home links continue to use `/en/`; only a direct visit to `/` changes behavior.
 
 ### Progress
 
-- Added the English `/en/system-design/event-driven-design-azure/` article and its Spanish
-  `/system-design/event-driven-design-azure/` counterpart.
-- Added the publication to the shared bilingual Writing index and System Design navigation group.
-- Explained the two event planes, end-to-end chat and crawl flows, aggregate crawl states,
-  idempotency, bounded retries, correlation, reconciliation, and known cancellation gap.
-- Added official Microsoft Learn references for the Azure architecture pattern, Web PubSub,
-  Functions queue triggers, and reliability patterns.
+- Reproduced the production behavior: `/` returns a 280-byte meta-refresh document before `/en/`.
+- Removed the Astro static redirect and added a direct root route using the existing English home.
+- Added a canonical override to the shared layout and documented the root-route behavior.
+- Verified direct cold loads at desktop and mobile sizes in both themes.
 
 ### Blockers
 
-- None.
+- None currently.
 
 ### Verification
 
 - `npm run harness:init` — PASS on macOS 26.5 arm64 with Node 24.18.0 and npm 11.16.0.
-- `npm run check` — PASS (Astro: 87 files clean, no errors, warnings, or hints).
-- Browser review — PASS at 1280×800 light and 390×844 dark, English and Spanish; no horizontal
-  overflow, correct active Writing link, working mobile disclosure, and correct language metadata.
+- Production baseline — `/` returned HTTP 200 with a 280-byte meta-refresh document to `/en/`.
+- `npm run check` — PASS (Astro: 88 files clean, no errors, warnings, or hints).
+- Generated-root check — PASS; full home HTML is present, canonical is `/en/`, Spanish alternate is
+  `/es/`, and no meta refresh is emitted.
+- Browser cold-load review — PASS at desktop light/dark and 390×844 dark; `/` issued one document
+  load, remained at `/`, rendered the home, and had no horizontal overflow or meta refresh.
+- `npm run verify` — PASS (harness: 9 checks; Astro: 88 files clean; 41 pages built).
 - `git diff --check` — PASS.
-- `npm run verify` — PASS on 2026-09-02 (harness: 9 checks; Astro: 87 files clean; 40 pages built).
 
 ### Next action
 
-No active implementation remains. Begin the next request from a clean checkout and use the
-current production deployment as the baseline.
+Commit the scoped fix to `main`, push it, and confirm the production root no longer serves the
+intermediate redirect document after deployment.
 
 ## Recently completed
 
