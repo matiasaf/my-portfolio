@@ -2,9 +2,11 @@
 import Layout from '../../../layouts/Layout.astro';
 import BookChapterHeader from '../../../components/system-design/BookChapterHeader.astro';
 import BookChapterFooter from '../../../components/system-design/BookChapterFooter.astro';
+import WritingSidebar from '../../../components/WritingSidebar.astro';
 import { book, chapterOneConcepts } from '../../../content/ddia';
 import '../../../styles/system-design.css';
 import '../../../styles/ddia.css';
+import '../../../styles/article-reading.css';
 
 const faultClasses = [
   {
@@ -65,8 +67,9 @@ const takeaways = [
   description="An extensive study analysis of Chapter 1 of Designing Data-Intensive Applications by Martin Kleppmann: reliability, scalability and maintainability, with the arguments redrawn as diagrams."
 >
   <BookChapterHeader number="01" />
+  <WritingSidebar lang="en" />
 
-  <main id="top" tabindex="-1" class="sd-page ddia-page">
+  <main id="top" tabindex="-1" class="sd-page ddia-page reading-article has-writing-sidebar">
     <!-- ─────────────────────────  HERO  ───────────────────────── -->
     <section class="ddia-hero section-shell">
       <p class="ddia-breadcrumb">

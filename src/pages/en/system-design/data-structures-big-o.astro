@@ -1,9 +1,11 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import PixelWordmark from '../../../components/PixelWordmark.astro';
+import WritingSidebar from '../../../components/WritingSidebar.astro';
 import '../../../styles/system-design.css';
 import '../../../styles/concurrency-article.css';
 import '../../../styles/data-structures-article.css';
+import '../../../styles/article-reading.css';
 
 const complexityRows = [
   ['Dynamic array', 'Θ(1)', 'O(n)', 'Amortized Θ(1)', 'O(n)', 'Fast indexed reads and iteration'],
@@ -61,7 +63,9 @@ const checklist = [
     <span class="sd-header-label">ALGORITHMS · FIELD NOTE 03</span>
   </header>
 
-  <main id="top" tabindex="-1" class="cp-page ds-page">
+  <WritingSidebar lang="en" />
+
+  <main id="top" tabindex="-1" class="cp-page ds-page reading-article has-writing-sidebar">
     <article>
       <header class="cp-hero section-shell">
         <p class="cp-breadcrumb">

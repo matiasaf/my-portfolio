@@ -2,8 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import ModuleHeader from './ModuleHeader.astro';
 import ModuleFooter from './ModuleFooter.astro';
+import WritingSidebar from '../WritingSidebar.astro';
 import '../../styles/ai.css';
 import '../../styles/production-rag-article.css';
+import '../../styles/article-reading.css';
 
 interface Props { lang: 'es' | 'en' }
 const { lang } = Astro.props;
@@ -231,7 +233,8 @@ const sources = [
 
 <Layout mainId="top" lang={lang} title={t.title} description={t.description} alternateHref={alternatePath} ogType="article" publishedTime="2026-08-25">
   <ModuleHeader label={t.header} lang={lang} />
-  <main id="top" tabindex="-1" class="ai-page rag-page">
+  <WritingSidebar {lang} />
+  <main id="top" tabindex="-1" class="ai-page rag-page reading-article has-writing-sidebar">
     <article>
       <header class="ai-post-hero section-shell rag-hero">
         <div class="rag-breadcrumb-row">

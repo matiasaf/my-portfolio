@@ -1,8 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import PixelWordmark from '../PixelWordmark.astro';
+import WritingSidebar from '../WritingSidebar.astro';
 import '../../styles/system-design.css';
 import '../../styles/database-article.css';
+import '../../styles/article-reading.css';
 
 interface Props { lang: 'es' | 'en' }
 const { lang } = Astro.props;
@@ -255,7 +257,9 @@ const sources = [
     </div>
   </header>
 
-  <main id="top" tabindex="-1" class="db-page">
+  <WritingSidebar {lang} />
+
+  <main id="top" tabindex="-1" class="db-page reading-article has-writing-sidebar">
     <article>
       <header class="db-hero section-shell">
         <div class="db-breadcrumb-row">

@@ -2,8 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import ModuleHeader from './ModuleHeader.astro';
 import ModuleFooter from './ModuleFooter.astro';
+import WritingSidebar from '../WritingSidebar.astro';
 import '../../styles/ai.css';
 import '../../styles/harness-engineering-article.css';
+import '../../styles/article-reading.css';
 
 interface Props { lang: 'es' | 'en' }
 const { lang } = Astro.props;
@@ -76,8 +78,9 @@ const sources = [
   publishedTime="2026-08-31"
 >
   <ModuleHeader label={tr('ARTÍCULO 03 · HARNESS', 'ARTICLE 03 · HARNESS')} lang={lang} />
+  <WritingSidebar {lang} />
 
-  <main id="top" tabindex="-1" class="ai-page harness-page">
+  <main id="top" tabindex="-1" class="ai-page harness-page reading-article has-writing-sidebar">
     <article>
       <header class="ai-post-hero section-shell harness-hero">
         <div class="harness-breadcrumb-row">

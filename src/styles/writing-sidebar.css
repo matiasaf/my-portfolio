@@ -1,0 +1,127 @@
+/* Topic navigation for Writing and long-form notes. The fixed desktop rail
+   follows OpenCode's documentation layout; mobile uses a native disclosure. */
+
+.writing-sidebar {
+  position: fixed;
+  z-index: 40;
+  inset: 76px auto 0 0;
+  width: 280px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  background: var(--paper);
+  scrollbar-width: thin;
+}
+
+.writing-sidebar-desktop { padding: 24px 16px 40px; }
+.writing-sidebar-mobile { display: none; }
+
+.writing-sidebar-home {
+  display: block;
+  margin-bottom: 24px;
+  padding: 8px 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.writing-sidebar :is(a:hover, a[aria-current='page']) {
+  color: var(--ink);
+  background: var(--surface-soft);
+}
+
+.writing-sidebar a[aria-current='page'] {
+  box-shadow: inset 2px 0 0 var(--accent-text);
+}
+
+.writing-sidebar-group + .writing-sidebar-group { margin-top: 22px; }
+.writing-sidebar-group h2 {
+  margin: 0 0 6px;
+  padding-inline: 12px;
+  color: var(--muted);
+  font: 600 11px/1.5 var(--mono);
+  letter-spacing: .04em;
+}
+
+.writing-sidebar-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.writing-sidebar-group a {
+  display: block;
+  padding: 7px 12px;
+  color: var(--muted-strong);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.has-writing-sidebar { margin-left: 280px; }
+.reading-article.has-writing-sidebar .section-shell {
+  margin-right: auto;
+  margin-left: 40px;
+}
+
+.writing-sidebar ~ footer {
+  width: auto;
+  margin-left: 280px;
+}
+
+@media (max-width: 1080px) {
+  .writing-sidebar {
+    position: relative;
+    z-index: 1;
+    inset: auto;
+    width: auto;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .writing-sidebar-desktop { display: none; }
+  .writing-sidebar-mobile { display: block; }
+  .writing-sidebar-mobile summary {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--shell-gutter);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    list-style: none;
+  }
+  .writing-sidebar-mobile summary::-webkit-details-marker { display: none; }
+  .writing-sidebar-mobile summary span { transition: transform .16s ease; }
+  .writing-sidebar-mobile[open] summary span { transform: rotate(45deg); }
+  .writing-sidebar-mobile > div {
+    max-height: min(65vh, 620px);
+    padding: 12px var(--shell-gutter) 28px;
+    overflow-y: auto;
+    border-top: 1px solid var(--line);
+  }
+  .writing-sidebar-mobile nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .writing-sidebar-mobile .writing-sidebar-home { width: fit-content; }
+  .writing-sidebar-group + .writing-sidebar-group { margin-top: 0; }
+
+  .has-writing-sidebar,
+  .writing-sidebar ~ footer { margin-left: 0; }
+  .reading-article.has-writing-sidebar .section-shell { margin-inline: auto; }
+}
+
+@media (max-width: 620px) {
+  .writing-sidebar-mobile nav { grid-template-columns: 1fr; }
+  .writing-sidebar-mobile .writing-sidebar-group + .writing-sidebar-group { margin-top: 18px; }
+}
+
+@media print {
+  .writing-sidebar { display: none; }
+  .has-writing-sidebar,
+  .writing-sidebar ~ footer { margin-left: 0; }
+}

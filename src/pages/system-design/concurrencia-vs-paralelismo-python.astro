@@ -1,8 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import PixelWordmark from '../../components/PixelWordmark.astro';
+import WritingSidebar from '../../components/WritingSidebar.astro';
 import '../../styles/system-design.css';
 import '../../styles/concurrency-article.css';
+import '../../styles/article-reading.css';
 
 const diagnosticRows = [
   {
@@ -102,7 +104,9 @@ const checklist = [
     <span class="sd-header-label">PYTHON · FIELD NOTE 01</span>
   </header>
 
-  <main id="top" tabindex="-1" class="cp-page">
+  <WritingSidebar lang="es" />
+
+  <main id="top" tabindex="-1" class="cp-page reading-article has-writing-sidebar">
     <article>
       <header class="cp-hero section-shell">
         <p class="cp-breadcrumb">

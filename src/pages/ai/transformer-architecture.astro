@@ -2,8 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import ModuleHeader from '../../components/ai/ModuleHeader.astro';
 import ModuleFooter from '../../components/ai/ModuleFooter.astro';
+import WritingSidebar from '../../components/WritingSidebar.astro';
 import { foundationConcepts } from '../../content/ai';
 import '../../styles/ai.css';
+import '../../styles/article-reading.css';
 
 /* GPT-3 parameter budget following the 3Blue1Brown breakdown. `bar` is relative
    to the largest block, the two MLP projections, rather than the total. */
@@ -75,8 +77,9 @@ const consequences = [
   description="A visual, didactic explanation of the transformer architecture behind LLMs: tokens, embeddings, attention, the MLP, softmax and temperature, and where GPT-3's 175 billion parameters actually live."
 >
   <ModuleHeader label="ARTICLE 01 · FOUNDATIONS" />
+  <WritingSidebar lang="en" />
 
-  <main id="top" tabindex="-1" class="ai-page">
+  <main id="top" tabindex="-1" class="ai-page reading-article has-writing-sidebar">
     <!-- ─────────────────────────  HERO  ───────────────────────── -->
     <section class="ai-post-hero section-shell">
       <p class="ai-breadcrumb">

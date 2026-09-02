@@ -1,0 +1,71 @@
+---
+import { notes, noteTopics } from '../content/notes';
+import '../styles/writing-sidebar.css';
+
+interface Props {
+  lang: 'es' | 'en';
+  currentPath?: string;
+}
+
+const { lang, currentPath = Astro.url.pathname } = Astro.props;
+const en = lang === 'en';
+const writingHref = en ? '/en/writing/' : '/es/publicaciones/';
+const groups = noteTopics[lang].map((topic) => ({
+  ...topic,
+  notes: notes[lang].filter((note) => note.topic === topic.id),
+}));
+const pathFor = (href: string) => href.split('#')[0];
+const isActive = (href: string) => pathFor(href) === currentPath;
+const label = en ? 'Writing navigation' : 'Navegación de publicaciones';
+const browse = en ? 'Browse writing' : 'Explorar publicaciones';
+const allWriting = en ? 'All writing' : 'Todas las publicaciones';
+---
+
+<aside class="writing-sidebar" aria-label={label}>
+  <div class="writing-sidebar-desktop">
+    <a class="writing-sidebar-home" href={writingHref} aria-current={currentPath === writingHref ? 'page' : undefined}>
+      {allWriting}
+    </a>
+    <nav aria-label={label}>
+      {groups.map((group) => (
+        <section class="writing-sidebar-group" aria-labelledby={`writing-topic-${group.id}`}>
+          <h2 id={`writing-topic-${group.id}`}>{group.label}</h2>
+          <ul>
+            {group.notes.map((note) => (
+              <li>
+                <a href={note.href} title={note.title} aria-current={isActive(note.href) ? 'page' : undefined}>
+                  {note.navTitle}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </nav>
+  </div>
+
+  <details class="writing-sidebar-mobile">
+    <summary>{browse}<span aria-hidden="true">＋</span></summary>
+    <div>
+      <a class="writing-sidebar-home" href={writingHref} aria-current={currentPath === writingHref ? 'page' : undefined}>
+        {allWriting}
+      </a>
+      <nav aria-label={label}>
+        {groups.map((group) => (
+          <section class="writing-sidebar-group" aria-labelledby={`writing-mobile-topic-${group.id}`}>
+            <h2 id={`writing-mobile-topic-${group.id}`}>{group.label}</h2>
+            <ul>
+              {group.notes.map((note) => (
+                <li>
+                  <a href={note.href} title={note.title} aria-current={isActive(note.href) ? 'page' : undefined}>
+                    {note.navTitle}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </nav>
+    </div>
+  </details>
+</aside>

@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PixelWordmark from './PixelWordmark.astro';
+import WritingSidebar from './WritingSidebar.astro';
 import '../styles/portfolio.css';
 import { notes as allNotes } from '../content/notes';
 import { contactLinks, navigation, routes } from '../content/profile';
@@ -108,7 +109,9 @@ const t = en ? {
     </div>
   </header>
 
-  <main id="inicio" tabindex="-1" class="portfolio-main editorial-home">
+  <WritingSidebar {lang} />
+
+  <main id="inicio" tabindex="-1" class="portfolio-main editorial-home has-writing-sidebar">
     <section class="portfolio-hero portfolio-shell editorial-hero">
       <div class="hero-intro">
         <p class="portfolio-kicker"><span></span> {t.kicker}</p>

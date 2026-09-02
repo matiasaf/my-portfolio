@@ -1,0 +1,779 @@
+/* OpenCode-docs-inspired reading layer for published long-form notes.
+   Article-specific styles still describe diagrams and code samples; this layer
+   removes the editorial poster treatment and restores a quiet reading rhythm. */
+
+.reading-article {
+  --shell-max: 700px;
+  --coral: var(--surface-soft);
+  --lime: var(--surface-soft);
+  --blue: var(--surface-soft);
+  --violet: var(--surface-soft);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.reading-article :where(.section-shell) {
+  width: min(var(--shell-max), calc(100% - var(--shell-gutter) * 2));
+}
+
+.reading-article :where(
+  .ai-post-hero,
+  .cp-hero,
+  .db-hero,
+  .ddia-hero
+) {
+  padding-block: 56px 64px;
+}
+
+.reading-article :where(.cp-hero-grid, .db-hero-grid) {
+  display: block;
+}
+
+/* Hero illustrations repeat ideas that the title and lede already explain. */
+.reading-article :where(.cp-hero-visual, .db-decision-chain, .pg-chain) {
+  display: none;
+}
+
+.reading-article :where(
+  .ai-post-hero h1,
+  .cp-hero h1,
+  .db-hero-copy h1,
+  .ddia-hero h1
+) {
+  max-width: 18ch;
+  margin: 20px 0 18px;
+  color: var(--ink);
+  font-size: clamp(32px, 5vw, 44px);
+  font-weight: 600;
+  letter-spacing: -.045em;
+  line-height: 1.12;
+}
+
+.reading-article :where(
+  .ai-post-hero h1 strong,
+  .ai-post-hero h1 em,
+  .cp-hero h1 strong,
+  .cp-hero h1 em,
+  .db-hero-copy h1 strong,
+  .db-hero-copy h1 em,
+  .ddia-hero h1 strong,
+  .ddia-hero h1 em
+) {
+  color: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.reading-article :where(.ai-post-lede, .cp-lede, .db-hero-copy > p:last-child, .ddia-lede) {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.reading-article :where(.eyebrow, .cp-kicker, .db-kicker) span {
+  width: 16px;
+  height: 1px;
+  background: var(--muted);
+}
+
+.reading-article :where(
+  .ai-post-meta,
+  .cp-meta,
+  .db-meta,
+  .ddia-hero-meta
+) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 32px;
+  border: 0;
+  border-block: 1px solid var(--line);
+  background: transparent;
+}
+
+.reading-article :where(
+  .ai-post-meta div,
+  .cp-meta div,
+  .db-meta div,
+  .ddia-hero-meta div
+) {
+  min-width: 0;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.reading-article :where(
+  .ai-post-meta div:nth-last-child(-n + 2),
+  .cp-meta div:nth-last-child(-n + 2),
+  .db-meta div:nth-last-child(-n + 2),
+  .ddia-hero-meta div:nth-last-child(-n + 2)
+) { border-bottom: 0; }
+
+.reading-article :where(
+  .ai-section,
+  .cp-section,
+  .db-section,
+  .ddia-section,
+  .rag-sources,
+  .harness-sources,
+  .incident-sources,
+  .cp-sources,
+  .db-sources
+) {
+  padding-block: 56px;
+  border-top: 1px solid var(--line);
+}
+
+.reading-article :where(
+  .ai-section-tint,
+  .ai-dark,
+  .cp-dark,
+  .cp-system,
+  .db-dark,
+  .db-cap,
+  .ddia-section-dark,
+  .ddia-section-tint,
+  .pg-dark
+) {
+  color: var(--ink);
+  background: transparent;
+}
+
+.reading-article :where(
+  .ai-section-head,
+  .cp-section-heading,
+  .db-section-heading,
+  .ddia-section-head
+) {
+  display: block;
+  margin-bottom: 30px;
+}
+
+.reading-article :where(
+  .ai-section-head > p,
+  .cp-section-heading > p,
+  .db-section-heading > p,
+  .ddia-section-head > p
+) {
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+
+.reading-article :where(
+  .ai-section-head h2,
+  .cp-section-heading h2,
+  .db-section-heading h2,
+  .ddia-section-head h2,
+  .rag-sources h2,
+  .harness-sources h2,
+  .incident-sources h2,
+  .cp-sources h2,
+  .db-sources h2
+) {
+  max-width: 30ch;
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: clamp(22px, 3vw, 27px);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.25;
+}
+
+.reading-article :where(h2 em, h2 strong, .light h2, .light h2 em) {
+  color: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.reading-article :where(
+  .ai-section-head > div > p,
+  .cp-section-heading > div > p,
+  .db-section-heading > div > p,
+  .ddia-section-head > div > p
+) {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.reading-article :where(.light, .section-number) { color: var(--muted); }
+.reading-article :where(.light p, .light .section-number) { color: var(--muted-strong); }
+
+.reading-article :where(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) {
+  max-width: none;
+  color: var(--muted-strong);
+}
+
+.reading-article :where(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) p {
+  color: inherit;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.reading-article :where(.cp-prose-two, .rag-prose-two) {
+  display: block;
+  max-width: none;
+  margin-top: 24px;
+}
+
+.reading-article :where(.cp-prose-two p + p, .rag-prose-two p + p) { margin-top: 16px; }
+
+/* Turn editorial cards into scan-friendly documentation rows. */
+.reading-article :where(
+  .harness-subsystems,
+  .harness-loop-rules,
+  .harness-observability,
+  .incident-lessons,
+  .incident-myths,
+  .incident-techniques,
+  .rag-principle-grid,
+  .rag-metric-grid,
+  .rag-security-grid,
+  .rag-signal-grid,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-shape-grid,
+  .db-index-cards,
+  .db-scale-cards,
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .ddia-triad,
+  .fault-classes,
+  .pillars
+) {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.reading-article :where(
+  .harness-subsystems,
+  .harness-loop-rules,
+  .harness-observability,
+  .incident-lessons,
+  .incident-myths,
+  .incident-techniques,
+  .rag-principle-grid,
+  .rag-metric-grid,
+  .rag-security-grid,
+  .rag-signal-grid,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-shape-grid,
+  .db-index-cards,
+  .db-scale-cards,
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .ddia-triad,
+  .fault-classes,
+  .pillars
+) > article {
+  min-height: 0;
+  margin: 0;
+  padding: 18px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.reading-article :where(
+  .harness-subsystems,
+  .harness-loop-rules,
+  .harness-observability,
+  .incident-lessons,
+  .incident-myths,
+  .incident-techniques,
+  .rag-principle-grid,
+  .rag-metric-grid,
+  .rag-security-grid,
+  .rag-signal-grid,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-shape-grid,
+  .db-index-cards,
+  .db-scale-cards,
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .ddia-triad,
+  .fault-classes,
+  .pillars
+) :where(h3, h4) {
+  margin: 6px 0 8px;
+  color: var(--ink);
+  font-size: 16px;
+  letter-spacing: -.02em;
+  line-height: 1.35;
+}
+
+.reading-article :where(
+  .harness-subsystems,
+  .harness-loop-rules,
+  .harness-observability,
+  .incident-lessons,
+  .incident-myths,
+  .incident-techniques,
+  .rag-principle-grid,
+  .rag-metric-grid,
+  .rag-security-grid,
+  .rag-signal-grid,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-shape-grid,
+  .db-index-cards,
+  .db-scale-cards,
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .ddia-triad,
+  .fault-classes,
+  .pillars
+) :where(p, dd) {
+  margin-block: 0;
+  color: var(--muted-strong);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.reading-article :where(figure, .ai-figure, .ddia-figure) {
+  margin: 32px 0 0;
+  padding: 18px 0;
+  border: 0;
+  border-block: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.reading-article :where(figure, .ai-figure, .ddia-figure) :where(*) {
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.reading-article :where(.ai-figure-cap, .ddia-figure-cap, figure > figcaption) {
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.reading-article :where(
+  .ai-figure-note,
+  .ddia-figure-note,
+  figure > p,
+  figure > figcaption p
+) {
+  color: var(--muted-strong);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.reading-article :where(
+  .ai-dark,
+  .cp-dark,
+  .db-dark,
+  .db-cap,
+  .ddia-section-dark,
+  .pg-dark
+) :where(p, small, dd, td) {
+  color: var(--muted-strong);
+}
+
+.reading-article :where(
+  .ai-dark,
+  .cp-dark,
+  .db-dark,
+  .db-cap,
+  .ddia-section-dark,
+  .pg-dark
+) :where(h2, h3, h4, strong, th, code) {
+  color: var(--ink);
+}
+
+.reading-article :where(
+  .ai-callout,
+  .ddia-callout,
+  .harness-callout,
+  .harness-warning,
+  .harness-feedback,
+  .harness-boundary,
+  .incident-callout,
+  .incident-boundary,
+  .incident-caveat,
+  .rag-note,
+  .rag-warning,
+  .rag-boundary,
+  .db-dark-note,
+  .db-scale-callout,
+  .db-acid-note,
+  .db-system-warning,
+  .cp-dark-callout,
+  .cp-gil-note,
+  .cp-capacity-note,
+  blockquote
+) {
+  display: block;
+  margin: 28px 0 0;
+  padding: 16px 0 16px 18px;
+  border: 0;
+  border-left: 2px solid var(--line-strong);
+  color: var(--ink);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.reading-article :where(pre, .cp-code-panel) {
+  border: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.reading-article :where(.cp-table-wrap, .pg-table-wrap) {
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.reading-article :where(
+  .ai-post-meta b,
+  .cp-meta b,
+  .db-meta dd,
+  .ddia-hero-meta b,
+  .section-number,
+  .ai-figure-cap,
+  .ddia-figure-cap
+) {
+  overflow-wrap: anywhere;
+}
+
+.reading-article :where(
+  .harness-conclusion,
+  .incident-conclusion,
+  .rag-conclusion,
+  .cp-conclusion,
+  .db-conclusion,
+  .ds-conclusion
+) {
+  min-height: 0;
+  padding-block: 56px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  background: transparent;
+}
+
+.reading-article :where(
+  .harness-conclusion,
+  .incident-conclusion,
+  .rag-conclusion,
+  .cp-conclusion,
+  .db-conclusion,
+  .ds-conclusion
+) h2 {
+  max-width: 24ch;
+  margin: 16px 0;
+  color: var(--ink);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  letter-spacing: -.04em;
+  line-height: 1.2;
+}
+
+@media (max-width: 680px) {
+  .reading-article :where(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero) {
+    padding-block: 36px 44px;
+  }
+
+  .reading-article :where(
+    .ai-section,
+    .cp-section,
+    .db-section,
+    .ddia-section,
+    .rag-sources,
+    .harness-sources,
+    .incident-sources,
+    .cp-sources,
+    .db-sources
+  ) { padding-block: 44px; }
+
+  .reading-article :where(
+    .ai-post-meta,
+    .cp-meta,
+    .db-meta,
+    .ddia-hero-meta
+  ) { grid-template-columns: 1fr; }
+
+  .reading-article :where(
+    .ai-post-meta div:nth-last-child(-n + 2),
+    .cp-meta div:nth-last-child(-n + 2),
+    .db-meta div:nth-last-child(-n + 2),
+    .ddia-hero-meta div:nth-last-child(-n + 2)
+  ) { border-bottom: 1px solid var(--line); }
+
+  .reading-article :where(
+    .ai-post-meta div:last-child,
+    .cp-meta div:last-child,
+    .db-meta div:last-child,
+    .ddia-hero-meta div:last-child
+  ) { border-bottom: 0; }
+}
+
+/* Article styles predate this shared layer and often target an element plus a
+   component class. These explicit selectors keep the reading layer decisive
+   without changing the module pages that reuse the original styles. */
+.reading-article.reading-article .ai-post-hero h1,
+.reading-article.reading-article .cp-hero h1,
+.reading-article.reading-article .db-hero-copy h1,
+.reading-article.reading-article .ddia-hero h1 {
+  max-width: 18ch;
+  margin: 20px 0 18px;
+  color: var(--ink);
+  font-size: clamp(32px, 5vw, 44px);
+  font-weight: 600;
+  letter-spacing: -.045em;
+  line-height: 1.12;
+}
+
+.reading-article.reading-article .ai-post-hero h1 :is(strong, em),
+.reading-article.reading-article .cp-hero h1 :is(strong, em),
+.reading-article.reading-article .db-hero-copy h1 :is(strong, em),
+.reading-article.reading-article .ddia-hero h1 :is(strong, em) {
+  color: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta) > div {
+  min-width: 0;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta) > div:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) h2,
+.reading-article.reading-article :is(.rag-sources, .harness-sources, .incident-sources, .cp-sources, .db-sources) h2 {
+  max-width: 30ch;
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: clamp(22px, 3vw, 27px);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.25;
+}
+
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) h2 :is(em, strong),
+.reading-article.reading-article :is(.rag-sources, .harness-sources, .incident-sources, .cp-sources, .db-sources) h2 :is(em, strong) {
+  color: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) > div > p {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.reading-article.reading-article :is(.ai-dark, .cp-dark, .db-dark, .db-cap, .ddia-section-dark, .pg-dark) {
+  color: var(--ink);
+  background: transparent;
+}
+
+.reading-article.reading-article :is(.ai-dark, .cp-dark, .db-dark, .db-cap, .ddia-section-dark, .pg-dark) :is(p, small, dd, td) {
+  color: var(--muted-strong);
+}
+
+.reading-article.reading-article > article > :is(section, aside),
+.reading-article.reading-article article article {
+  color: var(--ink);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.reading-article.reading-article > article > :is(
+  .harness-thesis,
+  .incident-thesis,
+  .rag-thesis,
+  .cp-thesis,
+  .db-thesis,
+  .ds-thesis
+) {
+  margin: 0;
+  padding-block: 28px;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.reading-article.reading-article > article > :is(
+  .harness-thesis,
+  .incident-thesis,
+  .rag-thesis,
+  .cp-thesis,
+  .db-thesis,
+  .ds-thesis
+) > .section-shell {
+  display: block;
+}
+
+.reading-article.reading-article > article > :is(
+  .harness-thesis,
+  .incident-thesis,
+  .rag-thesis,
+  .cp-thesis,
+  .db-thesis,
+  .ds-thesis
+) :is(span, p) {
+  margin: 0;
+  color: var(--muted-strong);
+}
+
+.reading-article.reading-article > article > :is(
+  .harness-thesis,
+  .incident-thesis,
+  .rag-thesis,
+  .cp-thesis,
+  .db-thesis,
+  .ds-thesis
+) span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font: 500 9px var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.reading-article.reading-article > article > :is(
+  .harness-thesis,
+  .incident-thesis,
+  .rag-thesis,
+  .cp-thesis,
+  .db-thesis,
+  .ds-thesis
+) p {
+  max-width: 68ch;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.55;
+}
+
+.reading-article.reading-article article article h3,
+.reading-article.reading-article article :is(div, aside, figure) > :is(h3, h4) {
+  max-width: none;
+  margin: 8px 0;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.35;
+}
+
+.reading-article.reading-article article :is(div, aside, figure) > p:not(.eyebrow, .section-number) {
+  color: var(--muted-strong);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.reading-article.reading-article :is(
+  .db-query-board,
+  .cp-code-study,
+  .cp-process-example,
+  .cp-checklist,
+  .db-checklist,
+  .rag-baseline,
+  .harness-contract,
+  .harness-graph,
+  .incident-story
+) {
+  display: block;
+  margin-top: 28px;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--ink);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.reading-article.reading-article :is(
+  .db-query-board,
+  .cp-code-study,
+  .cp-process-example,
+  .cp-checklist,
+  .db-checklist,
+  .rag-baseline,
+  .harness-contract,
+  .harness-graph,
+  .incident-story
+) > :where(*) {
+  min-height: 0;
+  padding: 18px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  background: transparent;
+  box-shadow: none;
+}
+
+.reading-article.reading-article :is(.cp-pullquote, .db-authority) {
+  display: block;
+  margin-top: 32px;
+  padding-block: 20px;
+  border-block: 1px solid var(--line);
+}
+
+.reading-article.reading-article :is(.cp-pullquote, .db-authority) p {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: 18px;
+  letter-spacing: -.025em;
+  line-height: 1.5;
+}
+
+@media (max-width: 680px) {
+  .reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta) > div:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta) > div:last-child {
+    border-bottom: 0;
+  }
+}

@@ -2,8 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import ModuleHeader from './ModuleHeader.astro';
 import ModuleFooter from './ModuleFooter.astro';
+import WritingSidebar from '../WritingSidebar.astro';
 import '../../styles/ai.css';
 import '../../styles/agent-incident-article.css';
+import '../../styles/article-reading.css';
 
 interface Props { lang: 'es' | 'en' }
 const { lang } = Astro.props;
@@ -90,8 +92,9 @@ const sources = es ? [
   publishedTime="2026-08-24"
 >
   <ModuleHeader label={tr('ARTÍCULO 08 · SEGURIDAD DE AGENTES', 'ARTICLE 08 · AGENT SECURITY')} lang={lang} />
+  <WritingSidebar {lang} />
 
-  <main id="top" tabindex="-1" class="ai-page incident-page">
+  <main id="top" tabindex="-1" class="ai-page incident-page reading-article has-writing-sidebar">
     <article>
       <header class="ai-post-hero section-shell incident-hero">
         <div class="incident-breadcrumb-row"><p class="ai-breadcrumb">
