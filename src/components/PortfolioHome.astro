@@ -1,11 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PixelWordmark from './PixelWordmark.astro';
+import PortfolioHeader from './PortfolioHeader.astro';
 import '../styles/portfolio.css';
 import {
   condensedExperience,
   contactLinks,
-  navigation,
   positioning,
   preferredEnvironment,
   routes,
@@ -16,7 +16,6 @@ interface Props { lang: 'es' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const route = routes[lang];
-const nav = navigation(lang);
 const alternatePath = en ? routes.es.about : routes.en.about;
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
 
@@ -45,7 +44,6 @@ const workingStyle = en ? [
 const t = en ? {
   title: 'About — Matías Fernández',
   description: 'How Matías Fernández works as a Senior Full-Stack Engineer across TypeScript, React, Next.js, Node.js, AWS, and AI-enabled products.',
-  navLabel: 'Main navigation', resumePdf: 'Résumé PDF',
   kicker: 'ABOUT · PROFILE & WORKING STYLE',
   heroA: 'Full-stack ownership.', heroEm: 'Product judgment.', heroB: ' Hands-on leadership.',
   intro: 'I’m a Senior Full-Stack Engineer who builds reliable products with TypeScript, React, Next.js, Node.js, AWS, and production AI systems.',
@@ -62,7 +60,6 @@ const t = en ? {
 } : {
   title: 'Sobre mí — Matías Fernández',
   description: 'Cómo trabaja Matías Fernández como Senior Full-Stack Engineer con TypeScript, React, Next.js, Node.js, AWS y productos con AI.',
-  navLabel: 'Navegación principal', resumePdf: 'CV PDF',
   kicker: 'SOBRE MÍ · PERFIL & FORMA DE TRABAJO',
   heroA: 'Ownership full-stack.', heroEm: 'Criterio de producto.', heroB: ' Liderazgo hands-on.',
   intro: 'Soy Senior Full-Stack Engineer y construyo productos confiables con TypeScript, React, Next.js, Node.js, AWS y sistemas de AI en producción.',
@@ -80,14 +77,7 @@ const t = en ? {
 ---
 
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="inicio">
-  <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}><PixelWordmark compact /></a>
-    <nav aria-label={t.navLabel}>{nav.map((item) => <a href={item.href} aria-current={item.href === route.about ? 'page' : undefined}>{item.label}</a>)}</nav>
-    <div class="portfolio-header-actions">
-      <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}><a href={routes.es.about} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a><a href={routes.en.about} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a></nav>
-      <a class="header-note" href={route.resumePdf} download>{t.resumePdf} <span aria-hidden="true">↓</span></a>
-    </div>
-  </header>
+  <PortfolioHeader {lang} current="about" alternateHref={alternatePath} />
 
   <main id="inicio" tabindex="-1" class="portfolio-main about-page-v2">
     <section class="portfolio-hero portfolio-shell about-hero-v2">
@@ -133,5 +123,4 @@ const t = en ? {
   </main>
 
   <footer class="portfolio-footer"><a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a><p>Product · Applied AI · Systems</p><span>{t.footer}</span></footer>
-  <script>const header = document.querySelector('[data-portfolio-header]'); const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20); onScroll(); window.addEventListener('scroll', onScroll, { passive: true });</script>
 </Layout>

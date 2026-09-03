@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PortfolioHeader from './PortfolioHeader.astro';
 import {
   resumeVariantMeta,
   resumeVariants,
@@ -35,6 +36,12 @@ const variantLabel = resumeVariantMeta[variant].label[lang];
   lang={lang}
   alternateHref={alternatePath}
 >
+  <PortfolioHeader
+    {lang}
+    current="resume"
+    alternateHref={alternatePath}
+    currentLanguageHref={resumeVariantMeta[variant].path[lang]}
+  />
   <main id="main-content" tabindex="-1" class="resume-page">
     <header class="resume-toolbar">
       <a href={homePath}>← {en ? 'Portfolio' : 'Portfolio'}</a>

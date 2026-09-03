@@ -1,10 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PixelWordmark from './PixelWordmark.astro';
+import PortfolioHeader from './PortfolioHeader.astro';
 import WritingSidebar from './WritingSidebar.astro';
 import '../styles/portfolio.css';
 import { notes as allNotes } from '../content/notes';
-import { contactLinks, navigation, routes } from '../content/profile';
+import { contactLinks, routes } from '../content/profile';
 import { aiKnowledgePlatformStatus } from '../content/work';
 
 interface Props { lang: 'es' | 'en'; }
@@ -14,7 +15,6 @@ const route = routes[lang];
 const alternatePath = en ? routes.es.writing : routes.en.writing;
 const aboutPath = route.about;
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
-const nav = navigation(lang);
 
 const socialLinks = {
   github: contactLinks.github,
@@ -64,7 +64,7 @@ const series = en ? [
 const t = en ? {
   title: 'Writing — Matías Fernández',
   description: 'Technical notes, visual guides, and an active side project about applied AI, system design, data, and building software products.',
-  nav: 'Main navigation', notes: 'Notes', projects: 'Projects', series: 'Series', about: 'About me', home: 'Back to the home page',
+  notes: 'Notes', projects: 'Projects', series: 'Series', about: 'About me',
   kicker: 'TECHNICAL NOTES · ACTIVE PROJECT · LEARNING IN PUBLIC',
   summary: 'A working notebook about applied AI, system design, data, and product engineering. I publish what I learn and show the artifacts I build along the way.',
   read: 'Start reading', explore: 'See the project', board: 'Map of published work', boardTop: 'PUBLISHED / IN PROGRESS', boardNote: 'notes + diagrams + working software',
@@ -76,7 +76,7 @@ const t = en ? {
 } : {
   title: 'Publicaciones — Matías Fernández',
   description: 'Notas técnicas, guías visuales y un side project activo sobre AI aplicada, system design, datos y construcción de productos de software.',
-  nav: 'Navegación principal', notes: 'Posteos', projects: 'Proyectos', series: 'Series', about: 'Sobre mí', home: 'Volver al inicio',
+  notes: 'Posteos', projects: 'Proyectos', series: 'Series', about: 'Sobre mí',
   kicker: 'NOTAS TÉCNICAS · PROYECTO ACTIVO · APRENDER EN PÚBLICO',
   summary: 'Una bitácora de trabajo sobre AI aplicada, system design, datos e ingeniería de producto. Publico lo que aprendo y muestro los artefactos que construyo en el camino.',
   read: 'Empezar a leer', explore: 'Ver el proyecto', board: 'Mapa de trabajo publicado', boardTop: 'PUBLICADO / EN PROCESO', boardNote: 'notas + diagramas + software funcionando',
@@ -89,25 +89,7 @@ const t = en ? {
 ---
 
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternatePath} mainId="inicio">
-  <header class="portfolio-header" data-portfolio-header>
-    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
-      <PixelWordmark compact />
-    </a>
-
-    <nav aria-label={t.nav}>
-      {nav.map((item) => (
-        <a href={item.href} aria-current={item.href === route.writing ? 'page' : undefined}>{item.label}</a>
-      ))}
-    </nav>
-
-    <div class="portfolio-header-actions">
-      <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
-        <a href={routes.es.writing} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-        <a href={routes.en.writing} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
-      </nav>
-      <a class="header-note" href={route.home}>{t.home} <span aria-hidden="true">→</span></a>
-    </div>
-  </header>
+  <PortfolioHeader {lang} current="writing" alternateHref={alternatePath} />
 
   <WritingSidebar {lang} />
 
@@ -227,10 +209,4 @@ const t = en ? {
     <p>{en ? 'Notes · Active project · Systems' : 'Posteos · Proyecto activo · Sistemas'}</p><span>{t.footer}</span>
   </footer>
 
-  <script>
-    const header = document.querySelector('[data-portfolio-header]');
-    const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  </script>
 </Layout>

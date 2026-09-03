@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PixelWordmark from './PixelWordmark.astro';
+import PortfolioHeader from './PortfolioHeader.astro';
 import '../styles/portfolio.css';
 import '../styles/work.css';
-import { contactLinks, navigation, routes, type Lang } from '../content/profile';
+import { contactLinks, routes, type Lang } from '../content/profile';
 import { selectedWork } from '../content/work';
 
 interface Props { lang: Lang; }
@@ -11,11 +12,10 @@ const { lang } = Astro.props;
 const en = lang === 'en';
 const route = routes[lang];
 const alternate = en ? routes.es.work : routes.en.work;
-const nav = navigation(lang);
 const t = en ? {
   title: 'Selected engineering work — Matías Fernández',
   description: 'Selected product engineering work across frontend architecture, applied AI, APIs, and cloud delivery, with precise ownership and verified evidence.',
-  nav: 'Main navigation', language: 'Choose language', eyebrow: 'SELECTED ENGINEERING WORK',
+  eyebrow: 'SELECTED ENGINEERING WORK',
   heroA: 'Systems I have', heroB: 'helped make real.',
   intro: 'Four projects chosen for the decisions, responsibility, and evidence behind them. Public work links to source and tests; private and client work uses explicit disclosure boundaries.',
   published: 'Published case study', review: 'Verified summary · disclosure review pending',
@@ -23,7 +23,7 @@ const t = en ? {
 } : {
   title: 'Trabajo de ingeniería seleccionado — Matías Fernández',
   description: 'Trabajo de ingeniería de producto seleccionado sobre arquitectura frontend, AI aplicada, APIs y cloud, con ownership preciso y evidencia verificada.',
-  nav: 'Navegación principal', language: 'Elegir idioma', eyebrow: 'TRABAJO DE INGENIERÍA SELECCIONADO',
+  eyebrow: 'TRABAJO DE INGENIERÍA SELECCIONADO',
   heroA: 'Sistemas que ayudé', heroB: 'a hacer realidad.',
   intro: 'Cuatro proyectos elegidos por sus decisiones, responsabilidad y evidencia. El trabajo público enlaza código y tests; el trabajo privado y para clientes usa límites explícitos de disclosure.',
   published: 'Caso de estudio publicado', review: 'Resumen verificado · auditoría de disclosure pendiente',
@@ -32,16 +32,7 @@ const t = en ? {
 ---
 
 <Layout title={t.title} description={t.description} lang={lang} alternateHref={alternate} mainId="work-main">
-  <header class="portfolio-header work-header" data-portfolio-header>
-    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
-      <PixelWordmark compact />
-    </a>
-    <nav aria-label={t.nav}>{nav.map((item) => <a href={item.href} aria-current={item.href === route.work ? 'page' : undefined}>{item.label}</a>)}</nav>
-    <nav class="language-switcher" aria-label={t.language}>
-      <a href={routes.es.work} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-      <a href={routes.en.work} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
-    </nav>
-  </header>
+  <PortfolioHeader {lang} current="work" alternateHref={alternate} />
 
   <main id="work-main" tabindex="-1" class="work-index">
     <section class="portfolio-shell work-index-hero">
@@ -81,10 +72,4 @@ const t = en ? {
 
   <footer class="portfolio-footer work-footer"><a class="portfolio-brand" href={route.home}><PixelWordmark compact /></a><p>{t.footer}</p><a href={route.resume}>{en ? 'Résumé' : 'CV'} ↗</a></footer>
 
-  <script>
-    const header = document.querySelector('[data-portfolio-header]');
-    const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  </script>
 </Layout>

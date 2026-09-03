@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PixelWordmark from './PixelWordmark.astro';
+import PortfolioHeader from './PortfolioHeader.astro';
 import '../styles/portfolio.css';
 import '../styles/professional-home.css';
 import { notes } from '../content/notes';
@@ -8,7 +9,6 @@ import {
   condensedExperience,
   contactEmail,
   contactLinks,
-  navigation,
   positioning,
   preferredEnvironment,
   proofMetrics,
@@ -26,14 +26,11 @@ const en = lang === 'en';
 const route = routes[lang];
 const alternatePath = en ? routes.es.home : routes.en.home;
 const newTab = en ? ' (opens in a new tab)' : ' (se abre en una pestaña nueva)';
-const nav = navigation(lang);
 const selectedNotes = notes[lang].slice(0, 4);
 
 const t = en ? {
   title: 'Matías Fernández — Senior Full-Stack Engineer · TypeScript · React · Next.js · Node.js · AWS',
   description: 'Senior Full-Stack Engineer building reliable products with TypeScript, React, Next.js, Node.js, AWS, and production AI experience. Selected work, experience, and résumé.',
-  navLabel: 'Main navigation',
-  langLabel: 'Choose language',
   kicker: 'OPEN TO SENIOR AND LEAD ENGINEERING ROLES',
   viewWork: 'View selected work',
   downloadResume: 'Download résumé',
@@ -72,14 +69,11 @@ const t = en ? {
   emailLabel: 'Send an email',
   responseTime: 'I usually reply within two business days.',
   resumeLabel: 'Résumé',
-  resumePdfLabel: 'Résumé PDF',
   footer: 'Product · Applied AI · Systems',
   footerNote: 'Updated as the work changes.',
 } : {
   title: 'Matías Fernández — Senior Full-Stack Engineer · TypeScript · React · Next.js · Node.js · AWS',
   description: 'Senior Full-Stack Engineer que construye productos confiables con TypeScript, React, Next.js, Node.js, AWS y experiencia en AI en producción. Trabajo seleccionado, experiencia y CV.',
-  navLabel: 'Navegación principal',
-  langLabel: 'Elegir idioma',
   kicker: 'ABIERTO A ROLES SENIOR Y DE LIDERAZGO TÉCNICO',
   viewWork: 'Ver el trabajo seleccionado',
   downloadResume: 'Descargar CV',
@@ -118,30 +112,13 @@ const t = en ? {
   emailLabel: 'Enviar un email',
   responseTime: 'Suelo responder dentro de dos días hábiles.',
   resumeLabel: 'CV',
-  resumePdfLabel: 'CV PDF',
   footer: 'Producto · AI aplicada · Sistemas',
   footerNote: 'Actualizado a medida que cambia el trabajo.',
 };
 ---
 
 <Layout title={t.title} description={t.description} lang={lang} {canonicalHref} alternateHref={alternatePath} mainId="top">
-  <header class="portfolio-header pro-header" data-portfolio-header>
-    <a class="portfolio-brand" href={route.home} aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}>
-      <PixelWordmark compact />
-    </a>
-
-    <nav aria-label={t.navLabel}>
-      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
-    </nav>
-
-    <div class="portfolio-header-actions">
-      <nav class="language-switcher" aria-label={t.langLabel}>
-        <a href={routes.es.home} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
-        <a href={routes.en.home} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
-      </nav>
-      <a class="header-note" href={route.resumePdf} download>{t.resumePdfLabel} <span aria-hidden="true">↓</span></a>
-    </div>
-  </header>
+  <PortfolioHeader {lang} current="home" alternateHref={alternatePath} />
 
   <main id="top" tabindex="-1" class="portfolio-main professional-home">
     <section class="portfolio-hero portfolio-shell pro-hero">
@@ -280,10 +257,4 @@ const t = en ? {
     <span>{t.footerNote}</span>
   </footer>
 
-  <script>
-    const header = document.querySelector('[data-portfolio-header]');
-    const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  </script>
 </Layout>

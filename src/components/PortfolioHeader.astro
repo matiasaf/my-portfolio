@@ -1,0 +1,54 @@
+---
+import PixelWordmark from './PixelWordmark.astro';
+import { navigation, routes, type Lang } from '../content/profile';
+import '../styles/portfolio.css';
+
+type PortfolioRoute = 'home' | 'work' | 'writing' | 'about' | 'resume';
+
+interface Props {
+  lang: Lang;
+  current: PortfolioRoute;
+  alternateHref: string;
+  currentLanguageHref?: string;
+}
+
+const { lang, current, alternateHref, currentLanguageHref } = Astro.props;
+const en = lang === 'en';
+const route = routes[lang];
+const currentHref = route[current];
+const localizedCurrentHref = currentLanguageHref ?? currentHref;
+const languageHrefs = en
+  ? { en: localizedCurrentHref, es: alternateHref }
+  : { en: alternateHref, es: localizedCurrentHref };
+---
+
+<header class="portfolio-header" data-portfolio-header>
+  <a
+    class="portfolio-brand"
+    href={route.home}
+    aria-label={en ? 'Matías Fernández, home' : 'Matías Fernández, inicio'}
+    aria-current={current === 'home' ? 'page' : undefined}
+  >
+    <PixelWordmark compact />
+  </a>
+
+  <nav aria-label={en ? 'Main navigation' : 'Navegación principal'}>
+    {navigation(lang).map((item) => (
+      <a href={item.href} aria-current={item.href === currentHref ? 'page' : undefined}>{item.label}</a>
+    ))}
+  </nav>
+
+  <div class="portfolio-header-actions">
+    <nav class="language-switcher" aria-label={en ? 'Choose language' : 'Elegir idioma'}>
+      <a href={languageHrefs.es} lang="es" hreflang="es" aria-current={!en ? 'page' : undefined}>ES</a>
+      <a href={languageHrefs.en} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('[data-portfolio-header]');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

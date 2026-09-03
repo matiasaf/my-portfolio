@@ -2,9 +2,6 @@
 .work-index,
 .case-study { --work-accent: var(--color-accent-hover); --work-accent-soft: var(--color-surface-card); --work-accent-ink: var(--color-on-primary); }
 
-.work-header > .language-switcher { justify-self: end; }
-.work-header > nav[aria-label]:not(.language-switcher) a[aria-current='page'] { text-decoration-color: var(--portfolio-accent); }
-
 .work-index-hero { padding-top: 154px; padding-bottom: 90px; }
 .work-index-hero h1 { max-width: 980px; margin: 28px 0 30px; font-size: clamp(54px, 7.5vw, 104px); font-weight: 620; line-height: .92; letter-spacing: -.075em; }
 .work-index-hero h1 em { color: var(--portfolio-accent-text); font-style: normal; }
@@ -156,20 +153,6 @@
 .work-footer { min-height: 118px; }
 
 @media (max-width: 980px) {
-  .work-header { grid-template-columns: 1fr auto; row-gap: 10px; height: auto; padding-block: 12px; }
-  .work-header > .portfolio-brand { grid-area: 1 / 1; }
-  .work-header > .language-switcher { grid-area: 1 / 2; justify-self: end; }
-  .work-header > nav[aria-label]:not(.language-switcher) {
-    grid-area: 2 / 1 / 3 / -1;
-    display: flex;
-    width: 100%;
-    gap: 22px;
-    overflow-x: auto;
-    padding-bottom: 2px;
-    scrollbar-width: thin;
-  }
-  .work-header > nav[aria-label]:not(.language-switcher) a { flex: none; }
-  .work-header.is-scrolled { height: auto; }
   .work-index-card { grid-template-columns: 140px 1fr; }
   .work-index-card-detail { grid-column: 2; }
   .case-hero { grid-template-columns: 1fr; min-height: auto; gap: 55px; }
@@ -192,10 +175,6 @@
 }
 
 @media (max-width: 680px) {
-  .work-header { grid-template-columns: 1fr auto; height: auto; }
-  .work-header > .language-switcher { display: inline-flex; }
-  .work-header > nav[aria-label]:not(.language-switcher) { display: flex; gap: 18px; }
-  .work-header .portfolio-brand > span:not(.pixel-wordmark):last-child { display: none; }
   .work-index-hero { padding-top: 150px; padding-bottom: 64px; }
   .work-index-hero h1 { font-size: clamp(48px, 14.5vw, 67px); }
   .work-index-card { grid-template-columns: 1fr; gap: 25px; padding-left: 14px; }

@@ -5,87 +5,90 @@ history; replace stale detail instead of accumulating a diary.
 
 ## Current state
 
-- Status: idle
+- Status: blocked
 - Branch: `main`
 - HEAD: `33dc679`
-- Updated: `2026-09-02T15:17:00-03:00`
-- Worktree: the main checkout contains the verified, uncommitted Senior Full-Stack repositioning
-  alongside the previously published root-render fix.
+- Updated: `2026-09-03T01:38:23-03:00`
+- Worktree: the responsive-header implementation is complete and verified statically. The
+  pre-existing `package-lock.json` key-order change remains unrelated and intentionally untouched.
 
 ### Objective
 
-Reposition the bilingual site and all résumé variants for Senior Full-Stack Engineer roles centered
-on TypeScript, React, Next.js, Node.js, AWS, and experience building production AI products.
+Make navigation visually stable across Home, Work, Writing, About, and Resume from 391–680 px
+without adding client-side routing or changing Astro's static output.
 
 ### Acceptance criteria
 
-1. Make the requested Senior Full-Stack Engineer role and TypeScript/React/Next.js/Node.js/AWS
-   stack explicit on the English and Spanish professional home and About pages.
-2. Align both résumé variants and all four PDFs to that role, with one balanced Full-Stack version
-   and one Full-Stack + AI emphasis.
-3. Preserve factual ownership boundaries and avoid inventing titles, scope, metrics, or experience.
-4. Preserve existing routes, downloads, accessibility, language parity, themes, responsive behavior,
-   metadata, and reproducible static output.
-5. Pass focused diagnostics, PDF rendering checks, bilingual visual checks, independent review,
-   and the complete repository gate.
+1. Keep Work, Writing, About, and Resume reachable at 425×900 and 430×932 through one consistent
+   bilingual navigation shell.
+2. Keep logo, primary navigation, header height, element order, and spacing stable across routes.
+3. Reuse one responsive header component across Home, Work, Writing, About, and Work case studies.
+4. Mark the active page with `aria-current="page"`.
+5. Preserve Resume's specialized toolbar beneath the portfolio shell and hide both in print.
+6. Preserve EN/ES parity, light/dark themes, keyboard focus, reduced motion, and native scroll
+   restoration without new dependencies or view transitions.
+7. Pass static artifact checks, `npm run check`, `npm run verify`, and the requested visual matrix.
 
 ### Decisions
 
-- Keep `frontend-lead` and `ai-product-engineer` as internal variant identifiers and retain their
-  published routes and filenames for compatibility; user-facing labels are Full-Stack and
-  Full-Stack + AI.
-- Preserve specific frontend-leadership wording in case studies where it describes the evidenced
-  responsibility; the target role changes without inflating past ownership.
-- Present frontend architecture as the deepest specialty inside an end-to-end full-stack profile.
-- No decorative change or new dependency is needed; this is a positioning and content update.
+- `PortfolioHeader.astro` owns the shared brand, four primary destinations, language switcher,
+  active state, and scroll-state behavior.
+- Use an exact 96 px header from 391–980 px and 70 px above 980 px; scrolling changes the surface
+  treatment but never the height.
+- Keep Resume's toolbar as page content below the fixed global shell. Preserve the active résumé
+  variant when switching languages and keep a visible Portfolio link in the toolbar on mobile.
+- Do not add Astro ClientRouter or View Transitions: removing the divergent shells addresses the
+  reproduced layout jump while retaining native document navigation and scroll restoration.
 
 ### Progress
 
-- Updated shared positioning, target roles, home metadata, hero copy, focus summary, About profile,
-  and contact copy in English and Spanish.
-- Reworked both résumé projections around Senior Full-Stack Engineer, reordered their evidence and
-  skills, and kept a distinct AI-product emphasis without changing shared experience history.
-- Regenerated the four version-controlled PDF downloads and updated the public résumé labels,
-  descriptions, README, and architecture documentation.
+- Replaced duplicated headers in ProfessionalHome, WorkIndex, EditorialHome, PortfolioHome, and
+  WorkCaseStudy with the shared component.
+- Added the shared portfolio shell to both languages and both variants of ResumePage.
+- Removed conflicting Home/Work responsive overrides and the rule that hid primary navigation on
+  Writing/About.
+- Preserved global focus-visible and reduced-motion behavior and added no dependencies.
+
+### Header measurements
+
+| Viewport range | Before | After |
+|---|---|---|
+| 391–680 px | Home ≈95 px; Work ≈93 px; Writing/About 62 px; Resume had no portfolio shell | All five primary routes use the same exact 96 px shell |
+| 681–980 px | Home/Work used separate auto-height two-row rules; Writing/About hid primary nav | All five primary routes use the same exact 96 px shell |
+| Above 980 px | Shared base started at 70 px and shrank to 62 px after scroll | All five primary routes remain exactly 70 px before and after scroll |
+
+The before values are the reproduced production measurements from the task report, corroborated by
+the former page-specific CSS. The after values are the explicit `--portfolio-header-height` contract
+and still need screenshot/runtime confirmation because no browser instance was available.
 
 ### Blockers
 
-- None.
+- Required visual QA is pending because the in-app browser runtime reported no available browser.
+  The static checks cannot substitute for inspecting 425×900, 430×932, and desktop in both themes,
+  both languages, and keyboard navigation.
 
 ### Verification
 
-- `npm run harness:init` — PASS on macOS 26.5 arm64 with Node 24.18.0 and npm 11.16.0.
-- `npm run check` — PASS in the main checkout (Astro: 88 files clean, no errors, warnings, or hints).
-- `npm run cv:pdf` — PASS with Tectonic; four two-page A4 PDFs regenerated.
-- PDF render review — PASS across all eight rendered pages; no clipping, overlap, broken glyphs,
-  or hierarchy defects.
-- Browser review — PASS at 1280×800 and 390×844, light and dark, across both languages and all four
-  résumé routes; no horizontal overflow, correct metadata/hreflang/downloads, and visible keyboard
-  focus.
-- Independent read-only review — PASS on claims, language parity, stable routes, and PDF rendering
-  after the state-file revision was addressed.
+- `npm run harness:init` — PASS; Node 24.18.0, npm 11.16.0, dependencies ready.
+- `npm run check` — PASS; 89 files, no errors, warnings, or hints.
+- `npm run verify` — PASS; harness 9/9, 89 files clean, 41 static pages built.
+- Generated HTML contract check — PASS for Home, Work, Writing, About, base résumé, and AI résumé
+  in English and Spanish: one shared header, all four destinations, correct current route/language,
+  and Resume toolbar context.
 - `git diff --check` — PASS.
-- `npm run verify` — PASS in the main checkout (harness: 9 checks; Astro: 88 files clean; 41 pages
-  built).
-- GitHub Verify run 16 — PASS for commit `283d2da` on `main`.
-- Production cold load — PASS; `/` renders the full home directly with no meta refresh or overflow,
-  while retaining canonical `/en/` and Spanish alternate `/es/`.
+- Independent read-only review — BLOCKED only by unavailable browser QA; the earlier progress and
+  measurement documentation findings are resolved, and no implementation regression was found.
+- Browser review — BLOCKED; no connected browser was available in this session.
 
 ### Next action
 
-Review the scoped diff and commit it when ready; deployment remains a separate explicit action.
+Connect an in-app browser and inspect Home, Work, Writing, About, and Resume at 425×900, 430×932,
+and a desktop width in light/dark themes and English/Spanish. Confirm visible keyboard focus, no
+horizontal page overflow, a 96 px mobile header on every route, a 70 px desktop header before and
+after scroll, and that print preview omits both headers. If all pass, set status to `idle`.
 
 ## Recently completed
 
-- Removed the root blank-screen redirect flick while preserving `/en/` as canonical, then verified
-  the production cold-load behavior.
-- Migrated the portfolio's shared design foundations and primary professional surfaces to the
-  OpenCode-inspired mono, flat, hairline-bordered visual system with responsive theme parity.
-- Upgraded the five-subsystem agent harness with a canonical goal loop and authority router,
-  cross-platform Node initialization, a validated operational-state schema, thin Claude/Copilot
-  adapters, and a read-only verifier included in the CI-equivalent full gate.
-- Published the bilingual Harness Engineering and Postgres internals articles, the PsiNota case
-  study, and the OpenAI–Hugging Face incident explainer with responsive, theme, language, and full
-  build verification.
-- Completed Portfolio V2 PRs 1–4: professional home, selected-work model and indexes, sanitized case
-  studies, About pages, and bilingual résumé variants.
+- Repositioned the bilingual site and résumé variants for Senior Full-Stack Engineer roles.
+- Removed the root blank-screen redirect flick while preserving `/en/` as canonical.
+- Migrated the professional surfaces to the shared mono, flat, hairline-bordered visual system.
