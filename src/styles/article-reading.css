@@ -673,7 +673,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--muted);
-  font: 500 9px var(--mono);
+  font: 500 11px var(--mono);
   letter-spacing: .1em;
   text-transform: uppercase;
 }
@@ -686,11 +686,13 @@
   .db-thesis,
   .ds-thesis
 ) p {
-  max-width: 68ch;
-  font-size: 16px;
+  max-width: 60ch;
+  color: var(--ink);
+  font-family: var(--reading);
+  font-size: 19px;
   font-weight: 500;
-  letter-spacing: -.02em;
-  line-height: 1.55;
+  letter-spacing: -.01em;
+  line-height: 1.5;
 }
 
 .reading-article.reading-article article article h3,
@@ -706,8 +708,6 @@
 
 .reading-article.reading-article article :is(div, aside, figure) > p:not(.eyebrow, .section-number) {
   color: var(--muted-strong);
-  font-size: 13px;
-  line-height: 1.65;
 }
 
 .reading-article.reading-article :is(
@@ -779,21 +779,52 @@
 }
 
 /* ── Readability layer ─────────────────────────────────────────────
-   Running text switches to a proportional face at a comfortable size and
-   measure. Headings, labels, diagrams and code keep the mono identity.
-   The zero-specificity selector lets any rule with an explicit `font`
-   shorthand (labels, tags, captions) keep its mono face. */
+   One contract for every published note: a single surface, a proportional
+   face for running text, a short type scale, and nothing smaller than 11px.
+   Headings, labels, diagrams and code keep the mono identity. */
+.reading-article {
+  /* Article stylesheets write tiny sizes as max(var(--label-floor, 0px), Npx),
+     so index pages keep their sizes while notes get a legible floor. */
+  --label-floor: 11px;
+  /* Tokens that assumed dark poster bands resolve to the reading surface. */
+  --strong-text: var(--ink);
+  --strong-surface: transparent;
+  /* Accent is reserved for diagram highlights; labels and ordinals go quiet. */
+  --accent-text: var(--muted-strong);
+}
+
+.reading-article :is(figure, .ai-figure, .ddia-figure, .db-breadcrumb, .ai-breadcrumb, .ddia-breadcrumb, .cp-breadcrumb) {
+  --accent-text: var(--color-accent-hover);
+}
+
+/* Zero specificity: rules with an explicit `font` shorthand keep their face. */
 :where(.reading-article) :where(p, li, dd, blockquote):not(:where(figure *, pre *, table *)) {
   font-family: var(--reading);
 }
 
+/* Links inside running text must look like links. */
+.reading-article.reading-article :is(p, li, dd):not(figure *) a:not([class]) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+
+.reading-article.reading-article :is(p, li, dd):not(figure *) a:not([class]):hover {
+  text-decoration-color: currentColor;
+}
+
+/* ── Type scale ── */
 .reading-article.reading-article :is(
   .ai-post-lede,
   .cp-lede,
   .db-hero-copy > p:last-child,
-  .ddia-lede
+  .ddia-lede,
+  .ed-lede
 ) {
   max-width: 62ch;
+  color: var(--muted-strong);
   font-size: 18px;
   line-height: 1.65;
 }
@@ -803,8 +834,8 @@
   max-width: none;
 }
 
-.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) :is(p, li),
-.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) > div > p {
+.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose, .rag-prose-two, .cp-prose-two) :is(p, li),
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head, .ed-section-heading) > div > p {
   max-width: 68ch;
   margin-block: 0 1.1em;
   color: var(--muted-strong);
@@ -812,39 +843,192 @@
   line-height: 1.7;
 }
 
-.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) :is(p, li):last-child,
-.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) > div > p:last-child {
+.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose, .rag-prose-two, .cp-prose-two) :is(p, li):last-child,
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head, .ed-section-heading) > div > p:last-child {
   margin-bottom: 0;
 }
 
-.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) strong {
+.reading-article.reading-article :is(p, li, dd):not(figure *) :is(strong, b) {
   color: var(--ink);
   font-weight: 600;
 }
 
-/* Supporting text inside cards, notes, callouts and lists. */
-.reading-article.reading-article article :is(div, aside):not(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) > p:not(.eyebrow, .section-number),
-.reading-article.reading-article :is(
-  .ddia-figure-note,
-  .ai-figure-note,
-  .ddia-callout p:last-child,
-  .takeaways p,
-  .pillar-body,
-  .triad-card p,
-  .fault-body
+/* Every running paragraph outside diagrams, code and tables starts at the
+   body size; article stylesheets set many of them at 12–13px. */
+/* Labels written as <p> are excluded: kickers before a heading, code or
+   list, breadcrumbs, section numbers, tags and the section-heading kicker. */
+.reading-article.reading-article :is(p, li):not(
+  figure *,
+  pre *,
+  table *,
+  nav *,
+  .eyebrow,
+  .section-number,
+  [class*="tag"],
+  [class*="label"],
+  [class*="kicker"],
+  [class*="breadcrumb"],
+  :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head, .ed-section-heading) > p,
+  :is(.rag-sources, .harness-sources, .incident-sources, .cp-sources, .db-sources, .ed-sources) > div > p,
+  :has(+ :is(h1, h2, h3, h4, pre, ul, ol, dl))
 ) {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* Supporting text: cards, callouts, notes and definition lists. */
+.reading-article.reading-article :is(
+  .harness-subsystems,
+  .harness-loop-rules,
+  .harness-observability,
+  .harness-graph,
+  .harness-loop,
+  .harness-lifecycle,
+  .harness-evidence,
+  .harness-callout,
+  .harness-warning,
+  .harness-feedback,
+  .harness-boundary,
+  .harness-contract,
+  .incident-lessons,
+  .incident-myths,
+  .incident-techniques,
+  .incident-chain,
+  .incident-callout,
+  .incident-boundary,
+  .incident-caveat,
+  .rag-principle-grid,
+  .rag-metric-grid,
+  .rag-security-grid,
+  .rag-signal-grid,
+  .rag-failure-table,
+  .rag-baseline,
+  .rag-note,
+  .rag-warning,
+  .rag-boundary,
+  .rag-async,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-shape-grid,
+  .db-index-cards,
+  .db-scale-cards,
+  .db-query-board,
+  .db-dark-note,
+  .db-scale-callout,
+  .db-acid-note,
+  .db-system-warning,
+  .db-checklist,
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .cp-checklist,
+  .cp-code-copy,
+  .cp-dark-callout,
+  .cp-gil-note,
+  .cp-capacity-note,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .ddia-triad,
+  .ddia-callout,
+  .fault-classes,
+  .pillars,
+  .takeaways,
+  .ai-callout,
+  .ai-concepts,
+  .ed-lanes,
+  .ed-guarantees,
+  .ed-failures,
+  .ed-flow,
+  .ed-pipeline,
+  .ed-checklist,
+  .ed-callout,
+  .ed-warning,
+  .ed-note,
+  .ed-states,
+  blockquote
+) :is(p, li, dd):not(figure *, .eyebrow, .section-number, [class*="tag"], [class*="label"], :has(+ :is(h1, h2, h3, h4, pre, ul, ol, dl))),
+.reading-article.reading-article :is(.ddia-figure-note, .ai-figure-note, dd:not(figure *)) {
   font-size: 15px;
   line-height: 1.65;
 }
 
-/* Small mono labels stay legible: nothing below 11px. */
+/* Card headings sit directly under their label instead of a poster gap. */
+.reading-article.reading-article :is(article, li, aside) > :is(h3, h4):not(figure *) {
+  margin: 4px 0 6px;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.35;
+}
+
+/* Poster-era fixed heights leave empty bands once cards become rows. */
+.reading-article.reading-article :where(section, article, div, aside) :where(article, li, div, aside, dl, ol, ul):not(:where(figure, figure *)) {
+  min-height: 0;
+}
+
+/* ── Hero: one quiet line of metadata instead of a ruled table ── */
+.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero, .ed-hero) :is(.eyebrow, .cp-kicker, .db-kicker, .ed-kicker) {
+  display: none;
+}
+
+.reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta, .ed-meta) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-top: 28px;
+  padding: 0;
+  border: 0;
+}
+
+.reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta, .ed-meta) > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+}
+
+.reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta, .ed-meta) :is(span, dt) {
+  margin: 0;
+  color: var(--muted);
+  font: 500 11px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.reading-article.reading-article :is(.ai-post-meta, .cp-meta, .db-meta, .ddia-hero-meta, .ed-meta) :is(b, dd) {
+  margin: 0;
+  color: var(--ink);
+  font: 500 14px var(--mono);
+  letter-spacing: 0;
+}
+
+.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero, .ed-hero) {
+  padding-bottom: 40px;
+}
+
+.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero, .ed-hero) + :is(section, .ddia-section) {
+  border-top: 1px solid var(--line);
+}
+
+/* Breadcrumb rows gain width at the label floor; let them wrap. */
+.reading-article.reading-article [class*="breadcrumb-row"] {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.reading-article.reading-article :is(.ai-breadcrumb, .ddia-breadcrumb, .ed-breadcrumb-row p) {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* ── Labels ── */
 .reading-article.reading-article :is(
-  .ai-post-meta span,
-  .cp-meta dt,
-  .db-meta dt,
-  .ddia-hero-meta span,
-  .ddia-figure-cap,
   .ddia-breadcrumb,
+  .ddia-figure-cap,
   .ddia-callout-tag,
   .ai-callout-tag,
   .triad-card > span,
@@ -854,20 +1038,321 @@
   font-size: 11px;
 }
 
-.reading-article.reading-article .ddia-hero-meta b { font-size: 15px; }
-
-/* The hero already ends with a ruled meta block; a second rule right after it
-   only produces an empty band before the first section. */
-.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero) {
-  padding-bottom: 48px;
+/* ── Former dark bands and panels: one surface, two text colors ──
+   These blocks were painted dark and their text was written in white or in
+   pastel accents. On the single reading surface they read as body text. */
+.reading-article {
+  --inverse-accent: var(--accent-text);
+  --h-dark-muted: var(--muted-strong);
 }
 
-.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero) + :is(section, .ddia-section) {
-  padding-top: 24px;
-  border-top: 0;
+.reading-article.reading-article :is(
+  .ai-dark,
+  .ai-loop-step.is-model,
+  .cp-dark,
+  .cp-system,
+  .cp-checklist > div,
+  .cp-conclusion,
+  .arch-workers,
+  .db-dark,
+  .db-cap,
+  .db-query-board ol,
+  .db-system-warning,
+  .db-checklist > div,
+  .db-conclusion,
+  .ddia-section-dark,
+  .tw-math,
+  .tail-origin,
+  .ds-conclusion,
+  .ed-conclusion,
+  .ed-tint,
+  .harness-contract,
+  .harness-conclusion,
+  .incident-boundary,
+  .incident-conclusion,
+  .pg-dark,
+  .pg-warning,
+  .rag-personal,
+  .rag-baseline > div,
+  .rag-warning,
+  .rag-async,
+  .rag-conclusion,
+  .light
+) {
+  color: var(--muted-strong);
+  background-color: transparent;
 }
 
-/* Center the reading column in the space beside the sidebar. */
-@media (min-width: 1081px) {
-  .reading-article.has-writing-sidebar .section-shell { margin-inline: auto; }
+.reading-article.reading-article :is(
+  .ai-dark,
+  .ai-loop-step.is-model,
+  .cp-dark,
+  .cp-system,
+  .cp-checklist > div,
+  .cp-conclusion,
+  .arch-workers,
+  .db-dark,
+  .db-cap,
+  .db-query-board ol,
+  .db-system-warning,
+  .db-checklist > div,
+  .db-conclusion,
+  .ddia-section-dark,
+  .tw-math,
+  .tail-origin,
+  .ds-conclusion,
+  .ed-conclusion,
+  .ed-tint,
+  .harness-contract,
+  .harness-conclusion,
+  .incident-boundary,
+  .incident-conclusion,
+  .pg-dark,
+  .pg-warning,
+  .rag-personal,
+  .rag-baseline > div,
+  .rag-warning,
+  .rag-async,
+  .rag-conclusion,
+  .light
+) :where(*):not(:where(pre, pre *, .cp-code-panel, .cp-code-panel *)) {
+  color: var(--muted-strong);
+  border-color: var(--line);
+}
+
+.reading-article.reading-article :is(
+  .ai-dark,
+  .ai-loop-step.is-model,
+  .cp-dark,
+  .cp-system,
+  .cp-checklist > div,
+  .cp-conclusion,
+  .arch-workers,
+  .db-dark,
+  .db-cap,
+  .db-query-board ol,
+  .db-system-warning,
+  .db-checklist > div,
+  .db-conclusion,
+  .ddia-section-dark,
+  .tw-math,
+  .tail-origin,
+  .ds-conclusion,
+  .ed-conclusion,
+  .ed-tint,
+  .harness-contract,
+  .harness-conclusion,
+  .incident-boundary,
+  .incident-conclusion,
+  .pg-dark,
+  .pg-warning,
+  .rag-personal,
+  .rag-baseline > div,
+  .rag-warning,
+  .rag-async,
+  .rag-conclusion,
+  .light
+) :where(h2, h3, h4, strong, b, th, code, em):not(:where(pre *, .cp-code-panel *)) {
+  color: var(--ink);
+}
+
+.reading-article.reading-article :is(.rag-sources, .db-sources, .cp-sources, .harness-sources, .incident-sources) small {
+  color: var(--muted);
+}
+
+/* Card grids drew hairlines with `gap: 1px` over a tinted fill; as stacked
+   rows they already carry their own dividers. */
+.reading-article.reading-article :is(
+  .harness-subsystems,
+  .harness-loop-rules,
+  .harness-observability,
+  .harness-graph,
+  .incident-lessons,
+  .incident-myths,
+  .incident-techniques,
+  .rag-principle-grid,
+  .rag-metric-grid,
+  .rag-security-grid,
+  .rag-signal-grid,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-shape-grid,
+  .db-index-cards,
+  .db-scale-cards,
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .ddia-triad,
+  .fault-classes,
+  .pillars
+) {
+  background: transparent;
+}
+
+.reading-article.reading-article .harness-loop small { color: var(--muted-strong); }
+
+/* Offset "poster" shadows are decoration, not structure. */
+.reading-article.reading-article *:not(:focus-visible) {
+  box-shadow: none;
+}
+
+.reading-article.reading-article .db-query-board li {
+  gap: 4px;
+  padding-block: 12px;
+}
+
+.reading-article.reading-article .db-shape-grid {
+  border: 0;
+}
+
+.reading-article.reading-article .db-shape-grid article > p:last-child {
+  margin-top: 16px;
+}
+
+.reading-article.reading-article .db-schema-map div {
+  border-color: var(--line);
+  background: var(--paper-2);
+}
+
+/* Harness: its blue/green/amber coding labels every block; one tone reads calmer.
+   The theme selector in the article sheet is (0,2,1), so this needs (0,3,0). */
+:root .reading-article.reading-article {
+  --h-blue: var(--muted-strong);
+  --h-blue-soft: var(--paper-2);
+  --h-green: var(--muted-strong);
+  --h-green-soft: var(--paper-2);
+  --h-amber: var(--muted-strong);
+  --h-amber-soft: var(--paper-2);
+  /* Incident rotates red/amber/blue by position: decoration, not meaning. */
+  --incident-red: var(--muted-strong);
+  --incident-red-soft: var(--paper-2);
+  --incident-amber: var(--muted-strong);
+  --incident-amber-soft: var(--paper-2);
+  --incident-blue: var(--muted-strong);
+  --incident-blue-soft: var(--paper-2);
+}
+
+/* Figure titles stay small; figure notes are reading text. */
+.reading-article.reading-article :is(figure > figcaption, .ai-figure-cap, .ddia-figure-cap) :is(b, strong) {
+  font-size: 13px;
+  letter-spacing: .02em;
+}
+
+.reading-article.reading-article :is(.ddia-figure-note, .ai-figure-note) {
+  color: var(--muted-strong);
+  font-family: var(--reading);
+}
+
+.reading-article.reading-article .harness-prose {
+  display: block;
+  margin-bottom: 40px;
+}
+
+.reading-article.reading-article .harness-map {
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.reading-article.reading-article .harness-map > div {
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.reading-article.reading-article .harness-map > i { display: none; }
+
+.reading-article.reading-article .harness-map strong {
+  margin: 4px 0 6px;
+  font-size: 17px;
+}
+
+.reading-article.reading-article .harness-contract span { margin-bottom: 4px; }
+
+/* A ~680px reading column has room for one column of text. */
+.reading-article.reading-article :is(
+  .rag-checklist,
+  .ai-concepts,
+  .concept-list,
+  .harness-lectures ol,
+  .incident-prose,
+  .incident-chain,
+  .cp-diagnostic-steps,
+  .rag-sources,
+  .harness-sources,
+  .incident-sources,
+  .cp-sources,
+  .db-sources,
+  .ed-sources
+) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.reading-article.reading-article :is(.rag-sources, .harness-sources, .incident-sources, .cp-sources, .db-sources, .ed-sources) > div {
+  margin-bottom: 20px;
+}
+
+/* Cards become rows: one divider below, nothing on the sides. */
+.reading-article.reading-article :is(
+  .cp-definition-grid,
+  .cp-tool-grid,
+  .cp-system-principles,
+  .cp-failure-grid,
+  .ds-definition-grid,
+  .ds-structure-grid,
+  .ds-reality-grid,
+  .db-canvas-grid,
+  .db-model-grid,
+  .db-index-cards,
+  .db-scale-cards
+) > article {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Tables: horizontal rules only, and cells in the reading face. */
+.reading-article.reading-article :is(.cp-table-wrap, .pg-table-wrap) {
+  border: 0;
+}
+
+.reading-article.reading-article :is(.cp-table-wrap, .pg-table-wrap) :is(td, th) {
+  border-inline: 0;
+}
+
+.reading-article.reading-article :is(.cp-table-wrap, .pg-table-wrap) td {
+  color: var(--muted-strong);
+  font-family: var(--reading);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.reading-article.reading-article :is(.cp-table-wrap, .pg-table-wrap) td :is(strong, b) {
+  color: var(--ink);
+}
+
+/* Diagram highlights: an inverse chip reads in both themes. */
+.reading-article.reading-article :is(.pg-nodes i.is-hit, .pg-steps i.is-visible) {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+/* ── Code keeps a dark panel in both themes; its syntax colors assume it. ── */
+.reading-article.reading-article :is(pre, .cp-code-panel) {
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: #f2eded;
+  background: #0c0c0e;
+}
+
+.reading-article.reading-article pre:not(.cp-code-panel pre) {
+  padding: 18px 20px;
+  overflow-x: auto;
 }

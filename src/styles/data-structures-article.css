@@ -3,10 +3,10 @@
 .ds-hero-visual { transform: rotate(-1deg); box-shadow: 12px 12px 0 var(--blue); }
 .ds-chart { position: relative; height: 330px; margin-top: 40px; border-left: 1px solid rgba(255,255,255,.35); border-bottom: 1px solid rgba(255,255,255,.35); overflow: hidden; }
 .ds-chart::before { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 25% 25%; }
-.ds-axis-y,.ds-axis-x { position: absolute; z-index: 2; color: rgba(255,255,255,.52); font: 500 7px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.ds-axis-y,.ds-axis-x { position: absolute; z-index: 2; color: rgba(255,255,255,.52); font: 500 max(var(--label-floor, 0px), 7px) var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 .ds-axis-y { top: -18px; left: -1px; }.ds-axis-x { right: 0; bottom: -20px; }
 .curve { position: absolute; left: 0; right: 0; bottom: 0; display: block; border-top: 3px solid var(--coral); transform-origin: bottom left; }
-.curve b { position: absolute; right: 5px; top: -20px; color: var(--coral); font: 500 8px var(--mono); }
+.curve b { position: absolute; right: 5px; top: -20px; color: var(--coral); font: 500 max(var(--label-floor, 0px), 8px) var(--mono); }
 .curve.constant { bottom: 15%; border-color: var(--blue); }.curve.constant b { color: var(--blue); }
 .curve.logarithmic { height: 43%; border-color: var(--lime); border-radius: 100% 0 0; transform: skewY(-13deg); }.curve.logarithmic b { color: var(--lime); transform: skewY(13deg); }
 .curve.linear { right: -30%; width: 112%; transform: rotate(-35deg); }.curve.linear b { right: 22%; transform: rotate(35deg); }
@@ -14,7 +14,7 @@
 
 .ds-definition-grid { display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--ink); }
 .ds-definition-grid article { min-height: 390px; padding: 31px; border-right: 1px solid var(--ink); background: var(--paper-2); }.ds-definition-grid article:last-child { border: 0; background: rgba(216,255,88,.24); }
-.ds-definition-grid span { font: 500 9px var(--mono); letter-spacing: .1em; }.ds-definition-grid h3 { margin: 72px 0 34px; color: var(--accent-text); font: 500 clamp(48px,5vw,70px) var(--mono); letter-spacing: -.08em; }.ds-definition-grid p { margin: 0; color: rgb(var(--ink-rgb) / .73); font-size: 13px; line-height: 1.72; }
+.ds-definition-grid span { font: 500 max(var(--label-floor, 0px), 9px) var(--mono); letter-spacing: .1em; }.ds-definition-grid h3 { margin: 72px 0 34px; color: var(--accent-text); font: 500 clamp(48px,5vw,70px) var(--mono); letter-spacing: -.08em; }.ds-definition-grid p { margin: 0; color: rgb(var(--ink-rgb) / .73); font-size: 13px; line-height: 1.72; }
 .ds-complexity-table code { white-space: nowrap; }.ds-complexity-table td:last-child { min-width: 220px; }
 .ds-structure-grid { display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--ink); }
 .ds-structure-grid .cp-tool-card { min-height: 465px; }.ds-structure-grid .cp-tool-card:nth-child(2n) { border-right: 1px solid var(--ink); }.ds-structure-grid .cp-tool-card:nth-child(3n) { border-right: 0; }.ds-structure-grid .cp-tool-card:nth-last-child(-n+3) { border-bottom: 0; }

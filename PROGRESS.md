@@ -89,6 +89,12 @@ after scroll, and that print preview omits both headers. If all pass, set status
 
 ## Recently completed
 
+- Unified the long-form reading contract in `src/styles/article-reading.css` for all 16 note routes:
+  proportional body text (17 px) with a 15 px support size, an 11 px label floor via
+  `max(var(--label-floor, 0px), Npx)` in article sheets (index pages unchanged), one surface with
+  former dark bands and decorative color coding neutralized, single-column text, and inline hero
+  metadata. Browser audits: 0 contrast failures in 32 page×theme runs (was 11–45 per page in light),
+  no text under 11 px, no page overflow at 390 px; `npm run verify` PASS.
 - Repositioned the bilingual site and résumé variants for Senior Full-Stack Engineer roles.
 - Removed the root blank-screen redirect flick while preserving `/en/` as canonical.
 - Migrated the professional surfaces to the shared mono, flat, hairline-bordered visual system.
