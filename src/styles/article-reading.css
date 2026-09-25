@@ -777,3 +777,97 @@
     border-bottom: 0;
   }
 }
+
+/* ── Readability layer ─────────────────────────────────────────────
+   Running text switches to a proportional face at a comfortable size and
+   measure. Headings, labels, diagrams and code keep the mono identity.
+   The zero-specificity selector lets any rule with an explicit `font`
+   shorthand (labels, tags, captions) keep its mono face. */
+:where(.reading-article) :where(p, li, dd, blockquote):not(:where(figure *, pre *, table *)) {
+  font-family: var(--reading);
+}
+
+.reading-article.reading-article :is(
+  .ai-post-lede,
+  .cp-lede,
+  .db-hero-copy > p:last-child,
+  .ddia-lede
+) {
+  max-width: 62ch;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+/* The measure lives on the paragraphs so it is computed in the reading face. */
+.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) {
+  max-width: none;
+}
+
+.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) :is(p, li),
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) > div > p {
+  max-width: 68ch;
+  margin-block: 0 1.1em;
+  color: var(--muted-strong);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) :is(p, li):last-child,
+.reading-article.reading-article :is(.ai-section-head, .cp-section-heading, .db-section-heading, .ddia-section-head) > div > p:last-child {
+  margin-bottom: 0;
+}
+
+.reading-article.reading-article :is(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Supporting text inside cards, notes, callouts and lists. */
+.reading-article.reading-article article :is(div, aside):not(.ai-prose, .cp-prose, .ddia-prose, .harness-prose, .incident-prose) > p:not(.eyebrow, .section-number),
+.reading-article.reading-article :is(
+  .ddia-figure-note,
+  .ai-figure-note,
+  .ddia-callout p:last-child,
+  .takeaways p,
+  .pillar-body,
+  .triad-card p,
+  .fault-body
+) {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* Small mono labels stay legible: nothing below 11px. */
+.reading-article.reading-article :is(
+  .ai-post-meta span,
+  .cp-meta dt,
+  .db-meta dt,
+  .ddia-hero-meta span,
+  .ddia-figure-cap,
+  .ddia-breadcrumb,
+  .ddia-callout-tag,
+  .ai-callout-tag,
+  .triad-card > span,
+  .ai-figure-cap,
+  figure > figcaption
+) {
+  font-size: 11px;
+}
+
+.reading-article.reading-article .ddia-hero-meta b { font-size: 15px; }
+
+/* The hero already ends with a ruled meta block; a second rule right after it
+   only produces an empty band before the first section. */
+.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero) {
+  padding-bottom: 48px;
+}
+
+.reading-article.reading-article :is(.ai-post-hero, .cp-hero, .db-hero, .ddia-hero) + :is(section, .ddia-section) {
+  padding-top: 24px;
+  border-top: 0;
+}
+
+/* Center the reading column in the space beside the sidebar. */
+@media (min-width: 1081px) {
+  .reading-article.has-writing-sidebar .section-shell { margin-inline: auto; }
+}

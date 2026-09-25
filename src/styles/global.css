@@ -27,6 +27,8 @@
   --shadow-soft: none;
   --mono: var(--font-primary);
   --sans: var(--font-primary);
+  /* Long-form running text only; UI chrome, labels and headings stay mono. */
+  --reading: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --measure: 72ch;
   --radius-sm: 4px;
   --radius-md: 8px;
