@@ -13,22 +13,22 @@ const faultClasses = [
     tone: 'blue',
     kind: 'Hardware faults',
     nature: 'Random and mostly independent. One machine failing says little about the next.',
-    example: 'A disk dies, a memory module develops a bad cell, a rack loses power, someone unplugs the wrong cable.',
-    response: 'Redundancy first. But past a certain scale the answer shifts to software tolerance across machines, which buys something extra: you can patch and reboot nodes one at a time, with no planned downtime.',
+    example: 'A disk dies, RAM develops a bad cell, a rack loses power, someone unplugs the wrong cable. Disks have a mean time to failure of roughly 10–50 years, so a cluster of 10,000 disks should expect about one dead disk per day.',
+    response: 'Redundancy first: RAID, dual power supplies, hot-swappable CPUs. But as data volumes grow, and cloud platforms trade single-machine reliability for elasticity, the answer shifts to software that tolerates the loss of whole machines. That buys something extra: you can patch and reboot nodes one at a time, with no planned downtime.',
   },
   {
     tone: 'coral',
     kind: 'Software faults',
     nature: 'Systematic and correlated. The same latent bug lives on every node and fires on every node at once.',
-    example: 'The 2012 leap second that hung Linux kernels simultaneously worldwide; a runaway process exhausting a shared resource; a slow dependency cascading into its callers.',
+    example: 'The leap second of 30 June 2012, when a Linux kernel bug hung many applications at the same moment; a runaway process exhausting a shared resource; a dependency that slows down or returns corrupted responses; cascading failures where one fault triggers the next.',
     response: 'No single countermeasure. Test the assumptions, isolate processes, let things crash and restart, and measure behaviour in production so a drifting system announces itself.',
   },
   {
     tone: 'violet',
     kind: 'Human faults',
-    nature: 'The most frequent source in practice. Configuration mistakes lead the statistics on outage causes.',
+    nature: 'The most frequent source in practice. In one study of large internet services, operator configuration errors were the leading cause of outages; hardware played a role in only 10–25% of them.',
     example: 'A config change rolled out everywhere at once, a migration run against the wrong environment, a manual step skipped at 3am.',
-    response: 'Reduce the opportunity for error rather than the humans: well-designed abstractions, realistic sandboxes, tests at every level, gradual rollouts, fast rollback, and telemetry that shows what actually happened.',
+    response: 'Design the opportunity for error out, rather than blaming the humans: well-designed abstractions, realistic sandboxes, tests at every level, gradual rollouts, fast rollback, and detailed telemetry that shows what actually happened.',
   },
 ];
 
@@ -55,8 +55,8 @@ const pillars = [
 
 const takeaways = [
   ['Name the load parameter before arguing about architecture.', 'Requests per second, read/write ratio, fan-out, working set size. If the group cannot agree on which number is growing, the design debate has no ground truth.'],
-  ['Ask for percentiles, never averages.', 'A mean response time describes no real user. Ask for p50, p99 and p999, and ask where they were measured — server-side numbers hide queueing that the client feels.'],
-  ['Separate the fault from the failure.', 'For each dependency: what happens when it is slow, wrong, or gone? A design is fault-tolerant only for the faults you named out loud.'],
+  ['Ask for percentiles, never averages.', 'A mean response time hides how many users actually waited. Ask for p50, p99 and p999, ask where they were measured (server-side numbers hide queueing that the client feels), and aggregate histograms, never percentiles.'],
+  ['Separate the fault from the failure.', 'For each dependency, ask what happens when it is slow, wrong, or gone. A design is fault-tolerant only for the faults you named out loud.'],
   ['Treat operations as a first-class requirement.', 'Rollback path, deploy strategy, and the signals you will alert on belong in the design, not in a runbook written after the incident.'],
 ];
 ---
@@ -64,7 +64,7 @@ const takeaways = [
 <Layout
   mainId="top"
   title="DDIA Chapter 1 — Reliable, Scalable, and Maintainable Applications"
-  description="An extensive study analysis of Chapter 1 of Designing Data-Intensive Applications by Martin Kleppmann: reliability, scalability and maintainability, with the arguments redrawn as diagrams."
+  description="Study notes on Chapter 1 of Designing Data-Intensive Applications by Martin Kleppmann: reliability, scalability and maintainability, with the arguments redrawn as diagrams."
 >
   <BookChapterHeader number="01" />
   <WritingSidebar lang="en" />
@@ -81,10 +81,10 @@ const takeaways = [
       </p>
       <h1>Reliable, scalable,<br /><strong>maintainable.</strong></h1>
       <p class="ddia-lede">
-        The opening chapter does something quietly ambitious: before any database, index or queue is
-        discussed, it argues that almost every meaningful decision in a data system can be traced
-        back to three concerns. Everything in the remaining eleven chapters is a technique for
-        buying one of them, usually at the expense of another.
+        The opening chapter does something quietly ambitious: before discussing any database, index
+        or queue, it argues that almost every meaningful decision in a data system can be traced
+        back to three concerns. Read the remaining eleven chapters with that lens and most techniques
+        turn out to buy one of them, usually at the expense of another.
       </p>
       <div class="ddia-hero-meta">
         <div><span>PART</span><b>I · Foundations</b></div>
@@ -182,11 +182,18 @@ const takeaways = [
 
         <div class="ddia-prose light">
           <p>
+            "Working correctly" is broader than it sounds. The chapter unpacks it into four
+            expectations: the application does what the user expected, it tolerates users making
+            mistakes or using it in unexpected ways, its performance is good enough for the use case
+            under the expected load, and it prevents unauthorised access and abuse.
+          </p>
+          <p>
             The distinction the chapter insists on is between a <strong>fault</strong> and a
             <strong>failure</strong>. A fault is one component deviating from its spec. A failure is
-            the system as a whole stopping. They are not the same event, and the entire discipline
-            lives in the gap between them: fault tolerance means arranging things so that a fault
-            never gets to become a failure.
+            the system as a whole no longer providing the service the user needs. They are not the
+            same event, and the whole discipline lives in the gap between them: the probability of a
+            fault can never be zero, so fault tolerance means arranging things so that a fault never
+            gets to become a failure.
           </p>
         </div>
 
@@ -224,9 +231,16 @@ const takeaways = [
         <div class="ddia-prose light">
           <p>
             There is a counter-intuitive move here that is worth sitting with: the way to trust fault
-            tolerance is to <strong>deliberately increase the rate of faults</strong>. Killing
-            processes at random in production is not recklessness; it is the only way to keep the
-            tolerance path exercised, because an untested recovery path is not a recovery path.
+            tolerance is to <strong>deliberately increase the rate of faults</strong>. Netflix's
+            Chaos Monkey kills processes at random without warning, and that is not recklessness.
+            Many critical bugs live in poor error handling, and injecting faults is what keeps the
+            recovery path exercised. An untested recovery path is not a recovery path.
+          </p>
+          <p>
+            Tolerance is not always the right answer, though. Some faults have no cure, only
+            prevention: if an attacker has compromised a system, that event cannot be undone. The
+            chapter generally prefers tolerating faults over preventing them, but security is where
+            that preference stops.
           </p>
         </div>
 
@@ -387,9 +401,15 @@ const takeaways = [
       <div class="ddia-prose">
         <h3 class="ddia-h3">Describing performance once load is defined</h3>
         <p>
-          With load described, performance becomes answerable in two ways. Batch systems care about
-          <strong>throughput</strong> — records processed per unit of time. Online systems care about
-          <strong>response time</strong> — what the user waits through.
+          Once load is described, you can ask what happens when it grows, and the chapter phrases
+          that as two concrete questions. If load increases and resources stay the same, how does
+          performance change? And if load increases, how much do resources have to grow to keep
+          performance where it was?
+        </p>
+        <p>
+          Both questions need a number for "performance". Batch systems care about
+          <strong>throughput</strong>: records processed per unit of time. Online systems care about
+          <strong>response time</strong>: what the user waits through.
         </p>
       </div>
 
@@ -408,7 +428,8 @@ const takeaways = [
           And response time is not a number — it is a distribution. The same endpoint, called
           repeatedly with identical arguments, returns a spread of times: a context switch, a garbage
           collection pause, a lost packet and retransmission, a cold page. Which is why the chapter is
-          blunt about averages: <strong>the mean describes no actual user</strong>. Percentiles do.
+          blunt about averages: <strong>the mean does not tell you how many users actually waited
+          that long</strong>. Percentiles do.
         </p>
       </div>
 
@@ -455,11 +476,23 @@ const takeaways = [
       </figure>
 
       <div class="ddia-prose">
+        <p>
+          Percentiles are also how performance becomes a contract. Service level objectives and
+          agreements are usually written in them: for example, the service counts as up if the median
+          response time is under 200 ms and p99 is under 1 s. Two practical traps follow. First,
+          percentiles cannot be averaged: to combine data from several machines or time windows, add
+          up the histograms and compute the percentile from the result. Second, a load-testing client
+          must keep sending requests without waiting for the previous response, or it will hide the
+          very queues it is supposed to measure.
+        </p>
+      </div>
+
+      <div class="ddia-prose">
         <h3 class="ddia-h3">Why tails get worse in distributed systems</h3>
         <p>
           Two mechanisms make this sharper than it first looks. The first is
           <strong>head-of-line blocking</strong>: a server handles a limited number of requests in
-          parallel, so a few slow ones delay everything queued behind them — requests that are fast
+          parallel, so a few slow ones delay everything queued behind them. Requests that are fast
           to process still arrive late. This is why the measurement has to be taken on the client
           side, where the queueing is visible.
         </p>
@@ -493,18 +526,23 @@ const takeaways = [
         <h3 class="ddia-h3">Coping with load</h3>
         <p>
           Only now, with load and performance described, does the chapter allow the architectural
-          question — and it deflates it on purpose. Scaling up (a bigger machine) and scaling out
-          (more machines) are not a religious choice; real systems use both, because a handful of
-          strong machines is often simpler and cheaper than a large fleet of small ones.
+          question, and it deflates it on purpose. Scaling up (a bigger machine) and scaling out
+          (more machines) are not a religious choice. Real systems use both, because a few powerful
+          machines are often simpler and cheaper than a large fleet of small virtual ones. The same
+          pragmatism applies to <strong>elasticity</strong>: adding resources automatically helps
+          when load is unpredictable, while scaling by hand is simpler and has fewer operational
+          surprises.
         </p>
         <p>
           Distributing <em>stateless</em> services is largely mechanical. Distributing
-          <em>stateful</em> ones is where the difficulty concentrates — which is the reason the next
-          eleven chapters exist at all. And the closing warning is the one worth memorising:
-          <strong>there is no generic scaling architecture</strong>. A system designed for a hundred
-          thousand small events per second looks nothing like one designed for a handful of enormous
-          ones, even at identical throughput. The architecture follows from the load parameters, and
-          those are specific to your problem.
+          <em>stateful</em> data systems is where the difficulty concentrates, and that is why the
+          common advice has long been to keep the database on a single node until cost or
+          availability forces otherwise. Part II of the book is about what happens after that point.
+          The closing warning is the one worth memorising: <strong>there is no generic scaling
+          architecture</strong>. A system that handles 100,000 requests per second of 1 kB each looks
+          nothing like one that handles 3 requests per minute of 2 GB each, even though both move the
+          same amount of data. The architecture follows from the load parameters, and those are
+          specific to your problem.
         </p>
       </div>
     </section>
@@ -518,6 +556,8 @@ const takeaways = [
           <p>
             Most of the money a system consumes is spent on maintenance: fixing it, adapting it to
             new requirements, operating it, and paying down the debt of decisions made quickly.
+            Nobody enjoys maintaining a legacy system, so the goal is to design one that will not
+            become one.
           </p>
         </div>
       </div>
@@ -536,7 +576,7 @@ const takeaways = [
         <p>
           The distinction inside simplicity is the one that earns its keep in code review.
           <strong>Essential complexity</strong> comes from the problem: tax rules really are that
-          complicated. <strong>Accidental complexity</strong> comes from how we built it — tangled
+          complicated. <strong>Accidental complexity</strong> comes from how we built it: tangled
           dependencies, inconsistent naming, special cases papering over a leaky abstraction. Only
           the second kind is negotiable, and separating them turns "this is too complex" from an
           opinion into a claim you can check.
@@ -551,7 +591,7 @@ const takeaways = [
           <p class="section-number">05 / VOCABULARY</p>
           <div>
             <h2>Four terms the rest<br /><em>of the book assumes.</em></h2>
-            <p>Chapter 1 is largely there to install these. They reappear constantly from Chapter 5 onward.</p>
+            <p>Chapter 1 is largely there to install these. The rest of the book uses them without re-explaining them.</p>
           </div>
         </div>
         <dl class="concept-list">

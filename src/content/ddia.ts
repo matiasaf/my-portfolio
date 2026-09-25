@@ -47,8 +47,8 @@ export const chapters: Chapter[] = [
 
 /** Concepts established by chapter 1 for the rest of the book. */
 export const chapterOneConcepts = [
-  ['Fault ≠ failure', 'A fault is one component deviating from spec. A failure is the system as a whole stopping. Tolerance means containing the first so it never becomes the second.'],
+  ['Fault ≠ failure', 'A fault is one component deviating from spec. A failure is the system as a whole no longer providing the service the user needs. Tolerance means containing the first so it never becomes the second.'],
   ['Load parameter', 'The number that describes what actually grows: requests per second, read/write ratio, fan-out, cache hit rate. Choosing the wrong one hides the bottleneck.'],
-  ['Tail latency', 'The p99 and p999 response times. Averages describe nobody; the tail describes the users most likely to matter.'],
+  ['Tail latency', 'The p99 and p999 response times. An average hides how many users waited; the tail shows the slowest requests, which often belong to the customers with the most data.'],
   ['Accidental complexity', 'Complexity that comes from the implementation rather than from the problem itself. It is the kind you are allowed to remove.'],
 ] as const;
